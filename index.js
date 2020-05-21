@@ -58,7 +58,7 @@ function ClientOnReady () {	//Called when after Discord Client is logged in
 
 function ClientOnMessage (message) {	//Called when the Client receives a message
 
-	if (message.content.toLowerCase().indexOf(Prefix) == 0 && message.channel.guild) {
+	if (message.content.toLowerCase().indexOf(Prefix) == 0 && message.channel.guild && !message.author.bot) {
 		
 		if (message.author.bot) {
 			console.log(`Bot (${message.author.username}) tried using a command:\n${message.content}\n`);
