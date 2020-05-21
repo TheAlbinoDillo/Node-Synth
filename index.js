@@ -255,7 +255,7 @@ function writeJSON (filename, object) {	//Write an object to a JSON file
 	let string = JSON.stringify(object);
 
  	try {
-		FileSystem.writeFileSync(`files/${filename}.json`, string);
+		FileSystem.writeFileSync(`/home/pi/furrieswithguns/Bot-FurGun/files/${filename}.json`, string);
 		console.log(`Wrote to "${filename}.json":\n${string}\n`);
 	} catch (error) {
 		console.error(`Failed to write to "${filename}.json":\n${error.message}\n`);
@@ -266,7 +266,7 @@ function readJSON (filename) {	//Read an object from a JSON file
 
 	let content;
 	try {
-		content = FileSystem.readFileSync(`files/${filename}.json`);
+		content = FileSystem.readFileSync(`/home/pi/furrieswithguns/Bot-FurGun/files/${filename}.json`);
 		console.log(`Read from "${filename}.json":\n${(content.length > 100) ? `${content.toString().substring(0, 150)}...` : content}\n`);
 	} catch (error) {
 		console.error(`Failed to read from "${filename}.json":\n${error.message}\n`);
