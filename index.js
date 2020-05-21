@@ -217,7 +217,7 @@ function serverName (user, guild, bold = true, removeSpecial = true) {	//Get the
 
 	let name = guild.member(user).nickname;
 	//let regex = /([❄]|[\u2B50]|[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g;
-	let regex = /[^a-z0-9_)-(]/gi;
+	let regex = /([^\u0000-\u007f])/gi;
 
 	if (removeSpecial && name != null) {	//Remove emojis and symbol characters, uppercase the first letter
 		name = name.replace(/[-_]/g,' ').replace(regex, '').trim();
