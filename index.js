@@ -60,7 +60,7 @@ function ClientOnReady () {	//Called when after Discord Client is logged in
 
 function ClientOnMessage (message) {	//Called when the Client receives a message
 
-	if (message.content.toLowerCase().indexOf(Prefix) == 0 && message.channel.guild && !message.author.bot) {
+	if (message.content.toLowerCase().indexOf(Prefix) == 0 && message.channel.guild) {
 		
 		if (message.author.bot) {
 			console.log(`Bot (${message.author.username}) tried using a command:\n${message.content}\n`);
@@ -70,11 +70,13 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 		}
 	}
 
-	let maa = message.attachments.array()[0];
-	if (maa != undefined) {
-		if (maa.width != undefined) {
-			botReact(message, ":symbol_reddit_vote_up:680935204050698329");
-			botReact(message, ":symbol_reddit_vote_down:680935348272103445");
+	if (!message.author.bot) {
+		let maa = message.attachments.array()[0];
+		if (maa != undefined) {
+			if (maa.width != undefined) {
+				botReact(message, ":symbol_reddit_vote_up:680935204050698329");
+				botReact(message, ":symbol_reddit_vote_down:680935348272103445");
+			}
 		}
 	}
 }
