@@ -875,7 +875,7 @@ const commandList =
 			let hex = args[1].replace(/[^a-f0-9]/gi, '').trim();
 
 			if (hex.length != 6) {
-				botSend(message.channel, "Not a valid hex code.");
+				botSend(message.channel, "Not a valid hex code. (**#**ABC123)");
 				return;
 			}
 
