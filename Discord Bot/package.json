@@ -1,0 +1,16 @@
+{
+  "name": "FurGun",
+  "version": "1.0.0",
+  "description": "Furry gun bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "TheAlbinoArmadillo",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.2.0",
+    "mathjs": "^7.0.0",
+    "request": "^2.88.2"
+  }
+}
