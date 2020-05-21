@@ -5,18 +5,18 @@
 // const token = 'NjYyODI1ODA2OTY3NDcyMTI4.Xqzm2Q.I2y50w7Nu5QmgMqamCI9a3VuxMc';
 
 // var prefix = 'fg.';
-var logging = false;
-var requestDestroy = false;
-var onlyme = false;
-var pingTime = 0;
+//var logging = false;
+//var requestDestroy = false;
+//var onlyme = false;
+//var pingTime = 0;
 //var foods;
 //var categoryList = new Array();
-var bandwagon =
-	{
-		leader: undefined,
-		limit: -1,
-		members: []
-	};
+// var bandwagon =
+// 	{
+// 		leader: undefined,
+// 		limit: -1,
+// 		members: []
+//	};
 
 // const rl = readline.createInterface({
 //   input: process.stdin,
@@ -703,89 +703,89 @@ function helpCommand (message, args) {
 // 		}
 // 	},
 
-// 	{//Band
-// 		call: "band",
-// 		name: "Band Wagon",
-// 		desc: "Join the band wagon!",
-// 		category: "tools",
-// 		usage: ["# | raffle | raffle- | pick"],
-// 		run: function (message, args) {
+	{//Band
+		call: "band",
+		name: "Band Wagon",
+		desc: "Join the band wagon!",
+		category: "tools",
+		usage: ["# | raffle | raffle- | pick"],
+		run: function (message, args) {
 
-// 			if (message.author != bandwagon.leader && bandwagon.limit > 0 && bandwagon.limit - bandwagon.members.length <= 0) {
-// 				botSend(message, `Sorry ${serverName(message.author, message.guild)}, the band wagon is full.`);
-// 				return;
-// 			}
+			if (message.author != bandwagon.leader && bandwagon.limit > 0 && bandwagon.limit - bandwagon.members.length <= 0) {
+				botSend(message, `Sorry ${serverName(message.author, message.guild)}, the band wagon is full.`);
+				return;
+			}
 
-// 			if (bandwagon.members.length > 0) {
-// 				if (message.author == bandwagon.leader) {
+			if (bandwagon.members.length > 0) {
+				if (message.author == bandwagon.leader) {
 
-// 					if (args[1] == "raffle" || args[1] == "raffle-") {
-// 						var pick = Math.floor(Math.random() * bandwagon.members.length);
+					if (args[1] == "raffle" || args[1] == "raffle-") {
+						var pick = Math.floor(Math.random() * bandwagon.members.length);
 
-// 						if (bandwagon.members.length <= 1) {
-// 							botSend(message, "Wait for members before starting a raffle!");
-// 							return;
-// 						}
+						if (bandwagon.members.length <= 1) {
+							botSend(message, "Wait for members before starting a raffle!");
+							return;
+						}
 
-// 						while (bandwagon.members[pick] == bandwagon.leader) {
-// 							pick = Math.floor(Math.random() * bandwagon.members.length);
-// 						}
+						while (bandwagon.members[pick] == bandwagon.leader) {
+							pick = Math.floor(Math.random() * bandwagon.members.length);
+						}
 
-// 						var end = "!";
-// 						if (args[1] == "raffle-") {
-// 							bandwagon.members.splice(pick, 1);
-// 							end = " and was removed!"
-// 						}
+						var end = "!";
+						if (args[1] == "raffle-") {
+							bandwagon.members.splice(pick, 1);
+							end = " and was removed!"
+						}
 
-// 						botSend(message, `<@${bandwagon.members[pick].id}> won the raffle ${end}`);
-// 						return;
-// 					}
-// 					if (args[1] == "pick") {
-// 						var pick = Math.floor(Math.random() * bandwagon.members.length);
-// 						botSend(message, `<@${bandwagon.members[pick].id}> got picked!`);
-// 						return;
-// 					}
+						botSend(message, `<@${bandwagon.members[pick].id}> won the raffle ${end}`);
+						return;
+					}
+					if (args[1] == "pick") {
+						var pick = Math.floor(Math.random() * bandwagon.members.length);
+						botSend(message, `<@${bandwagon.members[pick].id}> got picked!`);
+						return;
+					}
 
-// 					bandwagon.limit = -1;
-// 					bandwagon.members = [];
-// 					botSend(message, `${serverName(message.author, message.guild)} has ended the band wagon.`);
-// 					return;
-// 				} else {
-// 					for (var i = 0; i < bandwagon.members.length; i++) {
-// 						if (bandwagon.members[i] == message.author) {
-// 							bandwagon.members.splice(i, 1);
-// 							botSend(message, `${serverName(message.author, message.guild)} has left the band wagon.`);
-// 							return;
-// 						}
-// 					}
-// 				}
-// 			}
+					bandwagon.limit = -1;
+					bandwagon.members = [];
+					botSend(message, `${serverName(message.author, message.guild)} has ended the band wagon.`);
+					return;
+				} else {
+					for (var i = 0; i < bandwagon.members.length; i++) {
+						if (bandwagon.members[i] == message.author) {
+							bandwagon.members.splice(i, 1);
+							botSend(message, `${serverName(message.author, message.guild)} has left the band wagon.`);
+							return;
+						}
+					}
+				}
+			}
 
-// 			if (bandwagon.members.length == 0) {
-// 				bandwagon.members.push(message.author);
-// 				bandwagon.leader = message.author;
+			if (bandwagon.members.length == 0) {
+				bandwagon.members.push(message.author);
+				bandwagon.leader = message.author;
 
-// 				if (Math.abs(parseInt(args[1]) ) > 1) {
-// 					bandwagon.limit = Math.abs(parseInt(args[1]) );
-// 				}
+				if (Math.abs(parseInt(args[1]) ) > 1) {
+					bandwagon.limit = Math.abs(parseInt(args[1]) );
+				}
 
-// 				botSend(message, `${serverName(message.author, message.guild)} has started a band wagon.\nUse **${prefix}${this.call}** to join!`);
-// 				if (bandwagon.limit > 0) {
-// 					botSend(message, `${bandwagon.limit - bandwagon.members.length} members remaining.`)
-// 				}
-// 			} else {
-// 				bandwagon.members.push(message.author);
-// 				var names = [];
-// 				for (var i = 0; i < bandwagon.members.length; i++) {
-// 					names[i] = serverName(bandwagon.members[i], message.guild);
-// 				}
-// 				botSend(message, `${serverName(message.author, message.guild)} has joined the band wagon.\n${arrayIntoList(names)} are in the band wagon!`);
-// 				if (bandwagon.limit > 0) {
-// 					botSend(message, `${bandwagon.limit - bandwagon.members.length} members remaining.`)
-// 				}
-// 			}
-// 		}
-// 	},
+				botSend(message, `${serverName(message.author, message.guild)} has started a band wagon.\nUse **${prefix}${this.call}** to join!`);
+				if (bandwagon.limit > 0) {
+					botSend(message, `${bandwagon.limit - bandwagon.members.length} members remaining.`)
+				}
+			} else {
+				bandwagon.members.push(message.author);
+				var names = [];
+				for (var i = 0; i < bandwagon.members.length; i++) {
+					names[i] = serverName(bandwagon.members[i], message.guild);
+				}
+				botSend(message, `${serverName(message.author, message.guild)} has joined the band wagon.\n${arrayIntoList(names)} are in the band wagon!`);
+				if (bandwagon.limit > 0) {
+					botSend(message, `${bandwagon.limit - bandwagon.members.length} members remaining.`)
+				}
+			}
+		}
+	},
 
 // 	{//Leave
 // 		name: "Leave",

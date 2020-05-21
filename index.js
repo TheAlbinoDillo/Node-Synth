@@ -17,6 +17,7 @@ var foodCommandList;
 var commandCategoryList = new Array();
 var lastCommandMessage;
 var systemFilesPath = (TestRasPi() ) ? "/home/pi/furrieswithguns/Bot-FurGun/files/" : "files/";
+var bandwagonCommandVar = { leader: undefined, limit: -1, members: [] };
 
 //Setup ReadLine Interface
 const Interface = ReadLine.createInterface({
@@ -740,49 +741,49 @@ const commandList =
 		usage: ["# | raffle | raffle- | pick"],
 		run: function (message, args) {
 
-			if (message.author != bandwagon.leader && bandwagon.limit > 0 && bandwagon.limit - bandwagon.members.length <= 0) {
+			if (message.author != bandwagonCommandVar.leader && bandwagonCommandVar.limit > 0 && bandwagonCommandVar.limit - bandwagonCommandVar.members.length <= 0) {
 				botSend(message.channel, `Sorry ${serverName(message.author, message.guild)}, the band wagon is full.`);
 				return;
 			}
 
-			if (bandwagon.members.length > 0) {
-				if (message.author == bandwagon.leader) {
+			if (bandwagonCommandVar.members.length > 0) {
+				if (message.author == bandwagonCommandVar.leader) {
 
 					if (args[1] == "raffle" || args[1] == "raffle-") {
-						var pick = Math.floor(Math.random() * bandwagon.members.length);
+						var pick = Math.floor(Math.random() * bandwagonCommandVar.members.length);
 
-						if (bandwagon.members.length <= 1) {
+						if (bandwagonCommandVar.members.length <= 1) {
 							botSend(message.channel, "Wait for members before starting a raffle!");
 							return;
 						}
 
-						while (bandwagon.members[pick] == bandwagon.leader) {
-							pick = Math.floor(Math.random() * bandwagon.members.length);
+						while (bandwagonCommandVar.members[pick] == bandwagonCommandVar.leader) {
+							pick = Math.floor(Math.random() * bandwagonCommandVar.members.length);
 						}
 
 						var end = "!";
 						if (args[1] == "raffle-") {
-							bandwagon.members.splice(pick, 1);
+							bandwagonCommandVar.members.splice(pick, 1);
 							end = " and was removed!"
 						}
 
-						botSend(message.channel, `<@${bandwagon.members[pick].id}> won the raffle ${end}`);
+						botSend(message.channel, `<@${bandwagonCommandVar.members[pick].id}> won the raffle ${end}`);
 						return;
 					}
 					if (args[1] == "pick") {
-						var pick = Math.floor(Math.random() * bandwagon.members.length);
-						botSend(message.channel, `<@${bandwagon.members[pick].id}> got picked!`);
+						var pick = Math.floor(Math.random() * bandwagonCommandVar.members.length);
+						botSend(message.channel, `<@${bandwagonCommandVar.members[pick].id}> got picked!`);
 						return;
 					}
 
-					bandwagon.limit = -1;
-					bandwagon.members = [];
+					bandwagonCommandVar.limit = -1;
+					bandwagonCommandVar.members = [];
 					botSend(message.channel, `${serverName(message.author, message.guild)} has ended the band wagon.`);
 					return;
 				} else {
-					for (var i = 0; i < bandwagon.members.length; i++) {
-						if (bandwagon.members[i] == message.author) {
-							bandwagon.members.splice(i, 1);
+					for (var i = 0; i < bandwagonCommandVar.members.length; i++) {
+						if (bandwagonCommandVar.members[i] == message.author) {
+							bandwagonCommandVar.members.splice(i, 1);
 							botSend(message.channel, `${serverName(message.author, message.guild)} has left the band wagon.`);
 							return;
 						}
@@ -790,27 +791,27 @@ const commandList =
 				}
 			}
 
-			if (bandwagon.members.length == 0) {
-				bandwagon.members.push(message.author);
-				bandwagon.leader = message.author;
+			if (bandwagonCommandVar.members.length == 0) {
+				bandwagonCommandVar.members.push(message.author);
+				bandwagonCommandVar.leader = message.author;
 
 				if (Math.abs(parseInt(args[1]) ) > 1) {
-					bandwagon.limit = Math.abs(parseInt(args[1]) );
+					bandwagonCommandVar.limit = Math.abs(parseInt(args[1]) );
 				}
 
 				botSend(message.channel, `${serverName(message.author, message.guild)} has started a band wagon.\nUse **${Prefix}${this.call}** to join!`);
-				if (bandwagon.limit > 0) {
-					botSend(message.channel, `${bandwagon.limit - bandwagon.members.length} members remaining.`)
+				if (bandwagonCommandVar.limit > 0) {
+					botSend(message.channel, `${bandwagonCommandVar.limit - bandwagonCommandVar.members.length} members remaining.`)
 				}
 			} else {
-				bandwagon.members.push(message.author);
+				bandwagonCommandVar.members.push(message.author);
 				var names = [];
-				for (var i = 0; i < bandwagon.members.length; i++) {
-					names[i] = serverName(bandwagon.members[i], message.guild);
+				for (var i = 0; i < bandwagonCommandVar.members.length; i++) {
+					names[i] = serverName(bandwagonCommandVar.members[i], message.guild);
 				}
 				botSend(message.channel, `${serverName(message.author, message.guild)} has joined the band wagon.\n${arrayIntoList(names)} are in the band wagon!`);
-				if (bandwagon.limit > 0) {
-					botSend(message.channel, `${bandwagon.limit - bandwagon.members.length} members remaining.`)
+				if (bandwagonCommandVar.limit > 0) {
+					botSend(message.channel, `${bandwagonCommandVar.limit - bandwagonCommandVar.members.length} members remaining.`)
 				}
 			}
 		}
