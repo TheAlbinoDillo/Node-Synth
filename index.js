@@ -18,6 +18,7 @@ var commandCategoryList = new Array();
 var lastCommandMessage;
 var systemFilesPath = (TestRasPi() ) ? "/home/pi/furrieswithguns/Bot-FurGun/files/" : "files/";
 var bandwagonCommandVar = { leader: undefined, limit: -1, members: [] };
+var consoleLogging = { enabled: false, user: undefined };
 
 //Setup ReadLine Interface
 const Interface = ReadLine.createInterface({
@@ -101,13 +102,14 @@ Connect(Token);
 function Connect (token, seconds = 3) {
 
 	if (ClientLoggedIn) return;
-	botLog("\nAttempting to connect to Discord...\n");
+	console.log("\nAttempting to connect to Discord...\n");
 
 	Client.login(Token).then(token => {
 		botLog(`Logged in with token starting with: "${token.substring(0, 5)}"\n`);
 		ClientLoggedIn = true;
+
 	}).catch(error => {
-		botError(`Failed to connect to Discord:\n${error.message}\nTrying again in ${seconds} second${(seconds != 1) ? "s" : ""}...\n`);
+		console.error(`Failed to connect to Discord:\n${error.message}\nTrying again in ${seconds} second${(seconds != 1) ? "s" : ""}...\n`);
 		Client.setTimeout( () => {
 			Connect(token, seconds);
 		}, seconds * 1000);
@@ -192,30 +194,36 @@ function botSendDM (user, content) {	//Send a DM message to a user
 
 	if (user.dmChannel == undefined) {
 		user.createDM().then(channel => {
-			botLog(`Created a DM channel for ${name}`);
+			console.log(`Created a DM channel for ${name}`);
+			botSendDM(user, content);
 		}).catch(error => {
-			botError(`Error creating a DM channel for ${name}:\n${error.message}\n`);
+			console.error(`Error creating a DM channel for ${name}:\n${error.message}\n`);
 		});
 
-		botSendDM(user, content);
 		return;
 	}
 
 	if (content.trim() == "") {
-		botError("DM content is empty, this would fail. Did not DM user.\n");
+		console.error("DM content is empty, this would fail. Did not DM user.\n");
 		return null;
 	}
 
 	user.dmChannel.send(content).then(message => {
-		botLog(`Sent a DM to ${name}:\n${content}\n`);
+		console.log(`Sent a DM to ${name}:\n${content}\n`);
 	}).catch(error => {
-		botError(`Error sending a DM to ${name}${error.message}`);
+		console.error(`Error sending a DM to ${name}${error.message}`);
 	});
 }
 
 function botLog (content, realLog = true) {
-	botSendDM(`\`\`\`${Client.guilds.cache.get("704494659400892458").owner.user}\`\`\``, content);
-	console.log(content);
+
+	if (realLog) {
+		console.log(content);
+	}
+
+	if (!consoleLogging.enabled) return;
+
+	botSendDM(consoleLogging.user, `\`\`\`${content}\`\`\``);
 }
 
 function botError (content) {
@@ -832,7 +840,9 @@ const commandList =
 		desc: "Disconnect the bot.",
 		delmsg: true,
 		onlyOwner: true,
-		run: Disconnect
+		run: function (message, args) {
+			Disconnect(message);
+		}
 	},
 
 	{//Am I Cute
@@ -905,6 +915,17 @@ const commandList =
 					botSend(message.channel, embed);
 				}
 			});
+		}
+	},
+
+	{
+		name: "Enable Logging",
+		onlyOwner: true,
+		run: function (message, args) {
+			consoleLogging.enabled = true;
+			consoleLogging.user = message.guild.owner.user;
+
+			botLog("Started Logging.");
 		}
 	}
 ];
