@@ -663,7 +663,7 @@ const commandList =
 		run: function (message, args) {
 			let arr = arrayIntoList(getMentionList(message, true) ) || "their own";
 
-			let text = `${serverName(message.author, message.guild)} ruffles ${arr}${(arr == "themselves") ? "" : "'s"} feathers!"`;
+			let text = `${serverName(message.author, message.guild)} ruffles ${arr}${(arr == "themselves") ? "" : "'s"} feathers!`;
 			botSend(message.channel, text);
 		}
 	},
