@@ -18,7 +18,6 @@ var commandCategoryList = new Array();
 var lastCommandMessage;
 var systemFilesPath = (TestRasPi() ) ? "/home/pi/furrieswithguns/Bot-FurGun/files/" : "files/";
 var bandwagonCommandVar = { leader: undefined, limit: -1, members: [] };
-var serverNameRegex = /([^\u0024\u0028-\u0029\u002E-\u0039\u0041-\u005A\u005F-\u007A\u00C0-00FF])/gi;
 
 //Setup ReadLine Interface
 const Interface = ReadLine.createInterface({
@@ -222,7 +221,8 @@ function serverName (user, guild, bold = true, removeSpecial = true) {	//Get the
 	}
 
 	let name = guild.member(user).nickname;
-	let regex = serverNameRegex;
+	//let regex = /([❄]|[\u2B50]|[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g;
+	let regex = /([^\u0000-\u007f])/gi;
 
 	if (removeSpecial && name != null) {	//Remove emojis and symbol characters, uppercase the first letter
 		name = name.replace(/[-_]/g,' ').replace(regex, '').trim();
@@ -656,6 +656,7 @@ const commandList =
 		category: "interactions",
 		run: function (message, args) {
 			let arr = arrayIntoList(getMentionList(message, true) ) || "their own";
+
 			let text = `${serverName(message.author, message.guild)} boops ${arr}${(arr == "themselves") ? "" : "'s"} snoot! <:symbol_boop:692040846547091507>`;
 			botSend(message.channel, text);
 		}
