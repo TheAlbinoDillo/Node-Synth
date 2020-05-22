@@ -26,7 +26,7 @@ const Interface = ReadLine.createInterface({
 });
 
 //Setup Discord Client Events
-Client.on("ready", () => { console.log("Client is ready\n"); ClientOnReady(); });
+Client.on("ready", () => { botLog("Client is ready\n"); ClientOnReady(); });
 Client.on("message", message => { ClientOnMessage(message); });
 Client.on("messageUpdate", (oldMessage, newMessage) => { ClientOnMessageUpdate(oldMessage, newMessage); });
 Client.on("guildMemberAdd", member => {  });
@@ -64,7 +64,7 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 	if (message.content.toLowerCase().indexOf(Prefix) == 0 && message.channel.guild) {
 		
 		if (message.author.bot) {
-			console.log(`Bot (${message.author.username}) tried using a command:\n${message.content}\n`);
+			botLog(`Bot (${message.author.username}) tried using a command:\n${message.content}\n`);
 		} else {
 			lastCommandMessage = message;
 			runCommand(message);
@@ -101,13 +101,13 @@ Connect(Token);
 function Connect (token, seconds = 3) {
 
 	if (ClientLoggedIn) return;
-	console.log("\nAttempting to connect to Discord...\n");
+	botLog("\nAttempting to connect to Discord...\n");
 
 	Client.login(Token).then(token => {
-		console.log(`Logged in with token starting with: "${token.substring(0, 5)}"\n`);
+		botLog(`Logged in with token starting with: "${token.substring(0, 5)}"\n`);
 		ClientLoggedIn = true;
 	}).catch(error => {
-		console.error(`Failed to connect to Discord:\n${error.message}\nTrying again in ${seconds} second${(seconds != 1) ? "s" : ""}...\n`);
+		botError(`Failed to connect to Discord:\n${error.message}\nTrying again in ${seconds} second${(seconds != 1) ? "s" : ""}...\n`);
 		Client.setTimeout( () => {
 			Connect(token, seconds);
 		}, seconds * 1000);
@@ -116,7 +116,7 @@ function Connect (token, seconds = 3) {
 
 function Disconnect (message, seconds = 3) {
 
-	console.log(`Disconnecting Client and ending nodeJS script in ${seconds} second${(seconds != 1) ? "s" : ""}...\n`);
+	botLog(`Disconnecting Client and ending nodeJS script in ${seconds} second${(seconds != 1) ? "s" : ""}...\n`);
 
 	if (message != undefined) {
 		botDelete(message);
@@ -131,9 +131,9 @@ function Disconnect (message, seconds = 3) {
 function Activity (type = "WATCHING", activity = `${Prefix}help`) {
 
 	Client.user.setActivity(activity, { type: type }).then(presence => {
-		console.log(`Activity set to "${presence.activities[0].name}".\n`);
+		botLog(`Activity set to "${presence.activities[0].name}".\n`);
 	}).catch(error => {
-		console.error(`Could not set activity:\n${error.message}\n`);
+		botError(`Could not set activity:\n${error.message}\n`);
 	});
 }
 
@@ -142,15 +142,15 @@ function botSend (channel, content) {	//Send a message to the specified channel
 
 	if (typeof content == typeof "string") {
 		if (content.trim() == "") {
-			console.error("Message content is empty, this would fail. Did not send message.\n");
+			botError("Message content is empty, this would fail. Did not send message.\n");
 			return null;
 		}
 	}
 
 	return channel.send(content).then(message => {
-		console.log(`Sent to ${message.channel.name}(${message.channel.guild.name}):\n${message.content}`);
+		botLog(`Sent to ${message.channel.name}(${message.channel.guild.name}):\n${message.content}`);
 	}).catch(error => {
-		console.error(`Error sending message:\n${error.message}\n`);
+		botError(`Error sending message:\n${error.message}\n`);
 		botReact(lastCommandMessage, ":BOT_ERROR:712518336528777217");
 	});
 }
@@ -158,31 +158,31 @@ function botSend (channel, content) {	//Send a message to the specified channel
 function botEdit (message, content, append = false) {	//Edit a specified message
 
 	if (content.trim() == "") {
-		console.error("Edit content is empty, this would fail. Did not edit message.\n");
+		botError("Edit content is empty, this would fail. Did not edit message.\n");
 		return null;
 	}
 
 	return message.edit(`${append ? message.content : content}${append ? content : ''}`).then(message => {
-		console.log(`Edited message in ${message.channel.name}(${message.channel.guild.name}) to:\n${message.content}`);
+		botLog(`Edited message in ${message.channel.name}(${message.channel.guild.name}) to:\n${message.content}`);
 	}).catch(error => {
-		console.error(`Error editing message:\n${error.message}\n`);
+		botError(`Error editing message:\n${error.message}\n`);
 	});
 }
 
 function botDelete (message) {	//Delete a specified message
 
 	message.delete().then(message => {
-		console.log(`Deleted message from ${message.author} in ${message.channel.name}(${message.channel.guild.name}):\n${message.content}`);
+		botLog(`Deleted message from ${message.author} in ${message.channel.name}(${message.channel.guild.name}):\n${message.content}`);
 	}).catch(error => {
-		console.error(`Error deleting message:\n${error.message}\n`);
+		botError(`Error deleting message:\n${error.message}\n`);
 	});
 }
 
 function botReact (message, emote) {
 	message.react(emote).then( () => {
-		console.log(`Reacted with ${emote} to:\n${message.content}\n`);
+		botLog(`Reacted with ${emote} to:\n${message.content}\n`);
 	}).catch(error => {
-		console.error(`Failed to react to message:\n${error.message}\n`);
+		botError(`Failed to react to message:\n${error.message}\n`);
 	});
 }
 
@@ -192,9 +192,9 @@ function botSendDM (user, content) {	//Send a DM message to a user
 
 	if (user.dmChannel == undefined) {
 		user.createDM().then(channel => {
-			console.log(`Created a DM channel for ${name}`);
+			botLog(`Created a DM channel for ${name}`);
 		}).catch(error => {
-			console.error(`Error creating a DM channel for ${name}:\n${error.message}\n`);
+			botError(`Error creating a DM channel for ${name}:\n${error.message}\n`);
 		});
 
 		botSendDM(user, content);
@@ -202,22 +202,32 @@ function botSendDM (user, content) {	//Send a DM message to a user
 	}
 
 	if (content.trim() == "") {
-		console.error("DM content is empty, this would fail. Did not DM user.\n");
+		botError("DM content is empty, this would fail. Did not DM user.\n");
 		return null;
 	}
 
 	user.dmChannel.send(content).then(message => {
-		console.log(`Sent a DM to ${name}:\n${content}\n`);
+		botLog(`Sent a DM to ${name}:\n${content}\n`);
 	}).catch(error => {
-		console.error(`Error sending a DM to ${name}${error.message}`);
+		botError(`Error sending a DM to ${name}${error.message}`);
 	});
+}
+
+function botLog (content, realLog = true) {
+	botSendDM(`\`\`\`${Client.guilds.cache.get("704494659400892458").owner.user}\`\`\``, content);
+	console.log(content);
+}
+
+function botError (content) {
+	botLog(content, false);
+	console.error(content);
 }
 
 //Client misc. functions
 function serverName (user, guild, bold = true, removeSpecial = true) {	//Get the server nickname of a user and clean it up
 
 	if (guild == undefined) {
-		console.error("A guild was not provided. Did not get server name of user.\n")
+		botError("A guild was not provided. Did not get server name of user.\n")
 	}
 
 	let name = guild.member(user).nickname;
@@ -261,9 +271,9 @@ function writeJSON (filename, object) {	//Write an object to a JSON file
 
  	try {
 		FileSystem.writeFileSync(`${systemFilesPath}${filename}.json`, string);
-		console.log(`Wrote to "${filename}.json":\n${string}\n`);
+		botLog(`Wrote to "${filename}.json":\n${string}\n`);
 	} catch (error) {
-		console.error(`Failed to write to "${filename}.json":\n${error.message}\n`);
+		botError(`Failed to write to "${filename}.json":\n${error.message}\n`);
 	}
 }
 
@@ -272,9 +282,9 @@ function readJSON (filename) {	//Read an object from a JSON file
 	let content;
 	try {
 		content = FileSystem.readFileSync(`${systemFilesPath}${filename}.json`);
-		console.log(`Read from "${filename}.json":\n${(content.length > 100) ? `${content.toString().substring(0, 150)}...` : content}\n`);
+		botLog(`Read from "${filename}.json":\n${(content.length > 100) ? `${content.toString().substring(0, 150)}...` : content}\n`);
 	} catch (error) {
-		console.error(`Failed to read from "${filename}.json":\n${error.message}\n`);
+		botError(`Failed to read from "${filename}.json":\n${error.message}\n`);
 		return null;
 	}
 
@@ -378,7 +388,7 @@ function runCommand (message) {
 	var text = message.content;
 	var args = text.substring(Prefix.length).split(" ");
 
-	console.log(`\nCommand detected from ${message.author.username} in ${message.channel.name} at ${new Date(message.createdTimestamp)} :\n${text}`);
+	botLog(`\nCommand detected from ${message.author.username} in ${message.channel.name} at ${new Date(message.createdTimestamp)} :\n${text}`);
 
 	var didAnything = false;
 	for (var i = 0; i < commandList.length; i++) {
@@ -388,10 +398,10 @@ function runCommand (message) {
 			if ( (commandList[i].onlyOwner && message.author == message.guild.owner.user) || !commandList[i].onlyOwner) {
 				try {
 					commandList[i].run(message, args);
-					console.log("Ran command successfully");
+					botLog("Ran command successfully");
 				} catch (error) {
 					botSend(message.channel, "Command Failed.");
-					console.log(error.message);
+					botLog(error.message);
 				}
 	
 				if (commandList[i].delmsg) {
@@ -461,7 +471,7 @@ const commandList =
 			message.channel.send("Polo").then(msg => {
 				botEdit(msg, `**Polo** \`${(msg.createdTimestamp - pingTime)} ms\``);
 			}).catch(error => {
-				console.error(`Error sending marcopolo message:\n${error.message}\n`);
+				botError(`Error sending marcopolo message:\n${error.message}\n`);
 			});
 		}
 	},
