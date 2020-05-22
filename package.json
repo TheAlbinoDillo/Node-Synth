@@ -1,6 +1,6 @@
 {
   "name": "FurGun",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Furry gun bot",
   "main": "index.js",
   "scripts": {
