@@ -5,3 +5,5 @@ server settings
 perms
 
 op bandwagon command
+
+automatic welcome
