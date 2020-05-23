@@ -499,7 +499,7 @@ const commandList =
 			let content = message.content.substring(Prefix.length).substring(this.call.length);
 			botSend(message.channel, content);
 		}
-	}
+	},
 
 	{//Decide
 		name: "Decide",
