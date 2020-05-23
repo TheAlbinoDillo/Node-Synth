@@ -153,7 +153,7 @@ function botSend (channel, content) {	//Send a message to the specified channel
 		botLog(`Sent to ${message.channel.name}(${message.channel.guild.name}):\n${message.content}`);
 	}).catch(error => {
 		botError(`Error sending message:\n${error.message}\n`);
-		botReact(lastCommandMessage, ":BOT_ERROR:712518336528777217");
+		botReact(lastCommandMessage, ":BOT_ERROR:713595499067736067");
 	});
 }
 
@@ -334,10 +334,14 @@ function helpCommand (message, args) {
 	if (args[1] != undefined) {
 
 		if (commandCategoryList.includes(args[1]) ) {
+
 			for (let i = 0, l = commandList.length; i < l; i++) {
-				if (commandList[i].category == args[1]) {
+
+				let cli = commandList[i];
+				if (cli.category == args[1]) {
+
 					embed.setTitle(`Command category: ${args[1]}`)
-					.addField(`**${commandList[i].name}**${commandList[i].onlyOwner ? "®" : ""}\n${commandList[i].desc}`,`${Prefix}${commandList[i].call} ${usageList(commandList[i])}`);
+					.addField(`**${cli.name}**${cli.onlyOwner ? "®" : ""}\n${cli.desc}`,`${Prefix}${cli.call} ${usageList(cli)}`);
 				}
 			}
 			botSend(message.channel, embed);
@@ -346,6 +350,7 @@ function helpCommand (message, args) {
 
 		let selected = -1;
 		for (let i = 0, l = commandList.length; i < l; i++) {
+
 			if (commandList[i].call == args[1]) {
 				selected = i;
 			}
@@ -365,9 +370,13 @@ function helpCommand (message, args) {
 
 	embed.setTitle(`${Client.user.username} commands list`);
 
-	for (let i = 0; i < commandCategoryList.length; i++) {
-		if (commandCategoryList[i] == "unlisted") continue;
-		embed.addField(`${commandCategoryList[i]}`,`${Prefix}help ${commandCategoryList[i]}`);
+	for (let i = 0, l = commandCategoryList.length; i < l; i++) {
+
+		let ccli = commandCategoryList[i];
+		if (ccli == "unlisted") {
+			continue;
+		}
+		embed.addField(`${ccli}`,`${Prefix}help ${ccli}`);
 	}
 
 	botSend(message.channel, embed);
@@ -380,12 +389,9 @@ function usageList (command) {
 	}
 
 	let list = new Array();
-
 	for (let i = 0, l = command.usage.length; i < l; i++) {
-
 		list[i] = ` <${command.usage[i]}>`;
 	}
-
 	return list;
 }
 
@@ -398,17 +404,14 @@ function runCommand (message) {
 
 	botLog(`\nCommand detected from ${message.author.username} in ${message.channel.name} at ${new Date(message.createdTimestamp)} :\n${text}`);
 
-	var didAnything = false;
 	for (var i = 0; i < commandList.length; i++) {
 		if (args[0].toLowerCase() == commandList[i].call && !didAnything) {
-			didAnything = true;
 
 			if ( (commandList[i].onlyOwner && message.author == message.guild.owner.user) || !commandList[i].onlyOwner) {
 				try {
 					commandList[i].run(message, args);
 					botLog("Ran command successfully");
 				} catch (error) {
-					botSend(message.channel, "Command Failed.");
 					botLog(error.message);
 				}
 	
@@ -418,6 +421,7 @@ function runCommand (message) {
 			} else {
 				botSend(message.channel, "This command can only be used by the owner.");
 			}
+			break;
 		}
 	}
 
@@ -489,30 +493,13 @@ const commandList =
 		desc: "Make the bot say what you say",
 		category: "tools",
 		usage: ["text"],
+		perms: ["MANAGE_MESSAGES"],
 		delmsg: true,
 		run: function (message, args) {
 			let content = message.content.substring(Prefix.length).substring(this.call.length);
 			botSend(message.channel, content);
-
-			let lastEcho = new Object();
-			lastEcho.userid = message.author.id;
-			lastEcho.content = content;
-
-			writeJSON("lastEcho", lastEcho);
 		}
-	},
-
-	{//Inspect
-		name: "Inspect",
-		desc: "Inspect the last echo command",
-		category: "tools",
-		run: function (message, args) {
-			let lastEcho = readJSON("lastEcho");
-
-			let user = message.guild.members.cache.get(lastEcho.userid);
-			botSend(message.channel, `Uh oh, <@${lastEcho.userid}>! You got caught!\n**${serverName(user, message.guild)}** made me say \`${lastEcho.content.substring(1)}\``);
-		}
-	},
+	}
 
 	{//Decide
 		name: "Decide",
@@ -587,7 +574,7 @@ const commandList =
 			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 			let picks = ["gives a hug to","gives a warm hug to","gives a tight hug to","wraps their arms around","embraces","warmly embraces","tightly embraces"];
 
-			let text = `${serverName(message.author, message.guild)} ${randArray(picks)} ${arr}! <:GrantHug:704495124595474452>`;
+			let text = `${serverName(message.author, message.guild)} ${randArray(picks)} ${arr}!`;
 			botSend(message.channel, text);
 		}
 	},
@@ -601,7 +588,7 @@ const commandList =
 			let picks1 = ["warmly","comfily","cozily"];
 			let picks2 = [" ", " into "];
 
-			let text = `${serverName(message.author, message.guild)} ${randArray(picks1)} nuzzles${randArray(picks2)}${arr}! <:GrantLove:704495125669216338>`;
+			let text = `${serverName(message.author, message.guild)} ${randArray(picks1)} nuzzles${randArray(picks2)}${arr}!`;
 			botSend(message.channel, text);
 		}
 	},
@@ -639,7 +626,7 @@ const commandList =
 		run: function (message, args) {
 			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 
-			let text = `${serverName(message.author, message.guild)} gives ${arr} a big kiss! <:GrantBlush:704495120514285641>`;
+			let text = `${serverName(message.author, message.guild)} gives ${arr} a big kiss!`;
 			botSend(message.channel, text);
 		}
 	},
@@ -651,7 +638,7 @@ const commandList =
 		run: function (message, args) {
 			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 
-			let text = `${serverName(message.author, message.guild)} spanks ${arr} on the booty! <:GrantButt:708868787478200370> 👋`;
+			let text = `${serverName(message.author, message.guild)} spanks ${arr} on the booty!`;
 			botSend(message.channel, text);
 		}
 	},
@@ -675,7 +662,7 @@ const commandList =
 		run: function (message, args) {
 			let arr = arrayIntoList(getMentionList(message, true) ) || "their own";
 
-			let text = `${serverName(message.author, message.guild)} boops ${arr}${(arr == "themselves") ? "" : "'s"} snoot! <:symbol_boop:692040846547091507>`;
+			let text = `${serverName(message.author, message.guild)} boops ${arr}${(arr == "themselves") ? "" : "'s"} snoot!`;
 			botSend(message.channel, text);
 		}
 	},
@@ -708,7 +695,7 @@ const commandList =
 		name: "Add Food",
 		desc: "Add a food to the food list!",
 		usage: ["food"],
-		onlyOwner: true,
+		perms: ["ADMINISTRATOR"],
 		run: function (message, args) {
 			let content = message.content.substring(Prefix.length).substring(this.call.length + 1);
 
@@ -722,7 +709,7 @@ const commandList =
 	{//Remove last food
 		name: "Remove Last Food",
 		desc: "Remove the last food added to the list!",
-		onlyOwner: true,
+		perms: ["ADMINISTRATOR"],
 		run: function (message, args) {
 
 			let removed = foodCommandList.foodlist.shift();
@@ -741,12 +728,12 @@ const commandList =
 		run: function (message, args) {
 			let mention = getMentionList(message, false, false, false)[0];
 
-			let time = new Date(message.createdTimestamp);
+			let time = new Date(mention.lastMessage.createdTimestamp);
 			let day = time.getDate();
 			let month = time.toLocaleString('default',{month:'long'});
 			let year = time.getFullYear();
 
-			botSend(message.channel, `**${serverName(mention, message.guild)}** was last seen ${month}, ${day} ${year}`);
+			botSend(message.channel, `**${serverName(mention, message.guild)}** last sent a message ${month}, ${day} ${year}`);
 		}
 	},
 
@@ -878,6 +865,7 @@ const commandList =
 	{
 		name: "Test Error",
 		desc: "See if the error emote works",
+		onlyOwner: true,
 		run: function (message, args) {
 			let text = "";
 
