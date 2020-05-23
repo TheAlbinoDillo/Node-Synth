@@ -410,7 +410,6 @@ function runCommand (message) {
 			if ( (commandList[i].onlyOwner && message.author == message.guild.owner.user) || !commandList[i].onlyOwner) {
 				try {
 					commandList[i].run(message, args);
-					botLog("Ran command successfully");
 				} catch (error) {
 					botLog(error.message);
 				}
@@ -421,14 +420,11 @@ function runCommand (message) {
 			} else {
 				botSend(message.channel, "This command can only be used by the owner.");
 			}
-			break;
+			message.channel.stopTyping();
+			return;
 		}
 	}
-
-	if (!didAnything) {
-		botSend(message.channel, `**${Prefix + args[0]}** is not a command. Use **${Prefix}help** for avalible commands.`);
-	}
-
+	botSend(message.channel, `**${Prefix + args[0]}** is not a command. Use **${Prefix}help** for avalible commands.`);
 	message.channel.stopTyping();
 }
 
@@ -742,7 +738,6 @@ const commandList =
 		name: "Band Wagon",
 		desc: "Join the band wagon!",
 		category: "tools",
-		onlyOwner: true,
 		usage: ["# | raffle | raffle- | pick"],
 		run: function (message, args) {
 
