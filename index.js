@@ -4,7 +4,6 @@ const ReadLine = require("readline");
 const FileSystem = require("fs");
 const MathJS = require("mathjs");
 const Request = require("request");
-//const TestRasPi = require("detect-rpi");
 const Tools = require("./botTools.js");
 
 //Setup Discord Client
@@ -16,7 +15,6 @@ const Prefix = 'fg.';
 var ClientLoggedIn = false;
 var foodCommandList = [];
 var commandCategoryList = new Array();
-//var systemFilesPath = (TestRasPi() ) ? "/home/pi/furrieswithguns/Bot-FurGun/files/" : "files/";
 var bandwagonCommandVar = { leader: undefined, limit: -1, members: [] };
 var consoleLogging = { enabled: false, user: undefined };
 
@@ -278,7 +276,6 @@ function writeJSON (filename, object) {	//Write an object to a JSON file
 	let string = JSON.stringify(object);
 
  	try {
-		//FileSystem.writeFileSync(`${systemFilesPath}${filename}.json`, string);
 		FileSystem.writeFileSync(`./files/${filename}.json`, string);
 		botLog(`Wrote to "${filename}.json":\n${string}\n`);
 	} catch (error) {
@@ -290,7 +287,6 @@ function readJSON (filename) {	//Read an object from a JSON file
 
 	let content;
 	try {
-		//content = FileSystem.readFileSync(`${systemFilesPath}${filename}.json`);
 		content = FileSystem.readFileSync(`./files/${filename}.json`);
 		botLog(`Read from "${filename}.json":\n${(content.length > 100) ? `${content.toString().substring(0, 150)}...` : content}\n`);
 	} catch (error) {
