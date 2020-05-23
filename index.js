@@ -15,7 +15,6 @@ const Prefix = 'fg.';
 var ClientLoggedIn = false;
 var foodCommandList = [];
 var commandCategoryList = new Array();
-var lastCommandMessage = [];
 var systemFilesPath = (TestRasPi() ) ? "/home/pi/furrieswithguns/Bot-FurGun/files/" : "files/";
 var bandwagonCommandVar = { leader: undefined, limit: -1, members: [] };
 var consoleLogging = { enabled: false, user: undefined };
@@ -67,11 +66,6 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 		if (message.author.bot) {
 			botLog(`Bot (${message.author.username}) tried using a command:\n${message.content}\n`);
 		} else {
-			lastCommandMessage[message.author.id] =
-			{
-				input: message,
-				responce: undefined
-			};
 			runCommand(message);
 		}
 	}
@@ -88,18 +82,6 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 }
 
 function ClientOnMessageUpdate (oldMessage, newMessage) {	//Called when the Client receives a message edit
-
-	let newEdit = newMessage.author.lastMessage == newMessage;
-	if (lastCommandMessage[newMessage.author.id] != undefined) {
-		if (newMessage == lastCommandMessage[newMessage.author.id].input) {
-			botDelete(lastCommandMessage[newMessage.author.id].output);
-			botReact(newMessage, ":BOT_EDIT_PROCESSED:713749502728732674");
-			ClientOnMessage(newMessage);
-		}
-	} else if (newEdit && lastCommandMessage[newMessage.author.id] == undefined) {
-		botReact(newMessage, ":BOT_EDIT_PROCESSED:713749502728732674");
-		ClientOnMessage(newMessage);
-	}
 }
 
 //ReadLine Interface Called Events
@@ -167,9 +149,6 @@ function botSend (message, content) {	//Send a message to the specified channel
 
 	return message.channel.send(content).then(thisMsg => {
 		botLog(`Sent to ${thisMsg.channel.name}(${thisMsg.channel.guild.name}):\n${thisMsg.content}`);
-		if (lastCommandMessage[message.author.id] != undefined) {
-			lastCommandMessage[message.author.id].output = thisMsg;
-		}
 		
 	}).catch(error => {
 		botError(`Error sending message:\n${error.message}\n`);
@@ -430,7 +409,6 @@ function runCommand (message) {
 			} else {
 				botSend(message, "This command can only be used by the owner.");
 			}
-			lastCommandMessage[message.author.id] = undefined;
 			message.channel.stopTyping();
 			return;
 		}
