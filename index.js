@@ -405,7 +405,7 @@ function runCommand (message) {
 	botLog(`\nCommand detected from ${message.author.username} in ${message.channel.name} at ${new Date(message.createdTimestamp)} :\n${text}`);
 
 	for (var i = 0; i < commandList.length; i++) {
-		if (args[0].toLowerCase() == commandList[i].call && !didAnything) {
+		if (args[0].toLowerCase() == commandList[i].call) {
 
 			if ( (commandList[i].onlyOwner && message.author == message.guild.owner.user) || !commandList[i].onlyOwner) {
 				try {
