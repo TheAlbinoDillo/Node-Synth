@@ -13,7 +13,7 @@ const Prefix = 'fg.';
 
 //Client variables
 var ClientLoggedIn = false;
-var foodCommandList;
+var foodCommandList = [];
 var commandCategoryList = new Array();
 var lastCommandMessage;
 var systemFilesPath = (TestRasPi() ) ? "/home/pi/furrieswithguns/Bot-FurGun/files/" : "files/";
@@ -67,7 +67,7 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 		if (message.author.bot) {
 			botLog(`Bot (${message.author.username}) tried using a command:\n${message.content}\n`);
 		} else {
-			lastCommandMessage = message;
+			lastCommandMessage[message.author.id].input = message;
 			runCommand(message);
 		}
 	}
@@ -84,7 +84,7 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 }
 
 function ClientOnMessageUpdate (oldMessage, newMessage) {	//Called when the Client receives a message edit
-	if (newMessage == newMessage.author.lastMessage) {
+	if (oldMessage == lastCommandMessage[newMessage.author].input) {
 		ClientOnMessage(newMessage);
 	}
 }
@@ -140,20 +140,24 @@ function Activity (type = "WATCHING", activity = `${Prefix}help`) {
 }
 
 //Client message functions
-function botSend (channel, content) {	//Send a message to the specified channel
+function botSend (message, content) {	//Send a message to the specified channel
 
 	if (typeof content == typeof "string") {
 		if (content.trim() == "") {
 			botError("Message content is empty, this would fail. Did not send message.\n");
 			return null;
+		} else if (content.length > 2000) {
+			botError("Message content exceeds 2000 characters, this would fail. Did not send message.\n");
+			return null;
 		}
 	}
 
-	return channel.send(content).then(message => {
-		botLog(`Sent to ${message.channel.name}(${message.channel.guild.name}):\n${message.content}`);
+	return message.channel.send(content).then(thisMsg => {
+		botLog(`Sent to ${thisMsg.channel.name}(${thisMsg.channel.guild.name}):\n${thisMsg.content}`);
+		lastCommandMessage[message.author.id].output = thisMsg;
 	}).catch(error => {
 		botError(`Error sending message:\n${error.message}\n`);
-		botReact(lastCommandMessage, ":BOT_ERROR:713595499067736067");
+		botReact(lastCommandMessage[message.author.id].input, ":BOT_ERROR:713595499067736067");
 	});
 }
 
@@ -332,42 +336,32 @@ function helpCommand (message, args) {
 	.setFooter("This bot is a WIP by TheAlbinoDillo");
 
 	if (args[1] != undefined) {
-
 		if (commandCategoryList.includes(args[1]) ) {
-
 			for (let i = 0, l = commandList.length; i < l; i++) {
-
 				let cli = commandList[i];
 				if (cli.category == args[1]) {
-
 					embed.setTitle(`Command category: ${args[1]}`)
 					.addField(`**${cli.name}**${cli.onlyOwner ? "®" : ""}\n${cli.desc}`,`${Prefix}${cli.call} ${usageList(cli)}`);
 				}
 			}
-			botSend(message.channel, embed);
+			botSend(channel, embed);
 			return;
 		}
-
 		let selected = -1;
 		for (let i = 0, l = commandList.length; i < l; i++) {
-
 			if (commandList[i].call == args[1]) {
 				selected = i;
 			}
 		}
-
 		if (selected > -1) {
-			
 			let cls = commandList[selected];
 			embed.setTitle(`Command: ${cls.name} ${cls.onlyOwner ? "[Restricted]" : ""}`)
 			.addField(cls.desc, `${Prefix}${cls.call} ${usageList(cls)}`);
-			botSend(message.channel, embed);
+			botSend(channel, embed);
 	
 			return;
 		}
 	}
-
-
 	embed.setTitle(`${Client.user.username} commands list`);
 
 	for (let i = 0, l = commandCategoryList.length; i < l; i++) {
@@ -379,7 +373,7 @@ function helpCommand (message, args) {
 		embed.addField(`${ccli}`,`${Prefix}help ${ccli}`);
 	}
 
-	botSend(message.channel, embed);
+	botSend(channel, embed);
 }
 
 function usageList (command) {
@@ -418,13 +412,13 @@ function runCommand (message) {
 					message.delete();
 				}
 			} else {
-				botSend(message.channel, "This command can only be used by the owner.");
+				botSend(channel, "This command can only be used by the owner.");
 			}
 			message.channel.stopTyping();
 			return;
 		}
 	}
-	botSend(message.channel, `**${Prefix + args[0]}** is not a command. Use **${Prefix}help** for avalible commands.`);
+	botSend(channel, `**${Prefix + args[0]}** is not a command. Use **${Prefix}help** for avalible commands.`);
 	message.channel.stopTyping();
 }
 
@@ -466,7 +460,7 @@ const commandList =
 			.addField("Member Count:", `${g.memberCount} users`, true)
 			.setFooter(`${g.region} • ${g.id} • ${g.owner.user.username}#${g.owner.user.discriminator}`);
 
-			botSend(message.channel, embed);
+			botSend(channel, embed);
 		}
 	},
 
@@ -493,7 +487,7 @@ const commandList =
 		delmsg: true,
 		run: function (message, args) {
 			let content = message.content.substring(Prefix.length).substring(this.call.length);
-			botSend(message.channel, content);
+			botSend(channel, content);
 		}
 	},
 
@@ -509,7 +503,7 @@ const commandList =
 			arr.shift();
 			let pick = Math.floor(Math.random() * arr.length);
 			let text = `Deciding from:\n${arrayIntoList(arr)}\nWinner is: **${arr[pick]}**`;
-			botSend(message.channel, text);
+			botSend(channel, text);
 		},
 
 	},
@@ -520,7 +514,7 @@ const commandList =
 		category: "tools",
 		delmsg: true,
 		run: function (message, args) {
-			botSend(message.channel, `**Welcome to ${message.guild.name}!**\n Head on over to <#680991136378257433> to set yourself some tags, and <#685622079843860494> to ask for a custom role!`);
+			botSend(channel, `**Welcome to ${message.guild.name}!**\n Head on over to <#680991136378257433> to set yourself some tags, and <#685622079843860494> to ask for a custom role!`);
 		}
 	},
 
@@ -530,7 +524,7 @@ const commandList =
 		category: "fun",
 		run: function (message, args) {
 			let url = "files/fezzy.png";
-			botSend(message.channel, {files: [url]});
+			botSend(channel, {files: [url]});
 		}
 	},
 
@@ -540,7 +534,7 @@ const commandList =
 		category: "fun",
 		run: function (message, args) {
 			let url = "files/protoParty.gif";
-			botSend(message.channel, {files: [url]});
+			botSend(channel, {files: [url]});
 		}
 	},
 
@@ -558,7 +552,7 @@ const commandList =
 			}
 
 			let url = `files/dance/dance${randArray(pick)}.gif`;
-			botSend(message.channel, {files: [url]});
+			botSend(channel, {files: [url]});
 		}
 	},
 
@@ -571,7 +565,7 @@ const commandList =
 			let picks = ["gives a hug to","gives a warm hug to","gives a tight hug to","wraps their arms around","embraces","warmly embraces","tightly embraces"];
 
 			let text = `${serverName(message.author, message.guild)} ${randArray(picks)} ${arr}!`;
-			botSend(message.channel, text);
+			botSend(channel, text);
 		}
 	},
 
@@ -585,7 +579,7 @@ const commandList =
 			let picks2 = [" ", " into "];
 
 			let text = `${serverName(message.author, message.guild)} ${randArray(picks1)} nuzzles${randArray(picks2)}${arr}!`;
-			botSend(message.channel, text);
+			botSend(channel, text);
 		}
 	},
 
@@ -597,7 +591,7 @@ const commandList =
 			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 
 			let text = `${serverName(message.author, message.guild)} gives some soft pets to ${arr}!`;
-			botSend(message.channel, text);
+			botSend(channel, text);
 		}
 	},
 
@@ -611,7 +605,7 @@ const commandList =
 			let picks2 = ["","with ","next to "];
 
 			let text = `${serverName(message.author, message.guild)} ${randArray(picks1)}cuddles ${randArray(picks2)}${arr}!`;
-			botSend(message.channel, text);
+			botSend(channel, text);
 		}
 	},
 
@@ -623,7 +617,7 @@ const commandList =
 			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 
 			let text = `${serverName(message.author, message.guild)} gives ${arr} a big kiss!`;
-			botSend(message.channel, text);
+			botSend(channel, text);
 		}
 	},
 
@@ -635,7 +629,7 @@ const commandList =
 			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 
 			let text = `${serverName(message.author, message.guild)} spanks ${arr} on the booty!`;
-			botSend(message.channel, text);
+			botSend(channel, text);
 		}
 	},
 
@@ -647,7 +641,7 @@ const commandList =
 			let arr = arrayIntoList(getMentionList(message, true) ) || "their own";
 
 			let text = `${serverName(message.author, message.guild)} ruffles ${arr}${(arr == "themselves") ? "" : "'s"} feathers!`;
-			botSend(message.channel, text);
+			botSend(channel, text);
 		}
 	},
 
@@ -659,7 +653,7 @@ const commandList =
 			let arr = arrayIntoList(getMentionList(message, true) ) || "their own";
 
 			let text = `${serverName(message.author, message.guild)} boops ${arr}${(arr == "themselves") ? "" : "'s"} snoot!`;
-			botSend(message.channel, text);
+			botSend(channel, text);
 		}
 	},
 
@@ -671,7 +665,7 @@ const commandList =
 			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 
 			let text = `${serverName(message.author, message.guild)} feeds ${arr} ${randArray(foodCommandList.foodlist)}`;
-			botSend(message.channel, text);
+			botSend(channel, text);
 		}
 	},
 
@@ -683,7 +677,7 @@ const commandList =
 			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 
 			let text = `${serverName(message.author, message.guild)} bonks ${arr} on the head!`;
-			botSend(message.channel, text);
+			botSend(channel, text);
 		}
 	},
 
@@ -698,7 +692,7 @@ const commandList =
 			foodCommandList.foodlist.unshift(content);
 			writeJSON("foods", foodCommandList);
 
-			botSend(message.channel, `\`${content}\` has been added to the food list.`)
+			botSend(channel, `\`${content}\` has been added to the food list.`)
 		}
 	},
 
@@ -711,7 +705,7 @@ const commandList =
 			let removed = foodCommandList.foodlist.shift();
 			writeJSON("foods", foodCommandList);
 
-			botSend(message.channel, `Removed \`${removed}\` from the food list.`);
+			botSend(channel, `Removed \`${removed}\` from the food list.`);
 		}
 	},
 
@@ -729,7 +723,7 @@ const commandList =
 			let month = time.toLocaleString('default',{month:'long'});
 			let year = time.getFullYear();
 
-			botSend(message.channel, `**${serverName(mention, message.guild)}** last sent a message ${month}, ${day} ${year}`);
+			botSend(channel, `**${serverName(mention, message.guild)}** last sent a message ${month}, ${day} ${year}`);
 		}
 	},
 
@@ -742,7 +736,7 @@ const commandList =
 		run: function (message, args) {
 
 			if (message.author != bandwagonCommandVar.leader && bandwagonCommandVar.limit > 0 && bandwagonCommandVar.limit - bandwagonCommandVar.members.length <= 0) {
-				botSend(message.channel, `Sorry ${serverName(message.author, message.guild)}, the band wagon is full.`);
+				botSend(channel, `Sorry ${serverName(message.author, message.guild)}, the band wagon is full.`);
 				return;
 			}
 
@@ -753,7 +747,7 @@ const commandList =
 						var pick = Math.floor(Math.random() * bandwagonCommandVar.members.length);
 
 						if (bandwagonCommandVar.members.length <= 1) {
-							botSend(message.channel, "Wait for members before starting a raffle!");
+							botSend(channel, "Wait for members before starting a raffle!");
 							return;
 						}
 
@@ -767,24 +761,24 @@ const commandList =
 							end = " and was removed!"
 						}
 
-						botSend(message.channel, `<@${bandwagonCommandVar.members[pick].id}> won the raffle ${end}`);
+						botSend(channel, `<@${bandwagonCommandVar.members[pick].id}> won the raffle ${end}`);
 						return;
 					}
 					if (args[1] == "pick") {
 						var pick = Math.floor(Math.random() * bandwagonCommandVar.members.length);
-						botSend(message.channel, `<@${bandwagonCommandVar.members[pick].id}> got picked!`);
+						botSend(channel, `<@${bandwagonCommandVar.members[pick].id}> got picked!`);
 						return;
 					}
 
 					bandwagonCommandVar.limit = -1;
 					bandwagonCommandVar.members = [];
-					botSend(message.channel, `${serverName(message.author, message.guild)} has ended the band wagon.`);
+					botSend(channel, `${serverName(message.author, message.guild)} has ended the band wagon.`);
 					return;
 				} else {
 					for (var i = 0; i < bandwagonCommandVar.members.length; i++) {
 						if (bandwagonCommandVar.members[i] == message.author) {
 							bandwagonCommandVar.members.splice(i, 1);
-							botSend(message.channel, `${serverName(message.author, message.guild)} has left the band wagon.`);
+							botSend(channel, `${serverName(message.author, message.guild)} has left the band wagon.`);
 							return;
 						}
 					}
@@ -799,9 +793,9 @@ const commandList =
 					bandwagonCommandVar.limit = Math.abs(parseInt(args[1]) );
 				}
 
-				botSend(message.channel, `${serverName(message.author, message.guild)} has started a band wagon.\nUse **${Prefix}${this.call}** to join!`);
+				botSend(channel, `${serverName(message.author, message.guild)} has started a band wagon.\nUse **${Prefix}${this.call}** to join!`);
 				if (bandwagonCommandVar.limit > 0) {
-					botSend(message.channel, `${bandwagonCommandVar.limit - bandwagonCommandVar.members.length} members remaining.`)
+					botSend(channel, `${bandwagonCommandVar.limit - bandwagonCommandVar.members.length} members remaining.`)
 				}
 			} else {
 				bandwagonCommandVar.members.push(message.author);
@@ -809,9 +803,9 @@ const commandList =
 				for (var i = 0; i < bandwagonCommandVar.members.length; i++) {
 					names[i] = serverName(bandwagonCommandVar.members[i], message.guild);
 				}
-				botSend(message.channel, `${serverName(message.author, message.guild)} has joined the band wagon.\n${arrayIntoList(names)} are in the band wagon!`);
+				botSend(channel, `${serverName(message.author, message.guild)} has joined the band wagon.\n${arrayIntoList(names)} are in the band wagon!`);
 				if (bandwagonCommandVar.limit > 0) {
-					botSend(message.channel, `${bandwagonCommandVar.limit - bandwagonCommandVar.members.length} members remaining.`)
+					botSend(channel, `${bandwagonCommandVar.limit - bandwagonCommandVar.members.length} members remaining.`)
 				}
 			}
 		}
@@ -833,7 +827,7 @@ const commandList =
 		category: "fun",
 		run: function (message, args) {
 			let picks = ["Yes!","Yes.","Of course!","All the time!","Without a doubt!","100% of the time!","Only on days that end in \"Y\"","Si","💯","Absolutely!","Yup!","Sure are!","Totes.","Totally!","Definitely!","Certainly!","Undoubtedly!","Only if ```(true != false)```"];
-			botSend(message.channel, randArray(picks) );
+			botSend(channel, randArray(picks) );
 		}
 	},
 
@@ -853,7 +847,7 @@ const commandList =
 				text = error.message;
 			}
 
-			botSend(message.channel, text);
+			botSend(channel, text);
 		}
 	},
 
@@ -868,7 +862,7 @@ const commandList =
 				text = `${text}e`;
 			}
 
-			botSend(message.channel, text);
+			botSend(channel, text);
 		}
 	},
 
@@ -883,7 +877,7 @@ const commandList =
 			let hex = args[1].replace(/[^a-f0-9]/gi, '').trim();
 
 			if (hex.length != 6) {
-				botSend(message.channel, "Not a valid hex code. (**#**ABC123)");
+				botSend(channel, "Not a valid hex code. (**#**ABC123)");
 				return;
 			}
 
@@ -895,7 +889,7 @@ const commandList =
 					let embed = new Discord.MessageEmbed()
 					.addField(`\n${body.hex.value}`, body.name.value)
 					.setThumbnail(`http://via.placeholder.com/50/${body.hex.clean}/${body.hex.clean}`);
-					botSend(message.channel, embed);
+					botSend(channel, embed);
 				}
 			});
 		}
