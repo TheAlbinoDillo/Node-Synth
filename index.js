@@ -5,16 +5,18 @@ const MathJS = require("mathjs");
 const Request = require("request");
 const Tools = require("./botTools.js");
 const Commands = require("./commands.js");
-const Messaging = require("./botMessaging.js");
 
 //Setup Discord Client
-var Client = new Discord.Client();
+const Client = new Discord.Client();
 const Token = 'NjYyODI1ODA2OTY3NDcyMTI4.Xqzm2Q.I2y50w7Nu5QmgMqamCI9a3VuxMc';
 const Prefix = 'fg.';
 
 //Client variables
 var ClientLoggedIn = false;
+var foodCommandList = [];
 var commandCategoryList = new Array();
+var bandwagonCommandVar = { leader: undefined, limit: -1, members: [] };
+var consoleLogging = { enabled: false, user: undefined };
 
 //Setup ReadLine Interface
 const Interface = ReadLine.createInterface({
@@ -23,7 +25,7 @@ const Interface = ReadLine.createInterface({
 });
 
 //Setup Discord Client Events
-Client.on("ready", () => { Messaging.botLog("Client is ready\n"); ClientOnReady(); });
+Client.on("ready", () => { botLog("Client is ready\n"); ClientOnReady(); });
 Client.on("message", message => { ClientOnMessage(message); });
 Client.on("messageUpdate", (oldMessage, newMessage) => { ClientOnMessageUpdate(oldMessage, newMessage); });
 Client.on("guildMemberAdd", member => {  });
@@ -52,6 +54,8 @@ function ClientOnReady () {	//Called when after Discord Client is logged in
 			commandCategoryList.push(cmdi.category);
 		}
 	}
+
+	foodCommandList = readJSON("foods");
 }
 
 function ClientOnMessage (message) {	//Called when the Client receives a message
@@ -59,7 +63,7 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 	if (message.content.toLowerCase().indexOf(Prefix) == 0 && message.channel.guild) {
 		
 		if (message.author.bot) {
-			Messaging.botLog(`Bot (${message.author.username}) tried using a command:\n${message.content}\n`);
+			botLog(`Bot (${message.author.username}) tried using a command:\n${message.content}\n`);
 		} else {
 			runCommand(message);
 		}
@@ -69,8 +73,8 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 		let maa = message.attachments.array()[0];
 		if (maa != undefined) {
 			if (maa.width != undefined) {
-				Messaging.botReact(message, ":symbol_reddit_vote_up:680935204050698329");
-				Messaging.botReact(message, ":symbol_reddit_vote_down:680935348272103445");
+				botReact(message, ":symbol_reddit_vote_up:680935204050698329");
+				botReact(message, ":symbol_reddit_vote_down:680935348272103445");
 			}
 		}
 	}
@@ -95,7 +99,7 @@ function Connect (token, seconds = 3) {
 	console.log("\nAttempting to connect to Discord...\n");
 
 	Client.login(Token).then(token => {
-		Messaging.botLog(`Logged in with token starting with: "${token.substring(0, 5)}"\n`);
+		botLog(`Logged in with token starting with: "${token.substring(0, 5)}"\n`);
 		ClientLoggedIn = true;
 
 	}).catch(error => {
@@ -108,7 +112,7 @@ function Connect (token, seconds = 3) {
 
 function Disconnect (message, seconds = 3) {
 
-	Messaging.botLog(`Disconnecting Client and ending nodeJS script in ${seconds} second${(seconds != 1) ? "s" : ""}...\n`);
+	botLog(`Disconnecting Client and ending nodeJS script in ${seconds} second${(seconds != 1) ? "s" : ""}...\n`);
 
 	if (message != undefined) {
 		botDelete(message);
@@ -123,10 +127,106 @@ function Disconnect (message, seconds = 3) {
 function Activity (type = "WATCHING", activity = `${Prefix}help`) {
 
 	Client.user.setActivity(activity, { type: type }).then(presence => {
-		Messaging.botLog(`Activity set to "${presence.activities[0].name}".\n`);
+		botLog(`Activity set to "${presence.activities[0].name}".\n`);
 	}).catch(error => {
 		botError(`Could not set activity:\n${error.message}\n`);
 	});
+}
+
+//Client message functions
+function botSend (message, content) {	//Send a message to the specified channel
+
+	if (typeof content == typeof "string") {
+		if (content.trim() == "") {
+			botError("Message content is empty, this would fail. Did not send message.\n");
+			return null;
+		} else if (content.length > 2000) {
+			botError("Message content exceeds 2000 characters, this would fail. Did not send message.\n");
+			return null;
+		}
+	}
+
+	return message.channel.send(content).then(thisMsg => {
+		botLog(`Sent to ${thisMsg.channel.name}(${thisMsg.channel.guild.name}):\n${thisMsg.content}`);
+		
+	}).catch(error => {
+		botError(`Error sending message:\n${error.message}\n`);
+		botReact(message, ":BOT_ERROR:713595499067736067");
+	});
+}
+
+function botEdit (message, content, append = false) {	//Edit a specified message
+
+	if (content.trim() == "") {
+		botError("Edit content is empty, this would fail. Did not edit message.\n");
+		return null;
+	}
+
+	return message.edit(`${append ? message.content : content}${append ? content : ''}`).then(message => {
+		botLog(`Edited message in ${message.channel.name}(${message.channel.guild.name}) to:\n${message.content}`);
+	}).catch(error => {
+		botError(`Error editing message:\n${error.message}\n`);
+	});
+}
+
+function botDelete (message) {	//Delete a specified message
+
+	message.delete().then(message => {
+		botLog(`Deleted message from ${message.author} in ${message.channel.name}(${message.channel.guild.name}):\n${message.content}`);
+	}).catch(error => {
+		botError(`Error deleting message:\n${error.message}\n`);
+	});
+}
+
+function botReact (message, emote) {
+	message.react(emote).then( () => {
+		botLog(`Reacted with ${emote} to:\n${message.content}\n`);
+	}).catch(error => {
+		botError(`Failed to react to message:\n${error.message}\n`);
+	});
+}
+
+function botSendDM (user, content) {	//Send a DM message to a user
+
+	let name = user.username;
+
+	if (user.dmChannel == undefined) {
+		user.createDM().then(channel => {
+			console.log(`Created a DM channel for ${name}`);
+			botSendDM(user, content);
+		}).catch(error => {
+			console.error(`Error creating a DM channel for ${name}:\n${error.message}\n`);
+		});
+
+		return;
+	}
+
+	if (content.trim() == "") {
+		console.error("DM content is empty, this would fail. Did not DM user.\n");
+		return null;
+	}
+
+	user.dmChannel.send(content).then(message => {
+		console.log(`Sent a DM to ${name}:\n${content}\n`);
+	}).catch(error => {
+		console.error(`Error sending a DM to ${name}${error.message}`);
+	});
+}
+
+function botLog (content, realLog = true) {
+
+	if (realLog) {
+		console.log(content);
+	}
+
+	if (!consoleLogging.enabled) return;
+
+	botSendDM(consoleLogging.user, `\`\`\`${content}\`\`\``);
+}
+
+function botError (content) {
+	botLog(content, false);
+	console.error(content);
 }
 
 //Client misc. functions
@@ -171,6 +271,54 @@ function getMentionList (message, returnNames, removeSelf = true, removeBots = f
 	return mentions;
 }
 
+function helpCommand (message, args) {
+
+	let embed = new Discord.MessageEmbed()
+	.setThumbnail(Client.user.avatarURL() )
+	.setColor("64BF51")
+	.setFooter("This bot is a WIP by TheAlbinoDillo");
+
+	if (args[1] != undefined) {
+		if (commandCategoryList.includes(args[1]) ) {
+			for (let i = 0, l = Commands.commandList.length; i < l; i++) {
+				let cli = Commands.commandList[i];
+				if (cli.category == args[1]) {
+					embed.setTitle(`Command category: ${args[1]}`)
+					.addField(`**${cli.name}**${cli.onlyOwner ? "®" : ""}\n${cli.desc}`,`${Prefix}${cli.call} ${usageList(cli)}`);
+				}
+			}
+			botSend(message, embed);
+			return;
+		}
+		let selected = -1;
+		for (let i = 0, l = Commands.commandList.length; i < l; i++) {
+			if (Commands.commandList[i].call == args[1]) {
+				selected = i;
+			}
+		}
+		if (selected > -1) {
+			let cls = Commands.commandList[selected];
+			embed.setTitle(`Command: ${cls.name} ${cls.onlyOwner ? "[Restricted]" : ""}`)
+			.addField(cls.desc, `${Prefix}${cls.call} ${usageList(cls)}`);
+			botSend(message, embed);
+	
+			return;
+		}
+	}
+	embed.setTitle(`${Client.user.username} commands list`);
+
+	for (let i = 0, l = commandCategoryList.length; i < l; i++) {
+
+		let ccli = commandCategoryList[i];
+		if (ccli == "unlisted") {
+			continue;
+		}
+		embed.addField(`${ccli}`,`${Prefix}help ${ccli}`);
+	}
+
+	botSend(message, embed);
+}
+
 function usageList (command) {
 
 	if (command.usage == undefined) {
@@ -191,7 +339,7 @@ function runCommand (message) {
 	var text = message.content;
 	var args = text.substring(Prefix.length).split(" ");
 
-	Messaging.botLog(`\nCommand detected from ${message.author.username} in ${message.channel.name} at ${new Date(message.createdTimestamp)} :\n${text}`);
+	botLog(`\nCommand detected from ${message.author.username} in ${message.channel.name} at ${new Date(message.createdTimestamp)} :\n${text}`);
 
 	for (var i = 0; i < Commands.commandList.length; i++) {
 		if (args[0].toLowerCase() == Commands.commandList[i].call) {
@@ -200,7 +348,7 @@ function runCommand (message) {
 				try {
 					Commands.commandList[i].run(message, args);
 				} catch (error) {
-					Messaging.botLog(error.message);
+					botLog(error.message);
 				}
 	
 				if (Commands.commandList[i].delmsg) {
@@ -217,7 +365,3 @@ function runCommand (message) {
 	message.channel.stopTyping();
 }
 
-module.exports =
-{
-	Client: Client
-};

@@ -1,5 +1,4 @@
 const FileSystem = require("fs");
-const Messaging = require("./botMessaging.js");
 
 module.exports = {
 	arrayIntoList: arrayIntoList,
@@ -39,9 +38,9 @@ function writeJSON (filename, object) {	//Write an object to a JSON file
 
  	try {
 		FileSystem.writeFileSync(`./files/${filename}.json`, string);
-		Messaging.botLog(`Wrote to "${filename}.json":\n${string}\n`);
+		botLog(`Wrote to "${filename}.json":\n${string}\n`);
 	} catch (error) {
-		Messaging.botError(`Failed to write to "${filename}.json":\n${error.message}\n`);
+		botError(`Failed to write to "${filename}.json":\n${error.message}\n`);
 	}
 }
 
@@ -50,9 +49,9 @@ function readJSON (filename) {	//Read an object from a JSON file
 	let content;
 	try {
 		content = FileSystem.readFileSync(`./files/${filename}.json`);
-		Messaging.botLog(`Read from "${filename}.json":\n${(content.length > 100) ? `${content.toString().substring(0, 150)}...` : content}\n`);
+		botLog(`Read from "${filename}.json":\n${(content.length > 100) ? `${content.toString().substring(0, 150)}...` : content}\n`);
 	} catch (error) {
-		Messaging.botError(`Failed to read from "${filename}.json":\n${error.message}\n`);
+		botError(`Failed to read from "${filename}.json":\n${error.message}\n`);
 		return null;
 	}
 
