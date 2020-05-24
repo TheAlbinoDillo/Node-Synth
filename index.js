@@ -1,6 +1,7 @@
 //"Import" Dependencies
 const Discord = require("discord.js");
 const ReadLine = require("readline");
+const FileSystem = require("fs");
 const MathJS = require("mathjs");
 const Request = require("request");
 const Tools = require("./botTools.js");
@@ -236,8 +237,8 @@ function serverName (user, guild, bold = true, removeSpecial = true) {	//Get the
 	}
 
 	let name = guild.member(user).nickname;
-	let regex = /([❄]|[\u2B50]|[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g;
-	//let regex = /([^\u0000-\u007f])/gi;
+	//let regex = /([❄]|[\u2B50]|[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g;
+	let regex = /([^\u0000-\u007f])/gi;
 
 	if (removeSpecial && name != null) {	//Remove emojis and symbol characters, uppercase the first letter
 		name = name.replace(/[-_]/g,' ').replace(regex, '').trim();
@@ -268,6 +269,57 @@ function getMentionList (message, returnNames, removeSelf = true, removeBots = f
 	}
 
 	return mentions;
+}
+
+function writeJSON (filename, object) {	//Write an object to a JSON file
+
+	let string = JSON.stringify(object);
+
+ 	try {
+		FileSystem.writeFileSync(`./files/${filename}.json`, string);
+		botLog(`Wrote to "${filename}.json":\n${string}\n`);
+	} catch (error) {
+		botError(`Failed to write to "${filename}.json":\n${error.message}\n`);
+	}
+}
+
+function readJSON (filename) {	//Read an object from a JSON file
+
+	let content;
+	try {
+		content = FileSystem.readFileSync(`./files/${filename}.json`);
+		botLog(`Read from "${filename}.json":\n${(content.length > 100) ? `${content.toString().substring(0, 150)}...` : content}\n`);
+	} catch (error) {
+		botError(`Failed to read from "${filename}.json":\n${error.message}\n`);
+		return null;
+	}
+
+	return JSON.parse(content);
+}
+
+function arrayIntoList (array) {	//Turn an array into a human-readable list
+
+	let l = array.length;
+
+	if (l == 0) {
+		return undefined;
+	}
+
+	let text = "";
+	if (l <= 2) {
+		text += (l == 2) ? `${array[0]} and ${array[1]}` : `${array[0]}`;
+	} else {
+		for (let i = 0; i < l; i++) {
+			text += `${(i == l - 1) ? " and " : ""}${array[i]}${(i < l - 2) ? ", " : ""}`;
+		}
+	}
+
+	return text;
+}
+
+function randArray (array) {	//Randomly pick from an array
+	let pick = Math.floor(Math.random() * array.length);
+	return array[pick];
 }
 
 function helpCommand (message, args) {
@@ -444,7 +496,7 @@ const commandList =
 			let arr = args.slice();
 			arr.shift();
 			let pick = Math.floor(Math.random() * arr.length);
-			let text = `Deciding from:\n${Tools.arrayIntoList(arr)}\nWinner is: **${arr[pick]}**`;
+			let text = `Deciding from:\n${arrayIntoList(arr)}\nWinner is: **${arr[pick]}**`;
 			botSend(message, text);
 		},
 
@@ -493,7 +545,7 @@ const commandList =
 				pick[i] = `${i}`;
 			}
 
-			let url = `files/dance/dance${Tools.randArray(pick)}.gif`;
+			let url = `files/dance/dance${randArray(pick)}.gif`;
 			botSend(message, {files: [url]});
 		}
 	},
@@ -503,10 +555,10 @@ const commandList =
 		desc: "Give someone a hug!",
 		category: "interactions",
 		run: function (message, args) {
-			let arr = Tools.arrayIntoList(getMentionList(message, true) ) || "themselves";
+			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 			let picks = ["gives a hug to","gives a warm hug to","gives a tight hug to","wraps their arms around","embraces","warmly embraces","tightly embraces"];
 
-			let text = `${serverName(message.author, message.guild)} ${Tools.randArray(picks)} ${arr}!`;
+			let text = `${serverName(message.author, message.guild)} ${randArray(picks)} ${arr}!`;
 			botSend(message, text);
 		}
 	},
@@ -516,11 +568,11 @@ const commandList =
 		desc: "Give someone a comfy nuzzling!",
 		category: "interactions",
 		run: function (message, args) {
-			let arr = Tools.arrayIntoList(getMentionList(message, true) ) || "themselves";
+			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 			let picks1 = ["warmly","comfily","cozily"];
 			let picks2 = [" ", " into "];
 
-			let text = `${serverName(message.author, message.guild)} ${Tools.randArray(picks1)} nuzzles${Tools.randArray(picks2)}${arr}!`;
+			let text = `${serverName(message.author, message.guild)} ${randArray(picks1)} nuzzles${randArray(picks2)}${arr}!`;
 			botSend(message, text);
 		}
 	},
@@ -530,7 +582,7 @@ const commandList =
 		desc: "Give someone some nice pets!",
 		category: "interactions",
 		run: function (message, args) {
-			let arr = Tools.arrayIntoList(getMentionList(message, true) ) || "themselves";
+			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 
 			let text = `${serverName(message.author, message.guild)} gives some soft pets to ${arr}!`;
 			botSend(message, text);
@@ -542,11 +594,11 @@ const commandList =
 		desc: "Give someone cuddly cuddles!",
 		category: "interactions",
 		run: function (message, args) {
-			let arr = Tools.arrayIntoList(getMentionList(message, true) ) || "themselves";
+			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 			let picks1 = ["","warmly ","softly ","gently ","happily "];
 			let picks2 = ["","with ","next to "];
 
-			let text = `${serverName(message.author, message.guild)} ${Tools.randArray(picks1)}cuddles ${Tools.randArray(picks2)}${arr}!`;
+			let text = `${serverName(message.author, message.guild)} ${randArray(picks1)}cuddles ${randArray(picks2)}${arr}!`;
 			botSend(message, text);
 		}
 	},
@@ -556,7 +608,7 @@ const commandList =
 		desc: "Give someone a sloppy kiss!",
 		category: "interactions",
 		run: function (message, args) {
-			let arr = Tools.arrayIntoList(getMentionList(message, true) ) || "themselves";
+			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 
 			let text = `${serverName(message.author, message.guild)} gives ${arr} a big kiss!`;
 			botSend(message, text);
@@ -568,7 +620,7 @@ const commandList =
 		desc: "Give someone a spank on the butt!",
 		category: "interactions",
 		run: function (message, args) {
-			let arr = Tools.arrayIntoList(getMentionList(message, true) ) || "themselves";
+			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 
 			let text = `${serverName(message.author, message.guild)} spanks ${arr} on the booty!`;
 			botSend(message, text);
@@ -580,7 +632,7 @@ const commandList =
 		desc: "Ruffle up those feathery friends!",
 		category: "interactions",
 		run: function (message, args) {
-			let arr = Tools.arrayIntoList(getMentionList(message, true) ) || "their own";
+			let arr = arrayIntoList(getMentionList(message, true) ) || "their own";
 
 			let text = `${serverName(message.author, message.guild)} ruffles ${arr}${(arr == "themselves") ? "" : "'s"} feathers!`;
 			botSend(message, text);
@@ -592,7 +644,7 @@ const commandList =
 		desc: "Boop 'em on the snoot!",
 		category: "interactions",
 		run: function (message, args) {
-			let arr = Tools.arrayIntoList(getMentionList(message, true) ) || "their own";
+			let arr = arrayIntoList(getMentionList(message, true) ) || "their own";
 
 			let text = `${serverName(message.author, message.guild)} boops ${arr}${(arr == "themselves") ? "" : "'s"} snoot!`;
 			botSend(message, text);
@@ -604,9 +656,9 @@ const commandList =
 		desc: "Feed your friends some yummy food!",
 		category: "interactions",
 		run: function (message, args) {
-			let arr = Tools.arrayIntoList(getMentionList(message, true) ) || "themselves";
+			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 
-			let text = `${serverName(message.author, message.guild)} feeds ${arr} ${Tools.randArray(foodCommandList.foodlist)}`;
+			let text = `${serverName(message.author, message.guild)} feeds ${arr} ${randArray(foodCommandList.foodlist)}`;
 			botSend(message, text);
 		}
 	},
@@ -616,7 +668,7 @@ const commandList =
 		desc: "Give someone a bonk on the head!",
 		category: "interactions",
 		run: function (message, args) {
-			let arr = Tools.arrayIntoList(getMentionList(message, true) ) || "themselves";
+			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 
 			let text = `${serverName(message.author, message.guild)} bonks ${arr} on the head!`;
 			botSend(message, text);
@@ -632,7 +684,7 @@ const commandList =
 			let content = message.content.substring(Prefix.length).substring(this.call.length + 1);
 
 			foodCommandList.foodlist.unshift(content);
-			Tools.writeJSON("foods", foodCommandList);
+			writeJSON("foods", foodCommandList);
 
 			botSend(message, `\`${content}\` has been added to the food list.`)
 		}
@@ -645,7 +697,7 @@ const commandList =
 		run: function (message, args) {
 
 			let removed = foodCommandList.foodlist.shift();
-			Tools.writeJSON("foods", foodCommandList);
+			writeJSON("foods", foodCommandList);
 
 			botSend(message, `Removed \`${removed}\` from the food list.`);
 		}
@@ -745,7 +797,7 @@ const commandList =
 				for (var i = 0; i < bandwagonCommandVar.members.length; i++) {
 					names[i] = serverName(bandwagonCommandVar.members[i], message.guild);
 				}
-				botSend(message, `${serverName(message.author, message.guild)} has joined the band wagon.\n${Tools.arrayIntoList(names)} are in the band wagon!`);
+				botSend(message, `${serverName(message.author, message.guild)} has joined the band wagon.\n${arrayIntoList(names)} are in the band wagon!`);
 				if (bandwagonCommandVar.limit > 0) {
 					botSend(message, `${bandwagonCommandVar.limit - bandwagonCommandVar.members.length} members remaining.`)
 				}
@@ -769,7 +821,7 @@ const commandList =
 		category: "fun",
 		run: function (message, args) {
 			let picks = ["Yes!","Yes.","Of course!","All the time!","Without a doubt!","100% of the time!","Only on days that end in \"Y\"","Si","💯","Absolutely!","Yup!","Sure are!","Totes.","Totally!","Definitely!","Certainly!","Undoubtedly!","Only if ```(true != false)```"];
-			botSend(message, Tools.randArray(picks) );
+			botSend(message, randArray(picks) );
 		}
 	},
 
