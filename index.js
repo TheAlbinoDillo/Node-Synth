@@ -322,6 +322,10 @@ function randArray (array) {	//Randomly pick from an array
 	return array[pick];
 }
 
+function randNumber (max) {
+	return pick = Math.floor(Math.random() * max);
+}
+
 function helpCommand (message, args) {
 
 	let embed = new Discord.MessageEmbed()
@@ -539,13 +543,10 @@ const commandList =
 		run: function (message, args) {
 
 			let pick = new Array();
-			let pickLength = FileSystem.readdirSync("files/dance/").length;
+			let pickLength = FileSystem.readdirSync("./files/dance/").length;
+			let choice = parseInt(args[1]);
 
-			for (let i = 0, l = pickLength; i < l; i++) {
-				pick[i] = `${i}`;
-			}
-
-			let url = `files/dance/dance${randArray(pick)}.gif`;
+			let url = `./files/dance/dance${choice > -1 ? choice : randNumber(pickLength)}.gif`;
 			botSend(message, {files: [url]});
 		}
 	},
