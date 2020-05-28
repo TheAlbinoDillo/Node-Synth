@@ -538,6 +538,30 @@ const commandList =
 		]
 	),
 
+	new Interaction("Boop", "Give someone a boop on the snoot!",
+		[
+			["", " playfully", " quickly"],
+			["boops"],
+			["!", " on the snoot!", " on the nose!"]
+		]
+	),
+
+	new Command("Ruffle", function (message, args)
+		{
+			let arr = arrayIntoList(getMentionList(message, true) ) || "their own";
+			let picks =
+			[	
+				["", " gently", " softly"],
+				["ruffles"],
+				[" feathers!"]
+			];
+
+			let text = `${serverName(message.author, message.guild)}${randArray(picks[0])} ${randArray(picks[1])} ${arr}${args[1] ? "'s" : ""}${randArray(picks[2])}`;
+			botSend(message, text);
+
+		}, "Give someone a boop on the snoot!", "interactions", ["@user1","@user2","@user.."]
+	),
+
 	new Command("Server Information", function (message, args) {
 			let g = message.guild;
 			let url = `https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png`;
