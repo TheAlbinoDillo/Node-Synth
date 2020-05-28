@@ -1,3 +1,5 @@
+"use strict";
+
 //"Import" Dependencies
 const Discord = require("discord.js");
 const ReadLine = require("readline");
@@ -5,7 +7,6 @@ const FileSystem = require("fs");
 const MathJS = require("mathjs");
 const Request = require("request");
 const Tools = require("./botTools.js");
-const Commands = require("./commands.js");
 
 //Setup Discord Client
 const Client = new Discord.Client();
@@ -37,6 +38,8 @@ Interface.on('line', (input) => { InterfaceOnLine(input); });
 //Discord Called Events
 function ClientOnReady () {	//Called when after Discord Client is logged in
 
+	initCommands();
+
 	for (let i = 0, l = commandList.length; i < l; i++) {
 
 		let cmdi = commandList[i];
@@ -45,7 +48,7 @@ function ClientOnReady () {	//Called when after Discord Client is logged in
 		}
 	}
 
-	foodCommandList = readJSON("foods");
+	foodCommandList = readJSON("common/foods");
 }
 
 function ClientOnMessage (message) {	//Called when the Client receives a message
@@ -141,7 +144,7 @@ function botSend (message, content) {	//Send a message to the specified channel
 		
 	}).catch(error => {
 		botError(`Error sending message:\n${error.message}\n`);
-		botReact(message, ":BOT_ERROR:713595499067736067");
+		botReact(message, "‼️");
 	});
 }
 
@@ -313,7 +316,7 @@ function randArray (array) {	//Randomly pick from an array
 }
 
 function randNumber (max) {
-	return pick = Math.floor(Math.random() * max);
+	return Math.floor(Math.random() * max);
 }
 
 function helpCommand (message, args) {
@@ -329,7 +332,7 @@ function helpCommand (message, args) {
 				let cli = commandList[i];
 				if (cli.category == args[1]) {
 					embed.setTitle(`Command category: ${args[1]}`)
-					.addField(`**${cli.name}**${cli.onlyOwner ? "®" : ""}\n${cli.desc}`,`${Prefix}${cli.call} ${usageList(cli)}`);
+					.addField(`**${cli.name}**${cli.onlyOwner ? "®" : ""}\n${cli.description}`,`${Prefix}${cli.call} ${usageList(cli)}`);
 				}
 			}
 			botSend(message, embed);
@@ -344,7 +347,7 @@ function helpCommand (message, args) {
 		if (selected > -1) {
 			let cls = commandList[selected];
 			embed.setTitle(`Command: ${cls.name} ${cls.onlyOwner ? "[Restricted]" : ""}`)
-			.addField(cls.desc, `${Prefix}${cls.call} ${usageList(cls)}`);
+			.addField(cls.description, `${Prefix}${cls.call} ${usageList(cls)}`);
 			botSend(message, embed);
 	
 			return;
@@ -412,6 +415,7 @@ function runCommand (message) {
 		selectedCommand.runFunction(message, args);
 	} catch (error) {
 		//botSend(message, `Command Failed:\n${error.message}`);
+		console.error(error);
 		botReact(message, "⁉️");
 	}
 }
@@ -429,16 +433,112 @@ class Command {
 	}
 }
 
+class Interaction extends Command {
+	constructor(name, description, outputs, call, defaultWord = "themselves") {
+		super
+		(
+			name,
+			function (message, args)
+			{
+				let arr = arrayIntoList(getMentionList(message, true) ) || defaultWord;
+				let picks = this.outputs;
+
+				let text = `${serverName(message.author, message.guild)}${randArray(picks[0])} ${randArray(picks[1])} ${arr}${randArray(picks[2])}`;
+				botSend(message, text);
+			},
+			description = description,
+			"interactions",
+			["@user1","@user2","@user.."],
+			false,
+			[],
+			call ? call : name.toLowerCase().replace(/ /g, "")
+		);
+		this.outputs = outputs;
+	}
+}
+
+function initCommands () {
+
+}
+
 const commandList =
 [
 	new Command("Help", helpCommand, "Get help"),
 
-	/*{//Server Info	
-		call: "serverinfo",
-		name: "Server Information",
-		desc: "Get information about the server.",
-		category: "tools",
-		run: function (message, args) {
+	new Interaction("Hug", "Give someone a hug!",
+		[
+			["", " quickly", " happily"],
+			["gives a hug to", "hugs"],
+			["!", ", how nice!", ", awwww."]
+		]
+	),
+
+	new Interaction("Cuddle", "Cuddle up with someone!",
+		[
+			[""],
+			["cuddles"],
+			["!"]
+		]
+	),
+
+	new Interaction("Nuzzle", "Nuzzle with someone!",
+		[
+			[" cozily", " warmly"],
+			["nuzzles", "nuzzles with", "nuzzles into"],
+			["!"]
+		]
+	),
+
+	new Interaction("Snuggle", "Snuggle with someone!",
+		[
+			[" cozily", " warmly"],
+			["snuggles", "snuggles with", "snuggles into"],
+			["!"]
+		]
+	),
+
+	new Interaction("High Five", "Give someone a high five!",
+		[
+			[""],
+			["high fives"],
+			["!"]
+		],
+		"high"
+	),
+
+	new Interaction("Tase", "Give someone a shock!!",
+		[
+			[""],
+			["tases","uses a taser on"],
+			["!",", take that!",", ouch!"]
+		]
+	),
+
+	new Interaction("Spank", "Give someone the spanking they deserve!",
+		[
+			[""],
+			["spanks", "raises their arm and spanks"],
+			["!"," on the booty!"]
+		]
+	),
+
+	new Interaction("Kiss", "Give someone a nice kiss!",
+		[
+			["", "", " puckers up and", " smiles and"],
+			["kisses", "kisses", "gives a big kiss to"],
+			["!", "!", " on the lips!", " on the cheek!"]
+		]
+	),
+
+	new Interaction("Pet", "Give someone some nice pets!",
+		[
+			[" softly"],
+			["pets"],
+			["!", " on the head!"]
+		]
+	),
+
+	new Command("Server Information", function (message, args) {
 			let g = message.guild;
 			let url = `https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png`;
 
@@ -451,8 +551,8 @@ const commandList =
 			.setFooter(`${g.region} • ${g.id} • ${g.owner.user.username}#${g.owner.user.discriminator}`);
 
 			botSend(message, embed);
-		}
-	},*/
+		}, "Get information about the server.", "tools", [], false, [], "serverinfo"
+	),
 
 	new Command("Marco", function (message, args) {
 			let pingTime = message.createdTimestamp;
@@ -481,29 +581,32 @@ const commandList =
 		}, "Randomly decide from values", "tools", ["option1","option2","option.."]
 	),
 
-	new Command("Party", function (message, args) {
-			let url = "files/protoParty.gif";
-			botSend(message, {files: [url]});
-		}, "It's a party! Let's groove!", "fun"
-	),
-
 	new Command("Dance", function (message, args) {
 
 			let pick = new Array();
-			let pickLength = FileSystem.readdirSync("./files/dance/").length;
+			let pickLength = FileSystem.readdirSync("./files/common/dance/").length;
 			let choice = parseInt(args[1]);
 
-			let url = `./files/dance/dance${choice > -1 ? choice : randNumber(pickLength)}.gif`;
+			let url = `./files/common/dance/dance${choice > -1 ? choice : randNumber(pickLength)}.gif`;
 			botSend(message, {files: [url]});
 		}, "Let's dance!", "fun"
 	),
+
+	/*new Command("Fezzy", function (message, args) {
+
+			let pick = new Array();
+			let pickLength = FileSystem.readdirSync("./files/common/dance/").length;
+			let choice = parseInt(args[1]);
+
+			let url = `./files/common/dance/dance${choice > -1 ? choice : randNumber(pickLength)}.gif`;
+			botSend(message, {files: [url]});
+		}, "Let's dance!", "fun"
+	),*/
 
 	new Command("Leave", function (message, args) {
 			Disconnect(message);
 		}, "Disconnect the bot.", null, [], false, ["ADMINISTRATOR"]
 	),
-
-	new Command("Test Error", "This is not supposed to be a string"),
 
 	new Command("Calculator", function (message, args) {
 			let exp = message.content.substring(Prefix.length + args[0].length);
