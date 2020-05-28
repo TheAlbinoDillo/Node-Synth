@@ -7,6 +7,7 @@ const FileSystem = require("fs");
 const MathJS = require("mathjs");
 const Request = require("request");
 const Tools = require("./botTools.js");
+const Color = require("./colors.js");
 
 //Setup Discord Client
 const Client = new Discord.Client();
@@ -290,6 +291,13 @@ function readJSON (filename) {	//Read an object from a JSON file
 	return JSON.parse(content);
 }
 
+function makeUwU (string) {
+
+	let text = string.replace(/R/g, 'W').replace(/r/g, 'w').replace(/L/g, 'W').replace(/l/g, 'w');
+
+	return text;
+}
+
 function arrayIntoList (array) {	//Turn an array into a human-readable list
 
 	let l = array.length;
@@ -386,7 +394,7 @@ function runCommand (message) {
 
 	let selectedCommand = null;
 	for (let i = 0, l = commandList.length; i < l; i++) {
-		if (commandList[i].call == args[0]) {
+		if (commandList[i].call.toLowerCase() == args[0].toLowerCase() ) {
 			selectedCommand = commandList[i];
 			break;
 		}
@@ -417,6 +425,11 @@ function runCommand (message) {
 		//botSend(message, `Command Failed:\n${error.message}`);
 		console.error(error);
 		botReact(message, "⁉️");
+		return;
+	}
+
+	if (selectedCommand.deleteMessage) {
+		botDelete(message);
 	}
 }
 
@@ -514,11 +527,27 @@ const commandList =
 		]
 	),
 
+	new Interaction("Poke", "Poke poke poke someone!",
+		[
+			["", " rapidly"],
+			["pokes","poke poke pokes"],
+			["!","!","!","!","!", ", poke!",", pppppppppppoke!"]
+		]
+	),
+
 	new Interaction("Spank", "Give someone the spanking they deserve!",
 		[
 			[""],
 			["spanks", "raises their arm and spanks"],
 			["!"," on the booty!"]
+		]
+	),
+
+	new Interaction("Slap", "Slap someone!",
+		[
+			[" quickly", ""],
+			["slaps"],
+			["!"," on the face!"]
 		]
 	),
 
@@ -546,17 +575,54 @@ const commandList =
 		]
 	),
 
+	new Command("Bark", function (message, args)
+		{
+			let picks1 = ["", " Woof Woof!", " Woof!", " Ruff!", " Ruff Ruff!", " Arrwf!", " Awrf!", " Awrf awrf!"];
+
+			let text = `${serverName(message.author, message.guild)} barks!${randArray(picks1)}`;
+			botSend(message, text);
+
+		}, "Bark to be heard!", "actions", []
+	),
+
+	new Command("Vore", function (message, args)
+		{
+			botSend(message, "No.");
+
+		}, "Try to eat someone!", "interactions", ["@user1","@user2","@user.."]
+	),
+
+	new Command("Wag", function (message, args)
+		{
+			let picks1 = ["", " rapidly", " happily", " adorably"]
+			let picks2 = ["", " *wag wag wag*", " awwwwww.", " *wag wags*", " *waggies*"];
+
+			let text = `${serverName(message.author, message.guild)}${randArray(picks1)} wags their tail!${randArray(picks2)}`;
+			botSend(message, text);
+
+		}, "Wag your tail!", "actions", []
+	),
+
+	new Command("Purr", function (message, args)
+		{
+			let picks1 = ["", " softly", " happily", " adorably"]
+			let picks2 = ["", " *purr*", " awwwwww.", " *purrrrr*"];
+
+			let text = `${serverName(message.author, message.guild)}${randArray(picks1)} purrs!${randArray(picks2)}`;
+			botSend(message, text);
+
+		}, "Purr like a kitty!", "actions", []
+	),
+
 	new Command("Ruffle", function (message, args)
 		{
 			let arr = arrayIntoList(getMentionList(message, true) ) || "their own";
-			let picks =
-			[	
-				["", " gently", " softly"],
-				["ruffles"],
-				[" feathers!"]
-			];
 
-			let text = `${serverName(message.author, message.guild)}${randArray(picks[0])} ${randArray(picks[1])} ${arr}${args[1] ? "'s" : ""}${randArray(picks[2])}`;
+			let picks1 = ["", " gently", " softly"];
+			let picks2 = ["ruffles"];
+			let picks3 = [" feathers!", " feathers, squawk!"];
+
+			let text = `${serverName(message.author, message.guild)}${randArray(picks1)} ${randArray(picks2)} ${arr}${args[1] ? "'s" : ""}${randArray(picks3)}`;
 			botSend(message, text);
 
 		}, "Give someone a boop on the snoot!", "interactions", ["@user1","@user2","@user.."]
@@ -593,6 +659,11 @@ const commandList =
 			let content = message.content.substring(Prefix.length).substring(this.call.length);
 			botSend(message, content);
 		}, "Make the bot say what you say", "tools", ["text"], true, ["MANAGE_MESSAGES"]
+	),
+
+	new Command("UwU Speak", function (message, args) {
+			botSend(message, `${message.author} ${makeUwU(message.content.substring(Prefix.length + args[0].length) )}` );
+		}, "Convert to UwU speak!", "fun", ["text"], true, [], "uwu"
 	),
 
 	new Command("Decide", function (message, args) {
@@ -644,5 +715,41 @@ const commandList =
 
 			botSend(message, text);
 		}, "Enslave the bot to do math!", "tools", ["expression"], false, [], "calc"
+	),
+
+	new Command("Hex Color", function (message, args) {
+
+			if (args[1] == "FUCKME") {
+				botSend(message, "OwO");
+				return;
+			}
+
+			if (args[1].replace(/[^a-f0-9]/gi,'').length != 6) {
+				botSend(message, `**${args[1]}** is not a valid hex code.`);
+				return;
+			}	
+
+			let colorName = Color.closest(args[1]);
+			let colorCode = Color.format(args[1]).substring(1);
+			let url = `https://via.placeholder.com/50/${colorCode}/${colorCode}.png`;
+
+			let embed = new Discord.MessageEmbed()
+			.setThumbnail(url)
+			.addField(colorCode, colorName);
+
+			botSend(message, embed);
+
+		}, "Get a preview of a hex color!", "tools", ["hex code"], false, [], "hex"
+	),
+
+	new Command("To Binary", function (message, args) {
+
+			if (parseInt(args[1]) == NaN) {
+				botSend(message, `**${args[1]}** is not a valid number.`);
+				return;
+			}
+
+			botSend(message, parseInt(args[1]).toString(2) );
+		}, "Turn a number into binary!", "tools", ["number"]
 	)
 ];
