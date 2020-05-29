@@ -754,23 +754,23 @@ const commandList =
 
 	new Command("Dance", function (message, args) {
 
-			let pick = new Array();
 			let pickLength = FileSystem.readdirSync("./files/common/dance/").length;
 			let choice = parseInt(args[1]);
+			let pick = choice > -1 ? choice : randNumber(pickLength)
 
-			let url = `./files/common/dance/dance${choice > -1 ? choice : randNumber(pickLength)}.gif`;
-			botSend(message, {files: [url]});
+			let url = `./files/common/dance/dance${pick}.gif`;
+			botSend(message, {content: pick, files: [url]});
 		}, "Let's dance!", "fun"
 	),
 
 	new Command("Grant", function (message, args) {
 
-			let pick = new Array();
 			let pickLength = FileSystem.readdirSync("./files/common/grant/").length;
 			let choice = parseInt(args[1]);
+			let pick = choice > -1 ? choice : randNumber(pickLength)
 
-			let url = `./files/common/grant/grant${choice > -1 ? choice : randNumber(pickLength)}.png`;
-			botSend(message, {files: [url]});
+			let url = `./files/common/grant/grant${pick}.png`;
+			botSend(message, {content: pick, files: [url]});
 		}, "Get a picture of the panda!", "fun"
 	),
 
