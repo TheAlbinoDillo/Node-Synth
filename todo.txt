@@ -1,9 +1,7 @@
-High Five
-
 server settings
-
-perms
 
 op bandwagon command
 
 automatic welcome
+
+inspect

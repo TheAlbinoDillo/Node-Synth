@@ -20,6 +20,7 @@ var foodCommandList = [];
 var commandCategoryList = new Array();
 var bandwagonCommandVar = { leader: undefined, limit: -1, members: [] };
 var consoleLogging = { enabled: false, user: undefined };
+var consoleStatus = {guild: null, channel: null};
 
 //Setup ReadLine Interface
 const Interface = ReadLine.createInterface({
@@ -54,6 +55,10 @@ function ClientOnReady () {	//Called when after Discord Client is logged in
 
 function ClientOnMessage (message) {	//Called when the Client receives a message
 
+	if (consoleStatus.channel == message.channel) {
+		console.log(`${message.author.username}:\t${message.content}`);
+	}
+
 	if (message.content.toLowerCase().indexOf(Prefix) == 0 && message.channel.guild) {
 		
 		if (message.author.bot) {
@@ -80,9 +85,80 @@ function ClientOnMessageUpdate (oldMessage, newMessage) {	//Called when the Clie
 //ReadLine Interface Called Events
 function InterfaceOnLine (input) {	//Called when the console receives command line input
 
-	if (input == "leave") {
-		Disconnect();
+
+	let args = input.split(" ");
+	switch (args[0]) {
+		case "leave":
+			Disconnect();
+			break;
+		case "dir":
+			dir(args);
+			break;
+		case "send":
+			if (consoleStatus.guild != null && consoleStatus.channel != null) {
+				consoleStatus.channel.send(input.substring(5) );
+			}
+			break;
 	}
+}
+
+function dir (args) {
+
+	if (args[1] == "..") {
+		if (consoleStatus.channel != null) {
+			consoleStatus.channel = null;
+			console.log(`Client/${consoleStatus.guild.name}/`);
+			return;
+		}
+		if (consoleStatus.guild != null) {
+			consoleStatus.guild = null;
+			console.log(`Client/`);
+			return;
+		}
+		return;
+	}
+
+	if (args[1] != null) {
+		if (consoleStatus.guild == null) {
+			consoleStatus.guild = Client.guilds.cache.array()[parseInt(args[1])];
+			console.log("Set server to: " + consoleStatus.guild.name);
+			return;
+		}
+		if (consoleStatus.channel == null) {
+			consoleStatus.channel = consoleStatus.guild.channels.cache.array()[parseInt(args[1])];
+			console.log("Set channel to: " + consoleStatus.channel.name);
+			return;
+		}
+	}
+
+	let text = "Client/";
+	if (consoleStatus.guild == null) {
+
+		console.log(text);
+
+		let cgca = Client.guilds.cache.array();
+		for (let i = 0, l = cgca.length; i < l; i++) {
+			console.log(`${i >= 10 ? i : "0" + i}: ${cgca[i].name}`);
+		}
+		return;
+	} else {
+		text += consoleStatus.guild.name + "/";
+	}
+
+	if (consoleStatus.channel == null) {
+
+		console.log(text);
+
+		let cgcca = consoleStatus.guild.channels.cache.array();
+		for (let i = 0, l = cgcca.length; i < l; i++) {
+			console.log(`${i >= 10 ? i : "0" + i}: ${cgcca[i].type == "category" ? "----- " : ""}${cgcca[i].name} ${cgcca[i].type == "voice" ? "(VC)" : ""}`);
+		}
+		return;
+	} else {
+		text += consoleStatus.channel.name + "/";
+	}
+
+	console.log(text);
 }
 
 //Client logon functions
@@ -141,7 +217,7 @@ function botSend (message, content) {	//Send a message to the specified channel
 	}
 
 	return message.channel.send(content).then(thisMsg => {
-		botLog(`Sent to ${thisMsg.channel.name}(${thisMsg.channel.guild.name}):\n${thisMsg.content}`);
+		//botLog(`Sent to ${thisMsg.channel.name}(${thisMsg.channel.guild.name}):\n${thisMsg.content}`);
 		
 	}).catch(error => {
 		botError(`Error sending message:\n${error.message}\n`);
@@ -174,7 +250,7 @@ function botDelete (message) {	//Delete a specified message
 
 function botReact (message, emote) {
 	message.react(emote).then( () => {
-		botLog(`Reacted with ${emote} to:\n${message.content}\n`);
+		//botLog(`Reacted with ${emote} to:\n${message.content}\n`);
 	}).catch(error => {
 		botError(`Failed to react to message:\n${error.message}\n`);
 	});
@@ -685,6 +761,17 @@ const commandList =
 			let url = `./files/common/dance/dance${choice > -1 ? choice : randNumber(pickLength)}.gif`;
 			botSend(message, {files: [url]});
 		}, "Let's dance!", "fun"
+	),
+
+	new Command("Grant", function (message, args) {
+
+			let pick = new Array();
+			let pickLength = FileSystem.readdirSync("./files/common/grant/").length;
+			let choice = parseInt(args[1]);
+
+			let url = `./files/common/grant/grant${choice > -1 ? choice : randNumber(pickLength)}.png`;
+			botSend(message, {files: [url]});
+		}, "Get a picture of the panda!", "fun"
 	),
 
 	/*new Command("Fezzy", function (message, args) {
