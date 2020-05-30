@@ -56,8 +56,6 @@ Interface.on('line', (input) => { InterfaceOnLine(input); });
 //Discord Called Events
 function ClientOnReady () {	//Called when after Discord Client is logged in
 
-	initCommands();
-
 	for (let i = 0, l = commandList.length; i < l; i++) {
 
 		let cmdi = commandList[i];
@@ -610,17 +608,13 @@ class Interaction extends Command {
 			},
 			description = description,
 			"interactions",
-			["@user1","@user2","@user.."],
+			["@user1 @user2 @user.."],
 			false,
 			[],
 			call ? call : name.toLowerCase().replace(/ /g, "")
 		);
 		this.outputs = outputs;
 	}
-}
-
-function initCommands () {
-
 }
 
 const commandList =
@@ -746,7 +740,7 @@ const commandList =
 		{
 			botSend(message, "No.");
 
-		}, "Try to eat someone!", "interactions", ["@user1","@user2","@user.."]
+		}, "Try to eat someone!", "interactions", ["@user1 @user2 @user.."]
 	),
 
 	new Command("Wag", function (message, args)
@@ -782,7 +776,7 @@ const commandList =
 			let text = `${serverName(message.author, message.guild)}${randArray(picks1)} ${randArray(picks2)} ${arr}${args[1] ? "'s" : ""}${randArray(picks3)}`;
 			botSend(message, text);
 
-		}, "Give someone a boop on the snoot!", "interactions", ["@user1","@user2","@user.."]
+		}, "Give someone a boop on the snoot!", "interactions", ["@user1 @user2 @user.."]
 	),
 
 	new Command("Feed", function (message, args)
@@ -808,7 +802,7 @@ const commandList =
 			let text = `${serverName(message.author, message.guild)} feeds ${arr} ${matches.length > 0 ? randArray(matches) : randArray(foodlist)}`;
 			botSend(message, text);
 
-		}, "Give someone a nice snack!", "interactions", ["@user1","@user2","@user.."]
+		}, "Give someone a nice snack!", "interactions", ["@user1 @user2 @user.."]
 	),
 
 	new Command("Foods", function (message, args)
@@ -826,7 +820,7 @@ const commandList =
 
 				for (let i = 0, l = foodlist.length; i < l; i++) {
 					if (foodlist[i].includes(args[2]) ) {
-						matches.push(foodlist[i]);
+						matches.push({text: foodlist[i], index: i});
 					}
 				}
 
@@ -837,11 +831,23 @@ const commandList =
 
 				let text = "Search results:\n";
 				for (let i = 0, l = matches.length; i < l; i++) {
-					text += `\`${matches[i]}\`\n`;
+					text += `${matches[i].index}: \`${matches[i].text}\`\n`;
 				}
 
 				botSend(message, text);
 				return;
+			}
+
+			if (args[1] == "remove") {
+				if (parseInt(args[2]) == NaN) {
+					botSend(message, "Not a valid selection.");
+				} else {
+					let foodlist = readSetting(message.guild, "foods");
+					let removed = foodlist.splice(parseInt(args[2]), 1);
+					writeSetting(message.guild, "foods", foodlist);
+					botSend(message, `Removed \`${removed}\` from the food list.`);
+					return;
+				}
 			}
 
 			if (args[1] == "rmlast") {
@@ -852,14 +858,7 @@ const commandList =
 				return;
 			}
 
-		}, "Add a food to the food list.", "settings", ["add [text] | rmlast | search [text]"], false, ["ADMINISTRATOR"]
-	),
-
-	new Command("List Foods", function (message, args)
-		{
-			botSend(message, arrayIntoList(readSetting(message.guild, "foods") ) );
-
-		}, "See the foods on the food list.", "settings", [], false
+		}, "Add a food to the food list.", "settings", ["add [text] | rmlast | search [text] | remove [number]"], false, ["ADMINISTRATOR"]
 	),
 
 	new Command("Server Information", function (message, args) {
