@@ -420,7 +420,7 @@ function writeSetting (guild, valueTag, value, addTo = false) {
 function readSetting (guild, valueTag = null) {
 
 	let filename = `servers/${guild.id}`;
-	let settings = readJSON(filename, quiet);
+	let settings = readJSON(filename, true);
 
 	if (valueTag == null) {
 		return settings;
