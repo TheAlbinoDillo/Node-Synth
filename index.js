@@ -5,7 +5,8 @@ const Discord = require("discord.js");
 const ReadLine = require("readline");
 const FileSystem = require("fs");
 const MathJS = require("mathjs");
-//const Color = require("./files/scripts/colors.js");
+const Color = require("./files/scripts/colors.js");
+const Debug = require("./files/scripts/runningOnPi.js");
 
 //Setup Discord Client
 const Client = new Discord.Client();
@@ -19,11 +20,14 @@ var consoleLogging =
 {
 	enabled: false, user: undefined
 };
+
 var consoleStatus =
 {
 	guild: null,
 	channel: null
 };
+
+const settingsPath = Debug ? "C:/Users/mojo4/AppData/Roaming/FurGunData/servers" : "/home/pi/fwg/settings";
 
 //Setup ReadLine Interface
 const Interface = ReadLine.createInterface
@@ -55,6 +59,10 @@ Interface.on('line', (input) => { InterfaceOnLine(input); });
 
 //Discord Called Events
 function ClientOnReady () {	//Called when after Discord Client is logged in
+
+	if (Debug) {
+		console.log("\n----------------Running in Debug Mode-----------------\n");
+	}
 
 	for (let i = 0, l = commandList.length; i < l; i++) {
 
@@ -363,7 +371,7 @@ function writeJSON (filename, object, quiet = false) {	//Write an object to a JS
 	let string = JSON.stringify(object);
 
  	try {
-		FileSystem.writeFileSync(`./files/${filename}.json`, string);
+		FileSystem.writeFileSync(`${filename}.json`, string);
 		if (!quiet) {
 			botLog(`Wrote to "${filename}.json":\n${string}\n`);
 		}
@@ -376,7 +384,7 @@ function readJSON (filename, quiet = false) {	//Read an object from a JSON file
 
 	let content;
 	try {
-		content = FileSystem.readFileSync(`./files/${filename}.json`);
+		content = FileSystem.readFileSync(`${filename}.json`);
 		if (!quiet) {
 			botLog(`Read from "${filename}.json":\n${(content.length > 100) ? `${content.toString().substring(0, 150)}...` : content}\n`);
 		}
@@ -390,7 +398,7 @@ function readJSON (filename, quiet = false) {	//Read an object from a JSON file
 
 function writeSetting (guild, valueTag, value, addTo = false) {
 
-	let filename = `servers/${guild.id}`;
+	let filename = `${settingsPath}/${guild.id}`;
 	let settings = readSetting(guild);
 
 	if (settings == null) {
@@ -417,7 +425,7 @@ function writeSetting (guild, valueTag, value, addTo = false) {
 
 function readSetting (guild, valueTag = null) {
 
-	let filename = `servers/${guild.id}`;
+	let filename = `${settingsPath}/${guild.id}`;
 	let settings = readJSON(filename, true);
 
 	if (valueTag == null) {
