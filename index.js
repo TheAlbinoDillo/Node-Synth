@@ -261,7 +261,7 @@ function botEdit (message, content, append = false) {	//Edit a specified message
 function botDelete (message) {	//Delete a specified message
 
 	message.delete().then(message => {
-		botLog(`Deleted message from ${message.author} in ${message.channel.name}(${message.channel.guild.name}):\n${message.content}`);
+		botLog(`Deleted message from ${message.author} in ${message.channel.name}(${message.channel.guild.name}):\n${message.content.slice(0, 100 - message.content.length)}\n`);
 	}).catch(error => {
 		botError(`Error deleting message:\n${error.message}\n`);
 	});
@@ -813,6 +813,13 @@ const commandList =
 		}, "Add a food to the food list.", "settings", ["add [text]"], false, ["ADMINISTRATOR"]
 	),
 
+	new Command("List Foods", function (message, args)
+		{
+			botSend(message, arrayIntoList(readSetting(message.guild, "foods") ) );
+
+		}, "See the foods on the food list.", "settings", [], false
+	),
+
 	new Command("Server Information", function (message, args) {
 			let g = message.guild;
 			let url = `https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png`;
@@ -847,7 +854,7 @@ const commandList =
 	),
 
 	new Command("UwU Speak", function (message, args) {
-			botSend(message, `${message.author} ${makeUwU(message.content.substring(Prefix.length + args[0].length) )}` );
+			botSend(message, `${message.author} (${Prefix}${this.call}):\n${makeUwU(message.content.substring(Prefix.length + args[0].length) )}` );
 		}, "Convert to UwU speak!", "fun", ["text"], true, [], "uwu"
 	),
 
