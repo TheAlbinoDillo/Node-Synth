@@ -27,7 +27,7 @@ var consoleStatus =
 	channel: null
 };
 
-const settingsPath = Debug.isDebug ? "C:/Users/mojo4/AppData/Roaming/FurGunData/servers" : "/home/pi/fwg/settings";
+const settingsPath = Debug.isDebug ? "C:/Users/mojo4/AppData/Roaming/FurGunData/servers" : "/home/pi/fwg/settings/servers";
 
 //Setup ReadLine Interface
 const Interface = ReadLine.createInterface
