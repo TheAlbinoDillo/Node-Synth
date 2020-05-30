@@ -789,14 +789,23 @@ const commandList =
 		{
 			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
 
-			let pick = readSetting(message.guild, "foods");
+			let foodlist = readSetting(message.guild, "foods");
 
-			if (pick == null) {
+			if (foodlist == null) {
 				botSend(message, "The food list is empty.");
 				return;
 			}
 
-			let text = `${serverName(message.author, message.guild)} feeds ${arr} ${randArray(pick)}`;
+			let matches = [];
+			if (args[1]) {
+				for (let i = 0, l = foodlist.length; i < l; i++) {
+					if (foodlist[i].includes(args[1]) ) {
+						matches.push(foodlist[i]);
+					}
+				}
+			}
+
+			let text = `${serverName(message.author, message.guild)} feeds ${arr} ${matches.length > 0 ? randArray(matches) : randArray(foodlist)}`;
 			botSend(message, text);
 
 		}, "Give someone a nice snack!", "interactions", ["@user1","@user2","@user.."]
@@ -808,9 +817,42 @@ const commandList =
 				let text = message.content.substring(Prefix.length + args[0].length + args[1].length + 2);
 				writeSetting(message.guild, "foods", text, true);
 				botSend(message, `Added \`${text}\` to the food list.`);
+				return;
 			}
 
-		}, "Add a food to the food list.", "settings", ["add [text]"], false, ["ADMINISTRATOR"]
+			if (args[1] == "search") {
+				let foodlist = readSetting(message.guild, "foods");
+				let matches = [];
+
+				for (let i = 0, l = foodlist.length; i < l; i++) {
+					if (foodlist[i].includes(args[2]) ) {
+						matches.push(foodlist[i]);
+					}
+				}
+
+				if (matches.length == 0) {
+					botSend(message, `No matches for \`${args[2]}\``);
+					return;
+				}
+
+				let text = "Search results:\n";
+				for (let i = 0, l = matches.length; i < l; i++) {
+					text += `\`${matches[i]}\`\n`;
+				}
+
+				botSend(message, text);
+				return;
+			}
+
+			if (args[1] == "rmlast") {
+				let foodlist = readSetting(message.guild, "foods");
+				let removed = foodlist.pop();
+				writeSetting(message.guild, "foods", foodlist);
+				botSend(message, `Removed \`${removed}\` from the food list.`);
+				return;
+			}
+
+		}, "Add a food to the food list.", "settings", ["add [text] | rmlast | search [text]"], false, ["ADMINISTRATOR"]
 	),
 
 	new Command("List Foods", function (message, args)
