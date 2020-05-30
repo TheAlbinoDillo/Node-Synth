@@ -5,8 +5,7 @@ const Discord = require("discord.js");
 const ReadLine = require("readline");
 const FileSystem = require("fs");
 const MathJS = require("mathjs");
-//const Esix = require("./e6.js");
-const Color = require("./files/scripts/colors.js");
+//const Color = require("./files/scripts/colors.js");
 
 //Setup Discord Client
 const Client = new Discord.Client();
@@ -15,22 +14,40 @@ const Prefix = 'fg.';
 
 //Client variables
 var ClientLoggedIn = false;
-var foodCommandList = [];
 var commandCategoryList = new Array();
-var bandwagonCommandVar = { leader: undefined, limit: -1, members: [] };
-var consoleLogging = { enabled: false, user: undefined };
-var consoleStatus = {guild: null, channel: null};
+var consoleLogging = 
+{
+	enabled: false, user: undefined
+};
+var consoleStatus =
+{
+	guild: null,
+	channel: null
+};
 
 //Setup ReadLine Interface
-const Interface = ReadLine.createInterface({
+const Interface = ReadLine.createInterface
+({
 	input: process.stdin,
 	output: process.stdout
 });
 
 //Setup Discord Client Events
-Client.on("ready", () => { botLog("Client is ready\n"); ClientOnReady(); });
-Client.on("message", message => { ClientOnMessage(message); });
-Client.on("messageUpdate", (oldMessage, newMessage) => { ClientOnMessageUpdate(oldMessage, newMessage); });
+Client.on("ready", () =>
+	{
+		botLog("Client is ready\n"); ClientOnReady();
+	}
+);
+Client.on("message", message =>
+	{
+		ClientOnMessage(message);
+	}
+);
+Client.on("messageUpdate", (oldMessage, newMessage) =>
+	{
+		ClientOnMessageUpdate(oldMessage, newMessage);
+	}
+);
 Client.on("guildMemberAdd", member => {  });
 
 //Setup Interface Events
@@ -48,8 +65,6 @@ function ClientOnReady () {	//Called when after Discord Client is logged in
 			commandCategoryList.push(cmdi.category);
 		}
 	}
-
-	foodCommandList = readJSON("common/foods");
 }
 
 function ClientOnMessage (message) {	//Called when the Client receives a message
@@ -205,6 +220,11 @@ function Activity (type = "WATCHING", activity = `${Prefix}help`) {
 //Client message functions
 function botSend (message, content) {	//Send a message to the specified channel
 
+	if (typeof message != typeof new Discord.Message() ) {
+		botError("Did not provide a message to botSend.\n");
+		return null;
+	}
+
 	if (typeof content == typeof "string") {
 		if (content.trim() == "") {
 			botError("Message content is empty, this would fail. Did not send message.\n");
@@ -340,30 +360,84 @@ function getMentionList (message, returnNames, removeSelf = true, removeBots = f
 	return mentions;
 }
 
-function writeJSON (filename, object) {	//Write an object to a JSON file
+function writeJSON (filename, object, quiet = false) {	//Write an object to a JSON file
 
 	let string = JSON.stringify(object);
 
  	try {
 		FileSystem.writeFileSync(`./files/${filename}.json`, string);
-		botLog(`Wrote to "${filename}.json":\n${string}\n`);
+		if (!quiet) {
+			botLog(`Wrote to "${filename}.json":\n${string}\n`);
+		}
 	} catch (error) {
 		botError(`Failed to write to "${filename}.json":\n${error.message}\n`);
 	}
 }
 
-function readJSON (filename) {	//Read an object from a JSON file
+function readJSON (filename, quiet = false) {	//Read an object from a JSON file
 
 	let content;
 	try {
 		content = FileSystem.readFileSync(`./files/${filename}.json`);
-		botLog(`Read from "${filename}.json":\n${(content.length > 100) ? `${content.toString().substring(0, 150)}...` : content}\n`);
+		if (!quiet) {
+			botLog(`Read from "${filename}.json":\n${(content.length > 100) ? `${content.toString().substring(0, 150)}...` : content}\n`);
+		}
 	} catch (error) {
 		botError(`Failed to read from "${filename}.json":\n${error.message}\n`);
 		return null;
 	}
 
 	return JSON.parse(content);
+}
+
+function writeSetting (guild, valueTag, value, addTo = false) {
+
+	let filename = `servers/${guild.id}`;
+	let settings = readSetting(guild);
+
+	if (settings == null) {
+
+		settings = {name: guild.name};
+		botLog(`No settings file detected, created "${guild.id}" for "${guild.name}"\n`);
+		writeJSON(filename, settings);
+	}
+
+	if (settings[valueTag] == undefined) {
+
+		settings[valueTag] = [];
+	}
+
+	if (addTo) {
+		settings[valueTag].push(value);
+	} else {
+		settings[valueTag] = value;
+	}
+
+	writeJSON(filename, settings, true);
+	botLog(`${addTo ? "Added to" : "Set"} value "${valueTag}" in "${guild.name}":\n${value}\n`);
+}
+
+function readSetting (guild, valueTag = null) {
+
+	let filename = `servers/${guild.id}`;
+	let settings = readJSON(filename, quiet);
+
+	if (valueTag == null) {
+		return settings;
+	}
+
+	if (settings == null) {
+		botError(`No settings for "${guild.name}" were ever set.`);
+		return null;
+	}
+
+	if (settings[valueTag] == undefined) {
+		botError(`The "${valueTag}" setting for "${guild.name}" was never set.`);
+		return undefined;
+	}
+
+	botLog(`Read setting "${valueTag}" for "${guild.name}":\n${settings[valueTag]}\n`);
+	return settings[valueTag];
 }
 
 function makeUwU (string) {
@@ -650,6 +724,14 @@ const commandList =
 		]
 	),
 
+	new Interaction("Bite", "Give someone a bite! Rawr!",
+		[
+			["", " playfully", " quickly", " angrily"],
+			["bites"],
+			["!", "!", " on the face!", " on the arm!", " on the tail!"]
+		]
+	),
+
 	new Command("Bark", function (message, args)
 		{
 			let picks1 = ["", " Woof Woof!", " Woof!", " Ruff!", " Ruff Ruff!", " Arrwf!", " Awrf!", " Awrf awrf!"];
@@ -701,6 +783,34 @@ const commandList =
 			botSend(message, text);
 
 		}, "Give someone a boop on the snoot!", "interactions", ["@user1","@user2","@user.."]
+	),
+
+	new Command("Feed", function (message, args)
+		{
+			let arr = arrayIntoList(getMentionList(message, true) ) || "themselves";
+
+			let pick = readSetting(message.guild, "foods");
+
+			if (pick == null) {
+				botSend(message, "The food list is empty.");
+				return;
+			}
+
+			let text = `${serverName(message.author, message.guild)} feeds ${arr} ${randArray(pick)}`;
+			botSend(message, text);
+
+		}, "Give someone a nice snack!", "interactions", ["@user1","@user2","@user.."]
+	),
+
+	new Command("Foods", function (message, args)
+		{
+			if (args[1] == "add") {
+				let text = message.content.substring(Prefix.length + args[0].length + args[1].length + 2);
+				writeSetting(message.guild, "foods", text, true);
+				botSend(message, `Added \`${text}\` to the food list.`);
+			}
+
+		}, "Add a food to the food list.", "settings", ["add [text]"], false, ["ADMINISTRATOR"]
 	),
 
 	new Command("Server Information", function (message, args) {
@@ -773,17 +883,6 @@ const commandList =
 		}, "Get a picture of the panda!", "fun"
 	),
 
-	/*new Command("Fezzy", function (message, args) {
-
-			let pick = new Array();
-			let pickLength = FileSystem.readdirSync("./files/common/dance/").length;
-			let choice = parseInt(args[1]);
-
-			let url = `./files/common/dance/dance${choice > -1 ? choice : randNumber(pickLength)}.gif`;
-			botSend(message, {files: [url]});
-		}, "Let's dance!", "fun"
-	),*/
-
 	new Command("Leave", function (message, args) {
 			Disconnect(message);
 		}, "Disconnect the bot.", null, [], false, ["ADMINISTRATOR"]
@@ -827,14 +926,6 @@ const commandList =
 
 		}, "Get a preview of a hex color!", "tools", ["hex code"], false, [], "hex"
 	),
-
-	/*new Command("e621", function (message, args) {
-
-			args.shift();
-			botSend(message, Esix.getImages(args, true) );
-
-		}, "Request Images from e621.net", "tools", ["tags"], false, [], "e6"
-	),*/
 
 	new Command("To Binary", function (message, args) {
 
