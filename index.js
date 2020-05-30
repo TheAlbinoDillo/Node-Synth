@@ -27,7 +27,7 @@ var consoleStatus =
 	channel: null
 };
 
-const settingsPath = Debug ? "C:/Users/mojo4/AppData/Roaming/FurGunData/servers" : "/home/pi/fwg/settings";
+const settingsPath = Debug.isDebug ? "C:/Users/mojo4/AppData/Roaming/FurGunData/servers" : "/home/pi/fwg/settings";
 
 //Setup ReadLine Interface
 const Interface = ReadLine.createInterface
@@ -60,7 +60,7 @@ Interface.on('line', (input) => { InterfaceOnLine(input); });
 //Discord Called Events
 function ClientOnReady () {	//Called when after Discord Client is logged in
 
-	if (Debug) {
+	if (Debug.isDebug) {
 		console.log("\n----------------Running in Debug Mode-----------------\n");
 	}
 
