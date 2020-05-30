@@ -5,9 +5,8 @@ const Discord = require("discord.js");
 const ReadLine = require("readline");
 const FileSystem = require("fs");
 const MathJS = require("mathjs");
-const Request = require("request");
-const Tools = require("./botTools.js");
-const Color = require("./colors.js");
+const Esix = require("./e6.js");
+const Color = require("./files/scripts/colors.js");
 
 //Setup Discord Client
 const Client = new Discord.Client();
@@ -827,6 +826,14 @@ const commandList =
 			botSend(message, embed);
 
 		}, "Get a preview of a hex color!", "tools", ["hex code"], false, [], "hex"
+	),
+
+	new Command("e621", function (message, args) {
+
+			args.shift();
+			botSend(message, Esix.getImages(args, true) );
+
+		}, "Request Images from e621.net", "tools", ["tags"], false, [], "e6"
 	),
 
 	new Command("To Binary", function (message, args) {
