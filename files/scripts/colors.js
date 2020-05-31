@@ -1,10 +1,8 @@
-var fs = require("fs");
-var content = fs.readFileSync(`./files/common/hexcolors.json`);
-var obj = JSON.parse(content);
+const fs = require("fs");
+let content = fs.readFileSync(`./files/common/hexcolors.json`);
+const obj = JSON.parse(content);
 
-closest("##FFFF70");
-
-function closest (hexstring) {
+function closestColor (hexstring) {
 	let num = parseInt(hexstring.replace(/#/g, ""), 16);
 	let add = 0;
 
@@ -35,6 +33,6 @@ function format (num) {
 
 module.exports =
 {
-	closest: closest,
+	closest: closestColor,
 	format: format
 };
