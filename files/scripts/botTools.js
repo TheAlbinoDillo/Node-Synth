@@ -28,11 +28,14 @@ function serverName (user, guild, bold = true, removeSpecial = true) {	//Get the
 
 function getMentionList (message, returnNames, removeSelf = true, removeBots = false) {	//Get all the user mentions in a message
 
-	let mentions = message.mentions.users.array();
+	let rawMentions = message.mentions.users.array();
+	let mentions = [];
 
-	for (let i = 0, l = mentions.length; i < l; i++) {	//Remove the user writing the message or any bots
-		if ( (mentions[i] == message.author && removeSelf) || (mentions[i].bot && removeBots) ) {
-			mentions.splice(i, 1);
+	for (let i = 0, l = rawMentions.length; i < l; i++) {	//Remove the user writing the message or any bots
+		
+		let rmi = rawMentions[i];
+		if ( !( (rmi == message.author && removeSelf) || (rmi.bot && removeBots) ) ) {
+			mentions.push(rmi);
 		}
 	}
 
