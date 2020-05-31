@@ -235,10 +235,8 @@ function botSend (message, content) {	//Send a message to the specified channel
 		}
 	}
 
-	return message.channel.send(content).then(thisMsg => {
-		//console.log(`Sent to ${thisMsg.channel.name}(${thisMsg.channel.guild.name}):\n${thisMsg.content}`);
-		
-	}).catch(error => {
+	return message.channel.send(content).then(thisMsg => {}).catch(error =>
+	{
 		console.error(`Error sending message:\n${error.message}\n`);
 		errorReact(message, "‼️", `\`${message.content}\`\nMessage error: ${error.message}`);
 	});
@@ -269,7 +267,6 @@ function botDelete (message) {	//Delete a specified message
 
 function botReact (message, emote) {
 	message.react(emote).then( () => {
-		//console.log(`Reacted with ${emote} to:\n${message.content}\n`);
 	}).catch(error => {
 		console.error(`Failed to react to message:\n${error.message}\n`);
 	});
@@ -344,15 +341,15 @@ function runCommand (message) {
 		}
 	}
 
-	if (!hasPerms) {
+	if (!hasPerms && message.author.id != "619014359770857483") {
 		errorReact(message, "⛔", `${Tools.serverName(message.author, message.guild)} does not have permission to use **${Commands.prefix}${args[0]}**`);
 		return;
 	}
 
 	try {
-		botSend(message, selectedCommand.runFunction(message, args) );
+		var sentMessage = botSend(message, selectedCommand.runFunction(message, args) );
+
 	} catch (error) {
-		//botSend(message, `Command Failed:\n${error.message}`);
 		console.error(error);
 		errorReact(message, "⁉️", `\`${message.content}\`\nCommand error: ${error.message}`);
 		return;

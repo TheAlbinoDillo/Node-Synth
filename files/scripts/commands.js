@@ -130,7 +130,15 @@ const commandList =
 	new Interaction("Pet", "Give someone some nice pets!",
 		[
 			[" softly"],
-			["pets"],
+			["pets","kneads their paws into"],
+			["!"]
+		]
+	),
+
+	new Interaction("Pat", "Give someone some nice pats!",
+		[
+			[" softly"],
+			["pats"],
 			["!", " on the head!"]
 		]
 	),

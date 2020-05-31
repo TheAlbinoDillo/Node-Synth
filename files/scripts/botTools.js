@@ -18,6 +18,10 @@ function serverName (user, guild, bold = true, removeSpecial = true) {	//Get the
 		name = name.replace(/[-_]/g,' ').replace(regex, '').trim();
 		name = `${name[0].toUpperCase()}${name.substring(1)}`;
 
+		if (user.id == "662825806967472128") {
+			name = "me";
+		}
+
 		if (name.length <= 1) {
 			name = null;
 		}
