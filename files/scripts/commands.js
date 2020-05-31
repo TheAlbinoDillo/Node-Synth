@@ -297,16 +297,6 @@ const commandList =
 		}, "Get information about the server.", "tools", [], false, [], "serverinfo"
 	),
 
-	new Command("Marco", function (message, args) {
-			let pingTime = message.createdTimestamp;
-			message.channel.send("Polo").then(msg => {
-				botEdit(msg, `**Polo** \`${(msg.createdTimestamp - pingTime)} ms\``);
-			}).catch(error => {
-				console.error(`Error sending marcopolo message:\n${error.message}\n`);
-			});
-		}, "Ping a simple responce from the bot", "tools"
-	),
-
 	new Command("Echo", function (message, args)
 		{
 			let text = message.content.substring(Prefix.length).substring(this.call.length);
@@ -381,6 +371,8 @@ const commandList =
 			return text;
 		}, "Enslave the bot to do math!", "tools", ["expression"], false, [], "calc"
 	),
+
+	new Command("Test Error", "This is not supposed to be a string", "", null),
 
 	new Command("Hex Color", function (message, args) {
 

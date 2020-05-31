@@ -240,7 +240,7 @@ function botSend (message, content) {	//Send a message to the specified channel
 		
 	}).catch(error => {
 		console.error(`Error sending message:\n${error.message}\n`);
-		botReact(message, "‼️");
+		errorReact(message, "‼️", `\`${message.content}\`\nMessage error: ${error.message}`);
 	});
 }
 
@@ -302,6 +302,23 @@ function botSendDM (user, content) {	//Send a DM message to a user
 	});
 }
 
+function errorReact (message, emoji, respondWith, time = 300000) {
+
+	botReact(message, emoji);
+
+	let collector = message.createReactionCollector( (reaction, user) => 
+		{
+			return reaction.emoji.name == emoji && !user.bot;
+		}, {time: time});
+
+	collector.on("collect", (reaction, user) =>
+		{
+			collector.stop("complete");
+			botSend(message, respondWith);
+		}
+	);
+}
+
 function runCommand (message) {
 
 	let args = message.content.substring(Commands.prefix.length).split(" ");
@@ -328,8 +345,7 @@ function runCommand (message) {
 	}
 
 	if (!hasPerms) {
-		//botSend(message, `${Tools.serverName(message.author, message.guild)} does not have permission to use **${Commands.prefix}${args[0]}**`);
-		botReact(message, "⛔");
+		errorReact(message, "⛔", `${Tools.serverName(message.author, message.guild)} does not have permission to use **${Commands.prefix}${args[0]}**`);
 		return;
 	}
 
@@ -338,7 +354,7 @@ function runCommand (message) {
 	} catch (error) {
 		//botSend(message, `Command Failed:\n${error.message}`);
 		console.error(error);
-		botReact(message, "⁉️");
+		errorReact(message, "⁉️", `\`${message.content}\`\nCommand error: ${error.message}`);
 		return;
 	}
 
