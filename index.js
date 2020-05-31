@@ -940,6 +940,17 @@ const commandList =
 		}, "Get a picture of the panda!", "fun"
 	),
 
+	new Command("Fox", function (message, args) {
+
+			let pickLength = FileSystem.readdirSync("./files/common/fox/").length;
+			let choice = parseInt(args[1]);
+			let pick = choice > -1 ? choice : randNumber(pickLength)
+
+			let url = `./files/common/fox/fox${pick}.png`;
+			botSend(message, {content: pick, files: [url]});
+		}, "Get a picture of a cute fox!", "fun"
+	),
+
 	new Command("Leave", function (message, args) {
 			Disconnect(message);
 		}, "Disconnect the bot.", null, [], false, ["ADMINISTRATOR"]
