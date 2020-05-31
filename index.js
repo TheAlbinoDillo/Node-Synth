@@ -62,6 +62,7 @@ function ClientOnReady () {	//Called when after Discord Client is logged in
 
 	if (Debug.isDebug) {
 		console.log("\n----------------Running in Debug Mode-----------------\n");
+		Activity("PLAYING", "Debugging");
 	}
 
 	for (let i = 0, l = commandList.length; i < l; i++) {
