@@ -286,7 +286,7 @@ const commandList =
 				return `Removed \`${removed}\` from the food list.`;
 			}
 
-		}, "Add a food to the food list.", "settings", ["add [text] | rmlast | search [text] | remove [number]"], false, ["ADMINISTRATOR"]
+		}, "Add a food to the food list.", "settings", ["add [text] | rmlast | search [text] | remove [number]"], false, ["MANAGE_CHANNELS"]
 	),
 
 	new Command("Server Information", function (message, args) {
