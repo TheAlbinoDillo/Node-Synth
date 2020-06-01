@@ -76,8 +76,8 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 		let maa = message.attachments.array()[0];
 		if (maa != undefined) {
 			if (maa.width != undefined) {
-				botReact(message, ":symbol_reddit_vote_up:680935204050698329");
-				botReact(message, ":symbol_reddit_vote_down:680935348272103445");
+				//botReact(message, ":symbol_reddit_vote_up:680935204050698329");
+				//botReact(message, ":symbol_reddit_vote_down:680935348272103445");
 			}
 		}
 	}
@@ -299,6 +299,23 @@ function botSendDM (user, content) {	//Send a DM message to a user
 	});
 }
 
+function pinReact (message, count = 6, time = 100000) {
+
+	let collector = message.createReactionCollector( (reaction, user) => 
+	{
+		return reaction.emoji.name == "📌" && !user.bot;
+	}, {time: time});
+
+	collector.on("collect", (reaction, user) =>
+		{
+			if (collector.collected.array().length == count) {
+				message.pin().then().catch();
+				collector.stop("complete");
+			}
+		}
+	);
+}
+
 function errorReact (message, emoji, respondWith, time = 300000) {
 
 	botReact(message, emoji);
@@ -359,3 +376,8 @@ function runCommand (message) {
 		botDelete(message);
 	}
 }
+
+module.exports =
+{
+	Disconnect: Disconnect
+};
