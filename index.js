@@ -59,8 +59,6 @@ function ClientOnReady () {	//Called when after Discord Client is logged in
 
 function ClientOnMessage (message) {	//Called when the Client receives a message
 
-	pinReact(message);
-
 	if (consoleStatus.channel == message.channel) {
 		console.log(`${message.author.username}:\t${message.content}`);
 	}
@@ -78,6 +76,9 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 		let maa = message.attachments.array()[0];
 		if (maa != undefined) {
 			if (maa.width != undefined) {
+
+				pinReact(message);
+
 				//botReact(message, ":symbol_reddit_vote_up:680935204050698329");
 				//botReact(message, ":symbol_reddit_vote_down:680935348272103445");
 			}
@@ -319,8 +320,10 @@ function pinReact (message, count = 6, time = 3000000) {
 
 	collector.on("end", (collected, reason) =>
 		{
-			if (reason == "time" && collected.array()[0].count > 0) {
-				botReact(message, "⏰");
+			if (collected.array()[0]) {
+				if (reason == "time" && collected.array()[0].count > 0) {
+					botReact(message, "⏰");
+				}
 			}
 		}
 	);
