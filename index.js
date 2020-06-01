@@ -76,8 +76,8 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 		let maa = message.attachments.array()[0];
 		if (maa != undefined) {
 			if (maa.width != undefined) {
-				botReact(message, ":symbol_reddit_vote_up:680935204050698329");
-				botReact(message, ":symbol_reddit_vote_down:680935348272103445");
+				//botReact(message, ":symbol_reddit_vote_up:680935204050698329");
+				//botReact(message, ":symbol_reddit_vote_down:680935348272103445");
 			}
 		}
 	}
@@ -238,7 +238,7 @@ function botSend (message, content) {	//Send a message to the specified channel
 	return message.channel.send(content).then(thisMsg => {}).catch(error =>
 	{
 		console.error(`Error sending message:\n${error.message}\n`);
-		errorReact(message, "‼️", `\`${message.content}\`\nMessage error: ${error.message}`);
+		collectReacts(message, "‼️", `\`${message.content}\`\nMessage error: ${error.message}`);
 	});
 }
 
@@ -299,7 +299,7 @@ function botSendDM (user, content) {	//Send a DM message to a user
 	});
 }
 
-function errorReact (message, emoji, respondWith, time = 300000) {
+function collectReacts (message, emoji, respondWith, time = 300000) {
 
 	botReact(message, emoji);
 
@@ -342,7 +342,7 @@ function runCommand (message) {
 	}
 
 	if (!hasPerms && message.author.id != "619014359770857483") {
-		errorReact(message, "⛔", `${Tools.serverName(message.author, message.guild)} does not have permission to use **${Commands.prefix}${args[0]}**`);
+		collectReacts(message, "⛔", `${Tools.serverName(message.author, message.guild)} does not have permission to use **${Commands.prefix}${args[0]}**`);
 		return;
 	}
 
@@ -351,7 +351,7 @@ function runCommand (message) {
 
 	} catch (error) {
 		console.error(error);
-		errorReact(message, "⁉️", `\`${message.content}\`\nCommand error: ${error.message}`);
+		collectReacts(message, "⁉️", `\`${message.content}\`\nCommand error: ${error.message}`);
 		return;
 	}
 
