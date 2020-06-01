@@ -63,6 +63,14 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 		console.log(`${message.author.username}:\t${message.content}`);
 	}
 
+	message, emoji, respondWith, time = 300000
+
+	let respond = () =>
+	{
+
+	};
+	collectReacts(message, "symbol_pin:703655845388353576", respond);
+
 	if (message.content.toLowerCase().indexOf(Commands.prefix) == 0 && message.channel.guild) {
 		
 		if (message.author.bot) {
@@ -238,7 +246,11 @@ function botSend (message, content) {	//Send a message to the specified channel
 	return message.channel.send(content).then(thisMsg => {}).catch(error =>
 	{
 		console.error(`Error sending message:\n${error.message}\n`);
-		collectReacts(message, "‼️", `\`${message.content}\`\nMessage error: ${error.message}`);
+		let respond = () =>
+		{
+			botSend(message, `\`${message.content}\`\nMessage error: ${error.message}`);
+		};
+		collectReacts(message, "‼️", respond);
 	});
 }
 
@@ -311,7 +323,7 @@ function collectReacts (message, emoji, respondWith, time = 300000) {
 	collector.on("collect", (reaction, user) =>
 		{
 			collector.stop("complete");
-			botSend(message, respondWith);
+			respondWith();
 		}
 	);
 }
@@ -342,7 +354,12 @@ function runCommand (message) {
 	}
 
 	if (!hasPerms && message.author.id != "619014359770857483") {
-		collectReacts(message, "⛔", `${Tools.serverName(message.author, message.guild)} does not have permission to use **${Commands.prefix}${args[0]}**`);
+
+		let respond = () =>
+		{
+			botSend(message, `${Tools.serverName(message.author, message.guild)} does not have permission to use **${Commands.prefix}${args[0]}**`);
+		};
+		collectReacts(message, "⛔", respond);
 		return;
 	}
 
@@ -351,7 +368,11 @@ function runCommand (message) {
 
 	} catch (error) {
 		console.error(error);
-		collectReacts(message, "⁉️", `\`${message.content}\`\nCommand error: ${error.message}`);
+		let respond = () =>
+		{
+			botSend(message, `\`${message.content}\`\nCommand error: ${error.message}`);
+		};
+		collectReacts(message, "⁉️", respond);
 		return;
 	}
 
