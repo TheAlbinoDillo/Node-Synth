@@ -59,6 +59,8 @@ function ClientOnReady () {	//Called when after Discord Client is logged in
 
 function ClientOnMessage (message) {	//Called when the Client receives a message
 
+	pinReact(message);
+
 	if (consoleStatus.channel == message.channel) {
 		console.log(`${message.author.username}:\t${message.content}`);
 	}
@@ -314,6 +316,14 @@ function pinReact (message, count = 6, time = 100000) {
 			}
 		}
 	);
+
+	collector.on("end", (collected, reason) =>
+		{
+			if (reason == "time") {
+				botReact(message, "⏰");
+			}
+		}
+	);
 }
 
 function errorReact (message, emoji, respondWith, time = 300000) {
@@ -329,6 +339,14 @@ function errorReact (message, emoji, respondWith, time = 300000) {
 		{
 			collector.stop("complete");
 			botSend(message, respondWith);
+		}
+	);
+
+	collector.on("end", (collected, reason) =>
+		{
+			if (reason == "time") {
+				botReact(message, "⏰");
+			}
 		}
 	);
 }
@@ -376,8 +394,3 @@ function runCommand (message) {
 		botDelete(message);
 	}
 }
-
-module.exports =
-{
-	Disconnect: Disconnect
-};

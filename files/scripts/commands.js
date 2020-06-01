@@ -1,7 +1,6 @@
 const Discord = require("discord.js");
 const FileSystem = require("fs");
 const Tools = require("./botTools.js");
-const Index = require("../../index.js");
 
 const Prefix = 'fg.';
 
@@ -362,7 +361,7 @@ const commandList =
 	),
 
 	new Command("Leave", function (message, args) {
-			Index.Disconnect(message);
+			process.exit();
 			return null;
 		}, "Disconnect the bot.", null, [], false, ["ADMINISTRATOR"]
 	),
