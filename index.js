@@ -301,7 +301,7 @@ function botSendDM (user, content) {	//Send a DM message to a user
 	});
 }
 
-function pinReact (message, count = 6, time = 100000) {
+function pinReact (message, count = 6, time = 3000000) {
 
 	let collector = message.createReactionCollector( (reaction, user) => 
 	{
@@ -310,7 +310,7 @@ function pinReact (message, count = 6, time = 100000) {
 
 	collector.on("collect", (reaction, user) =>
 		{
-			if (collector.collected.array().length == count) {
+			if (collector.collected.array()[0].count == count) {
 				message.pin().then().catch();
 				collector.stop("complete");
 			}
@@ -319,14 +319,14 @@ function pinReact (message, count = 6, time = 100000) {
 
 	collector.on("end", (collected, reason) =>
 		{
-			if (reason == "time") {
+			if (reason == "time" && collected.array()[0].count > 0) {
 				botReact(message, "⏰");
 			}
 		}
 	);
 }
 
-function errorReact (message, emoji, respondWith, time = 300000) {
+function errorReact (message, emoji, respondWith, time = 3000000) {
 
 	botReact(message, emoji);
 
