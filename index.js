@@ -3,7 +3,6 @@
 //"Import" Dependencies
 const Discord = require("discord.js");
 const ReadLine = require("readline");
-const MathJS = require("mathjs");
 const Tools = require("./files/scripts/botTools.js");
 const Commands = require("./files/scripts/commands.js");
 
@@ -392,19 +391,8 @@ function runCommand (message) {
 		return;
 	}
 
-	commandrun: try {
-		let scrf = selectedCommand.runFunction(message, args);
-		if (!scrf) {
-			break commandrun;
-		}
-
-		if (typeof scrf != typeof []) {
-			scrf = [scrf];
-		}
-
-		for (let i = 0, l = scrf.length; i < l; i++) {
-			botSend(message, scrf[i]);
-		}
+	try {
+		botSend(message, selectedCommand.runFunction(message, args) );
 
 	} catch (error) {
 		console.error(error);
