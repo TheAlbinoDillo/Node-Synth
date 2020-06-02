@@ -3,7 +3,7 @@ const Debug = require("./runningOnPi.js");
 const Color = require("./colors.js");
 
 const settingsPath = Debug.isDebug ? "C:/Users/mojo4/AppData/Roaming/FurGunData/servers" : "/home/pi/fwg/settings/servers";
-var fileChanged = false;
+var cachedSettings = [];
 
 function serverName (user, guild, bold = true, removeSpecial = true) {	//Get the server nickname of a user and clean it up
 
@@ -53,29 +53,25 @@ function getMentionList (message, returnNames, removeSelf = true, removeBots = f
 	return mentions;
 }
 
-function writeJSON (filename, object, quiet = false) {	//Write an object to a JSON file
+function writeJSON (filename, object) {	//Write an object to a JSON file
 
 	let string = JSON.stringify(object);
 
  	try {
 		FileSystem.writeFileSync(`${filename}.json`, string);
-		if (!quiet) {
-			console.log(`Wrote to "${filename}.json":\n${string}\n`);
-		}
+		console.log(`Wrote to "${filename}.json":\n${string}\n`);
 	} catch (error) {
 		console.error(`Failed to write to "${filename}.json":\n${error.message}\n`);
 	}
 	fileChanged = true;
 }
 
-function readJSON (filename, quiet = false) {	//Read an object from a JSON file
+function readJSON (filename) {	//Read an object from a JSON file
 
 	let content;
 	try {
 		content = FileSystem.readFileSync(`${filename}.json`);
-		if (!quiet) {
-			console.log(`Read from "${filename}.json":\n${(content.length > 100) ? `${content.toString().substring(0, 150)}...` : content}\n`);
-		}
+		console.log(`Read from "${filename}.json":\n${(content.length > 100) ? `${content.toString().substring(0, 150)}...` : content}\n`);
 	} catch (error) {
 		console.error(`Failed to read from "${filename}.json":\n${error.message}\n`);
 		return null;
@@ -105,16 +101,25 @@ function writeSetting (guild, valueTag, value, addTo = false) {
 		addTo ? settings[valueTag].push(value) : settings[valueTag] = value;
 	}
 
-	writeJSON(filename, settings, true);
+	writeJSON(filename, settings);
+	cachedSettings[guild.id] = settings;
 	console.log(`${addTo ? "Added to" : "Set"} value "${valueTag}" in "${guild.name}":\n${value}\n`);
 }
 
 function readSetting (guild, valueTag = null) {
 
 	let filename = `${settingsPath}/${guild.id}`;
-	let settings = readJSON(filename, true);
+	let settings;
+
+	if (cachedSettings[guild.id] == null) {
+		cachedSettings[guild.id] = readJSON(filename);
+		console.error(`Loaded "${guild.name}" into settings cache.`);
+	}
+
+	settings = cachedSettings[guild.id];
 
 	if (valueTag == null) {
+		console.error(`No valueTag "${valueTag}" was found for "${guild.name}"`);
 		return settings;
 	}
 
@@ -198,5 +203,4 @@ module.exports =
 		format: Color.format
 	},
 	disconnect: disconnect,
-	fileChanged: fileChanged
 };
