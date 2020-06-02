@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const FileSystem = require("fs");
+const MathJS = require("mathjs");
 const Tools = require("./botTools.js");
 
 const Prefix = 'fg.';
@@ -407,6 +408,10 @@ const commandList =
 	),
 
 	new Command("Test Error", "This is not supposed to be a string", "", null),
+
+	new Command("Test List", function (message, args) {
+		return ["This","is","an","array"];
+	}),
 
 	new Command("Hex Color", function (message, args) {
 
