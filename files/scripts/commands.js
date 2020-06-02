@@ -361,9 +361,35 @@ const commandList =
 	),
 
 	new Command("Leave", function (message, args) {
-			process.exit();
+			Tools.disconnect(message.client);
 			return null;
 		}, "Disconnect the bot.", null, [], false, ["ADMINISTRATOR"]
+	),
+
+	new Command("List Emotes", function (message, args) {
+			
+			let emotes = message.guild.emojis.cache.array();
+			let list = [];
+
+			for (let i = 0, l = emotes.length; i < l; i++) {
+				list.push(emotes[i].toString() );
+			}
+
+			return list;
+
+		}, "List all the server's emotes.", null, [], true, ["ADMINISTRATOR"]
+	),
+
+	new Command("Vote", function (message, args) {
+			
+			if (args[1] == "images" || args[1] == "all"|| args[1] == "off") {
+				Tools.settings.write(message.guild, [message.channel.id, "vote"], args[1], true);
+				return `Channel vote setting set to **${args[1]}**.`;
+			} else {
+				return `**${args[1]}** is not a valid setting for voting.`;
+			}
+
+		}, "Setup this channel with react voting.", "settings", ["images | all | off"], false, ["ADMINISTRATOR"]
 	),
 
 	new Command("Calculator", function (message, args) {

@@ -13,7 +13,6 @@ const Token = 'NjYyODI1ODA2OTY3NDcyMTI4.Xqzm2Q.I2y50w7Nu5QmgMqamCI9a3VuxMc';
 
 //Client variables
 var ClientLoggedIn = false;
-
 var consoleStatus =
 {
 	guild: null,
@@ -57,7 +56,43 @@ function ClientOnReady () {	//Called when after Discord Client is logged in
 	}
 }
 
+function voteHandling (message) {
+
+	let channelSettings = Tools.settings.read(message.guild, message.channel.id);
+	if (channelSettings == null) {
+		return;
+	}
+
+	let voteSetting = channelSettings["vote"];
+	if (!voteSetting || voteSetting == "off") {
+		return;
+	}
+
+	let react = function () {
+		botReact(message, ":symbol_reddit_vote_up:680935204050698329");
+		botReact(message, ":symbol_reddit_vote_down:680935348272103445");
+	}
+
+	if (voteSetting == "images" && !message.author.bot) {
+
+		let maa = message.attachments.array()[0];
+		if (maa != null) {
+			if (maa.width != null) {
+				react();
+			}
+		}
+		return;
+	}
+
+	if (voteSetting == "all") {
+		react();
+		return;
+	}
+}
+
 function ClientOnMessage (message) {	//Called when the Client receives a message
+
+	voteHandling(message);
 
 	if (consoleStatus.channel == message.channel) {
 		console.log(`${message.author.username}:\t${message.content}`);
@@ -69,19 +104,6 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 			console.log(`Bot (${message.author.username}) tried using a command:\n${message.content}\n`);
 		} else {
 			runCommand(message);
-		}
-	}
-
-	if (!message.author.bot) {
-		let maa = message.attachments.array()[0];
-		if (maa != undefined) {
-			if (maa.width != undefined) {
-
-				pinReact(message);
-
-				//botReact(message, ":symbol_reddit_vote_up:680935204050698329");
-				//botReact(message, ":symbol_reddit_vote_down:680935348272103445");
-			}
 		}
 	}
 }
@@ -96,7 +118,7 @@ function InterfaceOnLine (input) {	//Called when the console receives command li
 	let args = input.split(" ");
 	switch (args[0]) {
 		case "leave":
-			Disconnect();
+			Tools.disconnect(Client);
 			break;
 		case "dir":
 			dir(args);
@@ -195,20 +217,6 @@ function Connect (token, seconds = 3) {
 			Connect(token, seconds);
 		}, seconds * 1000);
 	});
-}
-
-function Disconnect (message, seconds = 3) {
-
-	console.log(`Disconnecting Client and ending nodeJS script in ${seconds} second${(seconds != 1) ? "s" : ""}...\n`);
-
-	if (message != undefined) {
-		botDelete(message);
-	}
-
-	Client.setTimeout( () => {
-		Client.destroy();
-		process.exit(621);
-	}, seconds * 1000);
 }
 
 function Activity (type = "WATCHING", activity = `${Commands.prefix}help`) {
@@ -384,8 +392,19 @@ function runCommand (message) {
 		return;
 	}
 
-	try {
-		var sentMessage = botSend(message, selectedCommand.runFunction(message, args) );
+	commandrun: try {
+		let scrf = selectedCommand.runFunction(message, args);
+		if (!scrf) {
+			break commandrun;
+		}
+
+		if (typeof scrf != typeof []) {
+			scrf = [scrf];
+		}
+
+		for (let i = 0, l = scrf.length; i < l; i++) {
+			botSend(message, scrf[i]);
+		}
 
 	} catch (error) {
 		console.error(error);

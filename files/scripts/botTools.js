@@ -3,6 +3,7 @@ const Debug = require("./runningOnPi.js");
 const Color = require("./colors.js");
 
 const settingsPath = Debug.isDebug ? "C:/Users/mojo4/AppData/Roaming/FurGunData/servers" : "/home/pi/fwg/settings/servers";
+var fileChanged = false;
 
 function serverName (user, guild, bold = true, removeSpecial = true) {	//Get the server nickname of a user and clean it up
 
@@ -64,6 +65,7 @@ function writeJSON (filename, object, quiet = false) {	//Write an object to a JS
 	} catch (error) {
 		console.error(`Failed to write to "${filename}.json":\n${error.message}\n`);
 	}
+	fileChanged = true;
 }
 
 function readJSON (filename, quiet = false) {	//Read an object from a JSON file
@@ -88,21 +90,19 @@ function writeSetting (guild, valueTag, value, addTo = false) {
 	let settings = readSetting(guild);
 
 	if (settings == null) {
-
 		settings = {name: guild.name};
 		console.log(`No settings file detected, created "${guild.id}" for "${guild.name}"\n`);
 		writeJSON(filename, settings);
 	}
 
-	if (settings[valueTag] == undefined) {
-
-		settings[valueTag] = [];
-	}
-
-	if (addTo) {
-		settings[valueTag].push(value);
+	if (typeof valueTag == typeof [] ) {
+		if (!settings[valueTag[0]]) {
+			settings[valueTag[0]] = {};
+		}
+		settings[valueTag[0]][valueTag[1]] = value;
 	} else {
-		settings[valueTag] = value;
+		settings[valueTag] = settings[valueTag] || [];
+		addTo ? settings[valueTag].push(value) : settings[valueTag] = value;
 	}
 
 	writeJSON(filename, settings, true);
@@ -168,6 +168,15 @@ function randNumber (max) {
 	return Math.floor(Math.random() * max);
 }
 
+function disconnect (client, seconds = 3) {
+
+	console.log(`Disconnecting Client and ending nodeJS script in ${seconds} second${(seconds != 1) ? "s" : ""}...\n`);
+
+	client.setTimeout( () => {
+		client.destroy();
+		process.exit(621);
+	}, seconds * 1000);
+}
 
 module.exports =
 {
@@ -187,5 +196,7 @@ module.exports =
 	{
 		closest: Color.closest,
 		format: Color.format
-	}
+	},
+	disconnect: disconnect,
+	fileChanged: fileChanged
 };
