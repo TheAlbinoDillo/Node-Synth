@@ -130,6 +130,7 @@ function readSetting (guild, valueTag = null) {
 
 	if (settings[valueTag] == undefined) {
 		console.error(`The "${valueTag}" setting for "${guild.name}" was never set.`);
+		writeSetting(guild, );
 		return undefined;
 	}
 
