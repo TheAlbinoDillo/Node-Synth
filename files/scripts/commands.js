@@ -217,11 +217,11 @@ const commandList =
 		{
 			let arr = Tools.arrayIntoList(Tools.getMentionList(message, true) ) || "themselves";
 
+			console.log(`${message.author.username} ${Prefix}${this.call}:\nFetching foodlist.\n`);
 			let foodlist = Tools.settings.read(message.guild, "foods");
 
 			if (foodlist == null) {
-				botSend(message, "The food list is empty.");
-				return;
+				return "The food list is empty.";
 			}
 
 			let matches = [];
@@ -243,7 +243,7 @@ const commandList =
 		{
 			if (args[1] == "add") {
 				let text = message.content.substring(Prefix.length + args[0].length + args[1].length + 2);
-				Tools.settings.write(message.guild, "foods", text, true);
+				Tools.settings.write(message.guild, "foods", [text], true);
 				return `Added \`${text}\` to the food list.`;
 			}
 
@@ -384,7 +384,7 @@ const commandList =
 	new Command("Vote", function (message, args) {
 			
 			if (args[1] == "images" || args[1] == "all"|| args[1] == "off") {
-				Tools.settings.write(message.guild, [message.channel.id, "vote"], args[1], true);
+				Tools.settings.channels.write(message.channel, "vote", args[1], true);
 				return `Channel vote setting set to **${args[1]}**.`;
 			} else {
 				return `**${args[1]}** is not a valid setting for voting.`;

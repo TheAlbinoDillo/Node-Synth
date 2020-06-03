@@ -52,7 +52,7 @@ function ClientOnReady () {	//Called when after Discord Client is logged in
 
 function voteHandling (message) {
 
-	let channelSettings = Tools.settings.read(message.guild, message.channel.id);
+	let channelSettings = Tools.settings.channels.read(message.channel, "vote");
 	if (channelSettings == null) {
 		return;
 	}
@@ -87,10 +87,6 @@ function voteHandling (message) {
 function ClientOnMessage (message) {	//Called when the Client receives a message
 
 	voteHandling(message);
-
-	if (consoleStatus.channel == message.channel) {
-		console.log(`${message.author.username}:\t${message.content}`);
-	}
 
 	if (message.content.toLowerCase().indexOf(Commands.prefix) == 0 && message.channel.guild) {
 		

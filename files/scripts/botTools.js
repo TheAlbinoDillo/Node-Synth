@@ -63,7 +63,6 @@ function writeJSON (filename, object) {	//Write an object to a JSON file
 	} catch (error) {
 		console.error(`Failed to write to "${filename}.json":\n${error.message}\n`);
 	}
-	fileChanged = true;
 }
 
 function readJSON (filename) {	//Read an object from a JSON file
@@ -83,58 +82,154 @@ function readJSON (filename) {	//Read an object from a JSON file
 function writeSetting (guild, valueTag, value, addTo = false) {
 
 	let filename = `${settingsPath}/${guild.id}`;
+	let guildSet = `"${guild.id}" (${guild.name})`;
+	let ws = "writeSetting:\n";
+
+	console.log(`${ws}Fetching settings.\n`);
 	let settings = readSetting(guild);
 
-	if (settings == null) {
-		settings = {name: guild.name};
-		console.log(`No settings file detected, created "${guild.id}" for "${guild.name}"\n`);
-		writeJSON(filename, settings);
+	if (!settings[valueTag]) {
+		console.log(`${ws}No setting of "${valueTag}" for ${guildSet} was ever made, creating one.`);
+		
+		if (Array.isArray(value) ) {
+
+			console.log("Set as empty array.\n");
+			settings[valueTag] = [];
+		} else if (value instanceof Object) {
+
+			console.log("Set as empty object.\n");
+			settings[valueTag] = {};
+		} else {
+
+			console.log("Set as empty string.\n");
+			settings[valueTag] = "";
+		}
 	}
 
-	if (typeof valueTag == typeof [] ) {
-		if (!settings[valueTag[0]]) {
-			settings[valueTag[0]] = {};
+	if (addTo) {
+
+		let svt = settings[valueTag];
+		if (Array.isArray(svt) ) {
+
+			settings[valueTag] = settings[valueTag].concat(value);
+		} else if (svt instanceof Object) {
+
+			settings[valueTag] = Object.assign(svt, value);
+		} else {
+
+			settings[valueTag] += value;
 		}
-		settings[valueTag[0]][valueTag[1]] = value;
 	} else {
-		settings[valueTag] = settings[valueTag] || [];
-		addTo ? settings[valueTag].push(value) : settings[valueTag] = value;
+		settings[valueTag] = value;
 	}
 
 	writeJSON(filename, settings);
+
 	cachedSettings[guild.id] = settings;
-	console.log(`${addTo ? "Added to" : "Set"} value "${valueTag}" in "${guild.name}":\n${value}\n`);
 }
 
 function readSetting (guild, valueTag = null) {
 
 	let filename = `${settingsPath}/${guild.id}`;
-	let settings;
+	let guildSet = `"${guild.id}" (${guild.name})`;
+	let rs = "readSetting:\n";
 
-	if (cachedSettings[guild.id] == null) {
-		cachedSettings[guild.id] = readJSON(filename);
-		console.error(`Loaded "${guild.name}" into settings cache.`);
+	let settings = null;
+
+	let csgi = cachedSettings[guild.id];
+	if (csgi === undefined) {
+		console.log(`${rs}Reading to populate the settings cache.\n`);
+		csgi = readJSON(filename);
+		
+		if (!csgi) {
+			console.log(`${rs}Creating new settings file for ${guildSet}.\n`);
+			writeJSON(filename, {name: guild.name});
+			return readSetting(guild, valueTag);
+		} else {
+			console.log(`${rs}Loaded ${guildSet} into settings cache.\n`);
+			cachedSettings[guild.id] = csgi;
+		}
 	}
 
-	settings = cachedSettings[guild.id];
+	settings = csgi;
 
-	if (valueTag == null) {
-		console.error(`No valueTag "${valueTag}" was found for "${guild.name}"`);
-		return settings;
-	}
-
-	if (settings == null) {
-		console.error(`No settings for "${guild.name}" were ever set.`);
+	if (!settings) {
+		console.error(`${rs}No settings file for ${guildSet} was ever made.\n`);
 		return null;
 	}
 
-	if (settings[valueTag] == undefined) {
-		console.error(`The "${valueTag}" setting for "${guild.name}" was never set.`);
-		writeSetting(guild, );
-		return undefined;
+	if (!valueTag) {
+		if (valueTag === undefined) {
+			console.error(`${rs}The value to request was undefined for ${guildSet}.\n`);
+			return null;
+		}
+		return settings;
 	}
 
-	console.log(`Read setting "${valueTag}" for "${guild.name}":\n${settings[valueTag]}\n`);
+	if (!settings[valueTag]) {
+		console.error(`${rs}The "${valueTag}" setting for ${guildSet} was never set.\n`);
+		return null;
+	}
+
+	console.log(`${rs}Setting "${valueTag}" for ${guildSet} returned:\n${settings[valueTag]}\n`);
+	return settings[valueTag];
+}
+
+function writeSettingChannel (channel, valueTag, value) {
+	
+	let wsc = "writeSettingChannel:\n";
+
+	console.log(`${wsc}Fetching settings.\n`);
+	let settings = readSettingChannel(channel, valueTag);
+
+	if (!settings[valueTag]) {
+		console.log(`${wsc}No setting of "${valueTag}" for ${guildSet}/channels was ever made, creating one.`);
+		
+		if (Array.isArray(value) ) {
+
+			console.log("Set as empty array.\n");
+			settings[valueTag] = [];
+		} else if (value instanceof Object) {
+
+			console.log("Set as empty object.\n");
+			settings[valueTag] = {};
+		} else {
+
+			console.log("Set as empty string.\n");
+			settings[valueTag] = "";
+		}
+	}
+
+	if (addTo) {
+
+		let svt = settings[valueTag];
+		if (Array.isArray(svt) ) {
+
+			settings[valueTag] = settings[valueTag].concat(value);
+		} else if (svt instanceof Object) {
+
+			settings[valueTag] = Object.assign(svt, value);
+		} else {
+
+			settings[valueTag] += value;
+		}
+	} else {
+		settings[valueTag] = value;
+	}
+
+	writeSetting(channel.guild, "channels", settings);
+}
+
+function readSettingChannel (channel, valueTag) {
+
+	let settings = readSetting(channel.guild, "channels");
+
+	if (settings == null) {
+		console.log(`readSettingChannel:\nNo channels value found for "${channel.guild.id}" (${channel.guild.name}), creating one.\n`);
+		writeSetting(channel.guild, "channels", {});
+		return readSettingChannel(channel, valueTag);
+	}
+
 	return settings[valueTag];
 }
 
@@ -192,7 +287,12 @@ module.exports =
 	settings:
 	{
 		read: readSetting,
-		write: writeSetting
+		write: writeSetting,
+		channels:
+		{
+			read: readSettingChannel,
+			write: writeSettingChannel
+		}
 	},
 	makeUwU: makeUwU,
 	arrayIntoList: arrayIntoList,
