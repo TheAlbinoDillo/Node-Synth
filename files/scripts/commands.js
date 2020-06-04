@@ -442,13 +442,18 @@ const commandList =
 
 	new Command("To Binary", function (message, args) {
 
-			if (parseInt(args[1]) == NaN) {
-				botSend(message, `**${args[1]}** is not a valid number.`);
-				return;
+			if (Number.isNaN(parseInt(args[1]) ) ) {
+				let content = message.content.substring(Prefix.length + this.call.length + 1);
+
+				let text = "";
+				for (let i = 0, l = content.length; i < l; i++) {
+					text += `\`${Tools.formatBin(content.charCodeAt(i) )}\` `;
+				}
+				return text;
 			}
 
 			return parseInt(args[1]).toString(2);
-		}, "Turn a number into binary!", "tools", ["number"], false, [], "tobin"
+		}, "Turn something into binary!", "tools", ["number"], false, [], "tobin"
 	)
 ];
 

@@ -240,6 +240,15 @@ function makeUwU (string) {
 	return text;
 }
 
+function formatBin (string) {
+
+	let text = string.toString(2);
+	while (text.length < 8) {
+		text = `0${text}`;
+	}
+	return text;
+}
+
 function arrayIntoList (array) {	//Turn an array into a human-readable list
 
 	let l = array.length;
@@ -304,4 +313,5 @@ module.exports =
 		format: Color.format
 	},
 	disconnect: disconnect,
+	formatBin: formatBin
 };
