@@ -140,7 +140,7 @@ function readSetting (guild, valueTag = null) {
 	if (csgi === undefined) {
 		console.log(`${rs}Reading to populate the settings cache.\n`);
 		csgi = readJSON(filename);
-		
+	
 		if (!csgi) {
 			console.log(`${rs}Creating new settings file for ${guildSet}.\n`);
 			writeJSON(filename, {name: guild.name});
@@ -171,65 +171,7 @@ function readSetting (guild, valueTag = null) {
 		return null;
 	}
 
-	console.log(`${rs}Setting "${valueTag}" for ${guildSet} returned:\n${settings[valueTag]}\n`);
-	return settings[valueTag];
-}
-
-function writeSettingChannel (channel, valueTag, value) {
-	
-	let wsc = "writeSettingChannel:\n";
-
-	console.log(`${wsc}Fetching settings.\n`);
-	let settings = readSettingChannel(channel, valueTag);
-
-	if (!settings[valueTag]) {
-		console.log(`${wsc}No setting of "${valueTag}" for ${guildSet}/channels was ever made, creating one.`);
-		
-		if (Array.isArray(value) ) {
-
-			console.log("Set as empty array.\n");
-			settings[valueTag] = [];
-		} else if (value instanceof Object) {
-
-			console.log("Set as empty object.\n");
-			settings[valueTag] = {};
-		} else {
-
-			console.log("Set as empty string.\n");
-			settings[valueTag] = "";
-		}
-	}
-
-	if (addTo) {
-
-		let svt = settings[valueTag];
-		if (Array.isArray(svt) ) {
-
-			settings[valueTag] = settings[valueTag].concat(value);
-		} else if (svt instanceof Object) {
-
-			settings[valueTag] = Object.assign(svt, value);
-		} else {
-
-			settings[valueTag] += value;
-		}
-	} else {
-		settings[valueTag] = value;
-	}
-
-	writeSetting(channel.guild, "channels", settings);
-}
-
-function readSettingChannel (channel, valueTag) {
-
-	let settings = readSetting(channel.guild, "channels");
-
-	if (settings == null) {
-		console.log(`readSettingChannel:\nNo channels value found for "${channel.guild.id}" (${channel.guild.name}), creating one.\n`);
-		writeSetting(channel.guild, "channels", {});
-		return readSettingChannel(channel, valueTag);
-	}
-
+	//console.log(`${rs}Setting "${valueTag}" for ${guildSet} returned:\n${settings[valueTag]}\n`);
 	return settings[valueTag];
 }
 
@@ -296,12 +238,7 @@ module.exports =
 	settings:
 	{
 		read: readSetting,
-		write: writeSetting,
-		channels:
-		{
-			read: readSettingChannel,
-			write: writeSettingChannel
-		}
+		write: writeSetting
 	},
 	makeUwU: makeUwU,
 	arrayIntoList: arrayIntoList,

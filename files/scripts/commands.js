@@ -170,6 +170,23 @@ const commandList =
 		}, "Bark to be heard!", "actions", []
 	),
 
+	new Command("Tug", function (message, args)
+		{
+			let picks1 = [
+				"off a mattress tag! That's illegal!",
+				"on a german frag grenade activator! Better run!",
+				"on their shoelaces... now they have to tie them again.",
+				"on their own tail, that's cute, I guess.",
+				"on the leaf of a plant, it came off, unsurprisingly.",
+				"on a loose thread of their shirt, now it's a bit longer."
+				];
+
+			let text = `${Tools.serverName(message.author, message.guild)} tugs ${Tools.randArray(picks1)}`;
+			return text;
+
+		}, "Tug on something.", "interactions", []
+	),
+
 	new Command("Vore", function (message, args)
 		{
 			return "No.";
@@ -363,7 +380,7 @@ const commandList =
 
 	new Command("Leave", function (message, args) {
 			Tools.disconnect(message.client);
-			return null;
+			return "Disconnecting...";
 		}, "Disconnect the bot.", null, [], false, ["ADMINISTRATOR"]
 	),
 
@@ -384,7 +401,11 @@ const commandList =
 	new Command("Vote", function (message, args) {
 			
 			if (args[1] == "images" || args[1] == "all"|| args[1] == "off") {
-				Tools.settings.channels.write(message.channel, "vote", args[1], true);
+
+				let value = new Object()
+				value[message.channel.id.toString()] = {"vote": args[1]};
+
+				Tools.settings.write(message.guild, "channels", value, args[1], true);
 				return `Channel vote setting set to **${args[1]}**.`;
 			} else {
 				return `**${args[1]}** is not a valid setting for voting.`;

@@ -52,12 +52,16 @@ function ClientOnReady () {	//Called when after Discord Client is logged in
 
 function voteHandling (message) {
 
-	let channelSettings = Tools.settings.channels.read(message.channel, "vote");
+	let channelSettings = Tools.settings.read(message.guild, "channels");
 	if (channelSettings == null) {
 		return;
 	}
 
-	let voteSetting = channelSettings["vote"];
+	if (channelSettings[message.channel.id] == null) {
+		return;
+	}
+
+	let voteSetting = channelSettings[message.channel.id]["vote"];
 	if (!voteSetting || voteSetting == "off") {
 		return;
 	}
