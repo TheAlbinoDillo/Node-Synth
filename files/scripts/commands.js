@@ -5,6 +5,32 @@ const Tools = require("./botTools.js");
 
 const Prefix = 'fg.';
 
+var gameChannel;
+var gameLocked = false;
+var players = [];
+var fingers = [];
+var thisRound = [];
+var roundCount = 0;
+var turnCount = 0;
+var asked = false;
+
+function nextRound () {
+	roundCount = 0;
+	turnCount++;
+	thisRound = [];
+	asked = false;
+
+	if (turnCount == players.length) {
+		turnCount = 0;
+	}
+
+	if (fingers[turnCount] < 1) {
+		turnCount ++;
+	}
+
+	return `${players[turnCount]} It's your turn! Use fg.NeverHaveIever <statement>`;
+}
+
 class Command {
 	constructor(name, runFunction = function () {}, description = "", category, usage = [], deleteMessage = false, permissions = [], call = false) {
 		this.name = name;
@@ -459,6 +485,158 @@ const commandList =
 			return embed;
 
 		}, "Get a preview of a hex color!", "tools", ["hex code"], false, [], "hex"
+	),
+
+	new Command("Never Setup", function(message, args) {
+
+			if (gameLocked) {
+				return "A game is already running.";
+			}
+
+			gameChannel = message.channel;
+
+			return `${message.channel} was set up for the game.`;
+
+		}, "Make this channel for the game.", "nevergame", [], false, ["MANAGE_MESSAGES"]
+	),
+
+	new Command("Never End", function(message, args) {
+
+			if (!gameLocked) {
+				return "No game was running.";
+			}
+
+			gameLocked = false;
+			players = [];
+			fingers = [];
+
+			return `The game was ended.`;
+
+		}, "End the game.", "nevergame", [], false, ["MANAGE_MESSAGES"]
+	),
+
+	new Command("Never Skip", function(message, args) {
+
+			roundCount++;
+			return nextRound();
+
+		}, "Skip this player's turn.", "nevergame", [], false, ["MANAGE_MESSAGES"]
+	),
+
+	new Command("Never Start", function(message, args) {
+
+			if (!gameChannel) {
+				return "Either no game channel has been set, or no a game is already running.";
+			}
+
+			if (players.length < 2) {
+				return "You need more players.";
+			}
+
+			for (let i = 0; i < players.length; i++) {
+				fingers[i] = 5;
+			}
+
+			var names = [];
+			for (let i = 0; i < players.length; i++) {
+				names.push(Tools.serverName(players[i], message.guild) );
+			}
+
+			gameLocked = true;
+
+			return `Game has been locked to new players and game is starting!\nPlayers are ${Tools.arrayIntoList(names)}\n\n${players[turnCount]} It's your turn!`;
+
+		}, "Locks the game from new players and starts!", "nevergame", [], false, ["MANAGE_MESSAGES"]
+	),
+
+	new Command("Never Join", function(message, args) {
+
+			if (message.channel != gameChannel || gameLocked) {
+				return "Either you're in the wrong channel, or a game is running.";
+			}
+
+			if (players.includes(message.author) ) {
+				return "You already joined this game.";
+			}
+
+			players.push(message.author);
+			return `${message.author} has joined the game!`;
+
+		}, "Join the current game", "nevergame", [], false, []
+	),
+
+	new Command("Never Have I Ever", function(message, args) {
+
+			if (players[turnCount] != message.author) {
+				return "You're not the leader this round."
+			}
+
+			asked = true;
+			thisRound.push(message.author.id);
+			roundCount++;
+
+			return "^";
+
+		}, "Ask the question for this round", "nevergame", [], false, []
+	),
+
+	new Command("Never", function(message, args) {
+
+			if (message.channel != gameChannel || !players.includes(message.author) ) {
+				return "Either you're in the wrong channel, or no game is running without you.";
+			}
+
+			if (players[turnCount] == message.author) {
+				return "You're the leader this turn. Use fg.NeverHaveIever";
+			}
+
+			if (thisRound.includes(message.author.id) ) {
+				return "You already played this round.";
+			}
+
+			if (!asked) {
+				return "Wait for the leader to ask for this round.";
+			}
+
+			if (fingers[players.indexOf(message.author)] < 1) {
+				return `${message.author} you don't have any fingers left!`;
+			}
+
+			if (args[1] == "yes") {
+				fingers[players.indexOf(message.author)] --;
+
+				roundCount ++;
+				
+				let text = `${message.author} has put a finger down and has ${fingers[players.indexOf(message.author)]} finger(s) left!\n`;
+
+				if (fingers[players.indexOf(message.author)] > 0) {
+					thisRound.push(message.author.id);
+				} else {
+					text = `${message.author} is out of the game!\n`;
+					players.splice(players.indexOf(message.author), 1);
+				}
+
+				if (players.length == thisRound.length) {
+					return text + nextRound();
+				}
+
+				return text;
+			}
+
+			if (args[1] == "no") {
+				roundCount ++;
+				thisRound.push(message.author.id);
+
+				if (players.length == thisRound.length) {
+					return nextRound();
+				} else {
+				 	return "^";
+				}
+			}
+
+			return "Use `fg.never yes` or `fg.never no`";
+
+		}, "Put your finger down", "nevergame", [], false, []
 	),
 
 	new Command("To Binary", function (message, args) {
