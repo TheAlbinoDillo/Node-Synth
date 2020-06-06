@@ -18,15 +18,15 @@ function serverName (user, guild, bold = true, removeSpecial = true) {	//Get the
 	if (removeSpecial && name != null) {	//Remove emojis and symbol characters, uppercase the first letter
 		name = name.replace(/[-_]/g,' ').replace(regex, '').trim();
 
-		if (user.id == "662825806967472128") {
-			name = "me";
-		}
-
 		if (name.length <= 1) {
 			name = null;
 		} else {
 			name = `${name[0].toUpperCase()}${name.substring(1)}`;
 		}
+	}
+
+	if (user.id == "662825806967472128") {
+		name = "me";
 	}
 
 	return `${bold ? "**" : ""}${name ? name : user.username}${bold ? "**" : ""}`;
@@ -40,13 +40,14 @@ function getMentionList (message, returnNames, removeSelf = true, removeBots = f
 	for (let i = 0, l = rawMentions.length; i < l; i++) {	//Remove the user writing the message or any bots
 		
 		let rmi = rawMentions[i];
-		if ( !( (rmi == message.author && removeSelf) || (rmi.bot && removeBots) ) ) {
+		if ( !( (rmi == message.author && removeSelf) /*|| (rmi.bot && removeBots)*/ ) ) {
 			mentions.push(rmi);
 		}
 	}
 
 	if (returnNames) {	//Turn mentions into server names
 		for (let i = 0, l = mentions.length; i < l; i++) {
+			console.log(mentions[i]);
 			mentions[i] = serverName(mentions[i], message.guild);
 		}
 	}

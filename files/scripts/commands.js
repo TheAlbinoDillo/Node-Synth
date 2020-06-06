@@ -31,6 +31,74 @@ function nextRound () {
 	return `${players[turnCount]} It's your turn! Use fg.NeverHaveIever <statement>`;
 }
 
+class Responce {
+	constructor(type = "text", content, guild, channel, message) {
+		let types = ["text", "edit", "react", "ping", "transpose"];
+		if (!types.includes(type) ) {
+			console.error("Responce type not valid.\n");
+			return null;
+		}
+
+		this.type = type,
+		this.content = content,
+		this.guild = guild,
+		this.channel = channel,
+		this.message = message
+	}
+}
+
+class TextMessage extends Responce {
+	constructor(message, content) {
+		super
+		(
+			"text",
+			content,
+			message.guild,
+			message.channel,
+			message
+		);
+	}
+}
+
+class Transpose extends Responce {
+	constructor(content, guild, channel) {
+		super
+		(
+			"transpose",
+			content,
+			guild,
+			channel,
+			null
+		);
+	}
+}
+
+class PingMessage extends Responce {
+	constructor(message, content) {
+		super
+		(
+			"ping",
+			content,
+			message.guild,
+			message.channel,
+			message
+		);
+	}
+}
+
+class ReactEmote extends Responce {
+	constructor(message, emote) {
+		super
+		(
+			"react",
+			emote,
+			message.guild,
+			message.channel,
+			message
+		);
+	}
+}
+
 class Command {
 	constructor(name, runFunction = function () {}, description = "", category, usage = [], deleteMessage = false, permissions = [], call = false) {
 		this.name = name;
@@ -352,7 +420,7 @@ const commandList =
 			.addField("Member Count:", `${g.memberCount} users`, true)
 			.setFooter(`${g.region} • ${g.id} • ${g.owner.user.username}#${g.owner.user.discriminator}`);
 
-			return embed;
+			return new TextMessage(message, embed);
 		}, "Get information about the server.", "tools", [], false, [], "serverinfo"
 	),
 
@@ -489,7 +557,7 @@ const commandList =
 			.setThumbnail(url)
 			.addField(colorCode, colorName);
 
-			return embed;
+			return new TextMessage(message, embed);
 
 		}, "Get a preview of a hex color!", "tools", ["hex code"], false, [], "hex"
 	),
@@ -689,6 +757,24 @@ const commandList =
 
 		}, "Roll a number die!", "tools", ["number"]
 	),
+
+	new Command("Request", function (message, args) {
+			
+			let guild = "704494659400892458";
+			let channel = "718827126878371881";
+			let content = `**${message.author.username}#${message.author.discriminator}**:\n${message.content.substring(Prefix.length + this.call.length + 1)}\n`;
+
+			return [new Transpose(content, guild, channel), new ReactEmote(message, "✅")];
+
+		}, "Make a suggestion for bot changes", "tools", ["text"]
+	),
+
+	new Command("Ping", function (message, args) {
+			
+			return new PingMessage(message, ["Pong.", "**Pong! **"]);
+
+		}, "Ping the bot!", "tools"
+	),
 ];
 
 for (let i = 0, l = commandList.length; i < l; i++) {
@@ -715,7 +801,7 @@ function helpCommand (message, args) {
 					.addField(`**${cli.name}**${cli.onlyOwner ? "®" : ""}\n${cli.description}`,`${Prefix}${cli.call} ${usageList(cli)}`);
 				}
 			}
-			return embed;
+			return new TextMessage(message, embed);
 		}
 		let selected = -1;
 		for (let i = 0, l = commandList.length; i < l; i++) {
@@ -728,7 +814,7 @@ function helpCommand (message, args) {
 			embed.setTitle(`Command: ${cls.name} ${cls.onlyOwner ? "[Restricted]" : ""}`)
 			.addField(cls.description, `${Prefix}${cls.call} ${usageList(cls)}`);
 			
-			return embed;
+			return new TextMessage(message, embed);
 		}
 	}
 	embed.setTitle(`FurGun commands list`);
@@ -742,7 +828,7 @@ function helpCommand (message, args) {
 		embed.addField(`${ccli}`,`${Prefix}help ${ccli}`);
 	}
 
-	return embed;
+	return new TextMessage(message, embed);
 }
 
 function usageList (command) {

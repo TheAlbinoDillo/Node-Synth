@@ -155,14 +155,18 @@ function Activity (type = "WATCHING", activity = `${Commands.prefix}help`) {
 }
 
 //Client message functions
-function botSend (message, content) {	//Send a message to the specified channel
+function botSend (channel, content) {	//Send a message to the specified channel
 
-	if (typeof message != typeof new Discord.Message() ) {
-		console.error("Did not provide a message to botSend.\n");
+	if (channel instanceof Discord.Message) {
+		channel = channel.channel;
+	}
+
+	if (!channel instanceof Discord.Channel) {
+		console.error("Did not provide a channel to botSend.\n");
 		return null;
 	}
 
-	if (typeof content == typeof "string") {
+	if (typeof content === 'string' || content instanceof String) {
 		if (content.trim() == "") {
 			console.error("Message content is empty, this would fail. Did not send message.\n");
 			return null;
@@ -172,11 +176,17 @@ function botSend (message, content) {	//Send a message to the specified channel
 		}
 	}
 
-	return message.channel.send(content).then(thisMsg => {}).catch(error =>
+	//console.log(channel);
+
+	let sent = channel.send(content);
+
+	sent.then(message => {}).catch(error =>
 	{
 		console.error(`Error sending message:\n${error.message}\n`);
 		errorReact(message, "‼️", `\`${message.content}\`\nMessage error: ${error.message}`);
 	});
+
+	return sent;
 }
 
 function botEdit (message, content, append = false) {	//Edit a specified message
@@ -186,11 +196,15 @@ function botEdit (message, content, append = false) {	//Edit a specified message
 		return null;
 	}
 
-	return message.edit(`${append ? message.content : content}${append ? content : ''}`).then(message => {
+	let edit = message.edit(`${append ? message.content : content}${append ? content : ''}`);
+
+	edit.then(message => {
 		console.log(`Edited message in ${message.channel.name}(${message.channel.guild.name}) to:\n${message.content}`);
 	}).catch(error => {
 		console.error(`Error editing message:\n${error.message}\n`);
 	});
+
+	return edit;
 }
 
 function botDelete (message) {	//Delete a specified message
@@ -318,8 +332,42 @@ function runCommand (message) {
 		return;
 	}
 
-	try {
-		botSend(message, selectedCommand.runFunction(message, args) );
+	command: try {
+		let value = selectedCommand.runFunction(message, args);
+
+		if (typeof value === 'string' || value instanceof String) {
+			botSend(message, value);
+			break command;
+		}
+
+		if (!Array.isArray(value) ) {
+			value = [value];
+		}
+
+		for (let i in value) {
+			let cmd = value[i];
+			switch (cmd.type) {
+				case "text":
+					botSend(cmd.message, cmd.content);
+					break;
+				case "transpose":
+					let channel = Client.guilds.cache.get(cmd.guild).channels.cache.get(cmd.channel);
+					botSend(channel, cmd.content);
+					break;
+				case "react":
+					botReact(cmd.message, cmd.content);
+					break;
+				case "ping":
+					botSend(cmd.message, cmd.content[0]).
+					then(message => {
+						botEdit(message, cmd.content[1])
+						.then(edited => {
+							botEdit(edited, `\`${edited.editedTimestamp - message.createdTimestamp}ms\``, true);
+						});
+					});
+					break;
+			}
+		}
 
 	} catch (error) {
 		console.error(error);
