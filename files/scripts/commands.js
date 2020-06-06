@@ -220,6 +220,13 @@ const commandList =
 		}, "Try to eat someone!", "interactions", ["@user1 @user2 @user.."]
 	),
 
+	new Command("huh", function (message, args)
+		{
+			return "huh";
+
+		}, "huh", null, ["huh"]
+	),
+
 	new Command("Wag", function (message, args)
 		{
 			let picks1 = ["", " rapidly", " happily", " adorably"]
@@ -653,7 +660,35 @@ const commandList =
 
 			return parseInt(args[1]).toString(2);
 		}, "Turn something into binary!", "tools", ["number"], false, [], "tobin"
-	)
+	),
+
+	new Command("To Hexadecimal", function (message, args) {
+
+			if (Number.isNaN(parseInt(args[1]) ) ) {
+				let content = message.content.substring(Prefix.length + this.call.length + 1);
+
+				let text = "";
+				for (let i = 0, l = content.length; i < l; i++) {
+					text += `\`${Tools.formatHex(content.charCodeAt(i) )}\` `;
+				}
+				return text.toUpperCase();
+			}
+
+			return parseInt(args[1]).toString(16).toUpperCase();
+		}, "Turn something into hexadecimal!", "tools", ["number"], false, [], "tohex"
+	),
+
+	new Command("Roll", function (message, args) {
+
+			if (!Number.isNaN(parseInt(args[1]) ) ) {
+
+				return Tools.randNumber(args[1]);
+			}
+
+			return "Specify a valid number.";
+
+		}, "Roll a number die!", "tools", ["number"]
+	),
 ];
 
 for (let i = 0, l = commandList.length; i < l; i++) {

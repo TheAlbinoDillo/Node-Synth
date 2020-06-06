@@ -17,7 +17,6 @@ function serverName (user, guild, bold = true, removeSpecial = true) {	//Get the
 
 	if (removeSpecial && name != null) {	//Remove emojis and symbol characters, uppercase the first letter
 		name = name.replace(/[-_]/g,' ').replace(regex, '').trim();
-		name = `${name[0].toUpperCase()}${name.substring(1)}`;
 
 		if (user.id == "662825806967472128") {
 			name = "me";
@@ -25,6 +24,8 @@ function serverName (user, guild, bold = true, removeSpecial = true) {	//Get the
 
 		if (name.length <= 1) {
 			name = null;
+		} else {
+			name = `${name[0].toUpperCase()}${name.substring(1)}`;
 		}
 	}
 
@@ -191,6 +192,15 @@ function formatBin (string) {
 	return text;
 }
 
+function formatHex (string) {
+
+	let text = string.toString(16);
+	while (text.length < 2) {
+		text = `0${text}`;
+	}
+	return text;
+}
+
 function arrayIntoList (array) {	//Turn an array into a human-readable list
 
 	let l = array.length;
@@ -216,8 +226,8 @@ function randArray (array) {	//Randomly pick from an array
 	return array[pick];
 }
 
-function randNumber (max) {
-	return Math.floor(Math.random() * max);
+function randNumber (max, min = 0) {
+	return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 function disconnect (client, seconds = 3) {
@@ -250,5 +260,6 @@ module.exports =
 		format: Color.format
 	},
 	disconnect: disconnect,
-	formatBin: formatBin
+	formatBin: formatBin,
+	formatHex: formatHex
 };
