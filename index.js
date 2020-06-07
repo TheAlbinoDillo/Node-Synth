@@ -97,7 +97,6 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 		if (message.author.bot) {
 			console.log(`Bot (${message.author.username}) tried using a command:\n${message.content}\n`);
 		} else {
-			console.log(message.content);
 			runCommand(message);
 		}
 	}
@@ -278,7 +277,7 @@ function pinReact (message, count = 6, time = 3000000) {
 	);
 }
 
-function errorReact (message, emoji, respondWith, time = 3000000) {
+function errorReact (message, emoji, respondWith, time = 180000) {
 
 	botReact(message, emoji);
 

@@ -761,7 +761,7 @@ const commandList =
 
 			if (!Number.isNaN(parseInt(args[1]) ) ) {
 
-				return Tools.randNumber(args[1]);
+				return Tools.randNumber(args[1]).toString();
 			}
 
 			return "Specify a valid number.";

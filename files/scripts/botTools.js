@@ -60,7 +60,7 @@ function writeJSON (filename, object) {	//Write an object to a JSON file
 
  	try {
 		FileSystem.writeFileSync(`${filename}.json`, string);
-		console.log(`Wrote to "${filename}.json":\n${string}\n`);
+		//console.log(`Wrote to "${filename}.json":\n${string}\n`);
 	} catch (error) {
 		console.error(`Failed to write to "${filename}.json":\n${error.message}\n`);
 	}
@@ -71,7 +71,7 @@ function readJSON (filename) {	//Read an object from a JSON file
 	let content;
 	try {
 		content = FileSystem.readFileSync(`${filename}.json`);
-		console.log(`Read from "${filename}.json":\n${(content.length > 100) ? `${content.toString().substring(0, 150)}...` : content}\n`);
+		//console.log(`Read from "${filename}.json":\n${(content.length > 100) ? `${content.toString().substring(0, 150)}...` : content}\n`);
 	} catch (error) {
 		console.error(`Failed to read from "${filename}.json":\n${error.message}\n`);
 		return null;
@@ -86,11 +86,11 @@ function writeSetting (guild, valueTag, value, addTo = false) {
 	let guildSet = `"${guild.id}" (${guild.name})`;
 	let ws = "writeSetting:\n";
 
-	console.log(`${ws}Fetching settings.\n`);
+	//console.log(`${ws}Fetching settings.\n`);
 	let settings = readSetting(guild);
 
 	if (!settings[valueTag]) {
-		console.log(`${ws}No setting of "${valueTag}" for ${guildSet} was ever made, creating one.`);
+		//console.log(`${ws}No setting of "${valueTag}" for ${guildSet} was ever made, creating one.`);
 		
 		if (Array.isArray(value) ) {
 
@@ -139,15 +139,15 @@ function readSetting (guild, valueTag = null) {
 
 	let csgi = cachedSettings[guild.id];
 	if (csgi === undefined) {
-		console.log(`${rs}Reading to populate the settings cache.\n`);
+		//console.log(`${rs}Reading to populate the settings cache.\n`);
 		csgi = readJSON(filename);
 	
 		if (!csgi) {
-			console.log(`${rs}Creating new settings file for ${guildSet}.\n`);
+			//console.log(`${rs}Creating new settings file for ${guildSet}.\n`);
 			writeJSON(filename, {name: guild.name});
 			return readSetting(guild, valueTag);
 		} else {
-			console.log(`${rs}Loaded ${guildSet} into settings cache.\n`);
+			//console.log(`${rs}Loaded ${guildSet} into settings cache.\n`);
 			cachedSettings[guild.id] = csgi;
 		}
 	}
