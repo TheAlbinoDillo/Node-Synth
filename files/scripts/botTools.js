@@ -47,7 +47,6 @@ function getMentionList (message, returnNames, removeSelf = true, removeBots = f
 
 	if (returnNames) {	//Turn mentions into server names
 		for (let i = 0, l = mentions.length; i < l; i++) {
-			console.log(mentions[i]);
 			mentions[i] = serverName(mentions[i], message.guild);
 		}
 	}

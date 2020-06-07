@@ -531,9 +531,20 @@ const commandList =
 
 	new Command("Test Error", "This is not supposed to be a string", "", null),
 
-	new Command("Test List", function (message, args) {
-		return ["This","is","an","array"];
-	}),
+	/*new Command("Test Role", function (message, args) {
+
+		let roles = message.member.roles.cache.array();
+
+		roles.sort((a, b) => {return b.rawPosition - a.rawPosition});
+
+		for (let i = 0; i < roles.length; i++) {
+			console.log(`${roles[i].name}:    \t${roles[i].rawPosition}`);
+		}
+
+		roles[0].edit({name: "Panda Boi"}).catch(error => {console.log(error)});
+
+		return null
+	}),*/
 
 	new Command("Hex Color", function (message, args) {
 

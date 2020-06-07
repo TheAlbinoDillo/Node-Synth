@@ -97,6 +97,7 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 		if (message.author.bot) {
 			console.log(`Bot (${message.author.username}) tried using a command:\n${message.content}\n`);
 		} else {
+			console.log(message.content);
 			runCommand(message);
 		}
 	}
@@ -199,7 +200,7 @@ function botEdit (message, content, append = false) {	//Edit a specified message
 	let edit = message.edit(`${append ? message.content : content}${append ? content : ''}`);
 
 	edit.then(message => {
-		console.log(`Edited message in ${message.channel.name}(${message.channel.guild.name}) to:\n${message.content}`);
+		//console.log(`Edited message in ${message.channel.name}(${message.channel.guild.name}) to:\n${message.content}`);
 	}).catch(error => {
 		console.error(`Error editing message:\n${error.message}\n`);
 	});
@@ -304,6 +305,10 @@ function errorReact (message, emoji, respondWith, time = 3000000) {
 
 function runCommand (message) {
 
+	if (message.mentions.users.size > 0) {
+		message.content = message.content.replace("<@", " <@");
+	}
+
 	let args = message.content.substring(Commands.prefix.length).split(" ");
 
 	let selectedCommand = null;
@@ -334,6 +339,10 @@ function runCommand (message) {
 
 	command: try {
 		let value = selectedCommand.runFunction(message, args);
+
+		if (!value) {
+			break command;
+		}
 
 		if (typeof value === 'string' || value instanceof String) {
 			botSend(message, value);
