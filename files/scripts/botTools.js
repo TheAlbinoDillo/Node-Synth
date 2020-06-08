@@ -1,6 +1,7 @@
 const FileSystem = require("fs");
 const Debug = require("./runningOnPi.js");
 const Color = require("./colors.js");
+const http = require("http");
 
 const settingsPath = Debug.isDebug ? "C:/Users/mojo4/AppData/Roaming/FurGunData/servers" : "/home/pi/fwg/settings/servers";
 var cachedSettings = [];
@@ -240,6 +241,12 @@ function disconnect (client, seconds = 3) {
 	}, seconds * 1000);
 }
 
+function e6() {
+	let url = "https://e621.net/posts.json?tags=limit:10+order:score+-animated+gay";
+
+	console.log(url);
+}
+
 module.exports =
 {
 	isDebug: Debug.isDebug,
@@ -261,5 +268,6 @@ module.exports =
 	},
 	disconnect: disconnect,
 	formatBin: formatBin,
-	formatHex: formatHex
+	formatHex: formatHex,
+	e6: e6
 };
