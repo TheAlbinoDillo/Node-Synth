@@ -12,6 +12,7 @@ const Token = 'NjYyODI1ODA2OTY3NDcyMTI4.Xqzm2Q.I2y50w7Nu5QmgMqamCI9a3VuxMc';
 
 //Client variables
 var ClientLoggedIn = false;
+var textTrain = [{}, {}, {}, {}];
 
 //Setup ReadLine Interface
 const Interface = ReadLine.createInterface
@@ -45,7 +46,6 @@ Interface.on('line', (input) => { InterfaceOnLine(input); });
 function ClientOnReady () {	//Called when after Discord Client is logged in
 
 	if (Tools.isDebug) {
-		console.log("\n----------------Running in Debug Mode-----------------\n");
 		Activity("PLAYING", "Debugging");
 	}
 }
@@ -148,7 +148,7 @@ function Connect (token, seconds = 3) {
 function Activity (type = "WATCHING", activity = `${Commands.prefix}help`) {
 
 	Client.user.setActivity(activity, { type: type }).then(presence => {
-		console.log(`Activity set to "${presence.activities[0].name}".\n`);
+		//console.log(`Activity set to "${presence.activities[0].name}".\n`);
 	}).catch(error => {
 		console.error(`Could not set activity:\n${error.message}\n`);
 	});
@@ -157,7 +157,9 @@ function Activity (type = "WATCHING", activity = `${Commands.prefix}help`) {
 //Client message functions
 function botSend (channel, content) {	//Send a message to the specified channel
 
+	let message;
 	if (channel instanceof Discord.Message) {
+		message = channel;
 		channel = channel.channel;
 	}
 
@@ -183,7 +185,9 @@ function botSend (channel, content) {	//Send a message to the specified channel
 	sent.then(message => {}).catch(error =>
 	{
 		console.error(`Error sending message:\n${error.message}\n`);
-		errorReact(message, "‼️", `\`${message.content}\`\nMessage error: ${error.message}`);
+		if (message) {
+			errorReact(message, "‼️", `\`${message.content}\`\nMessage error: ${error.message}`);
+		}
 	});
 
 	return sent;
@@ -353,6 +357,7 @@ function runCommand (message) {
 		}
 
 		for (let i in value) {
+
 			let cmd = value[i];
 			switch (cmd.type) {
 				case "text":

@@ -464,7 +464,9 @@ const commandList =
 			let pick = choice > -1 ? choice : Tools.randNumber(pickLength)
 
 			let url = `./files/common/grant/grant${pick}.png`;
-			return {content: pick, files: [url]};
+			let content = {content: pick, files: [url]};
+
+			return new TextMessage(message, content);
 		}, "Get a picture of the panda!", "fun"
 	),
 
@@ -472,10 +474,33 @@ const commandList =
 
 			let pickLength = FileSystem.readdirSync("./files/common/fox/").length;
 			let choice = parseInt(args[1]);
-			let pick = choice > -1 ? choice : Tools.randNumber(pickLength)
+			let pick = Tools.randNumber(pickLength - 1);
 
 			let url = `./files/common/fox/fox${pick}.png`;
-			return {content: pick, files: [url]};
+			let content = {content: pick, files: [url]};
+
+			if (args[1]) {
+				let returnList =
+					[
+						new ReactEmote(message, "🔍"),
+						new TextMessage(message, content)
+					];
+
+				if (choice >= 0 && choice < pickLength) {
+
+					pick = choice;
+					url = `./files/common/fox/fox${pick}.png`;
+					content = {content: pick, files: [url]};
+					returnList[1] = new TextMessage(message, content);
+
+					return returnList;
+				} else {
+					returnList.push(new ReactEmote(message, "❔") );
+					return returnList;
+				}
+			}
+
+			return new TextMessage(message, content);
 		}, "Get a picture of a cute fox!", "fun"
 	),
 
