@@ -531,21 +531,6 @@ const commandList =
 
 	new Command("Test Error", "This is not supposed to be a string", "", null),
 
-	/*new Command("Test Role", function (message, args) {
-
-		let roles = message.member.roles.cache.array();
-
-		roles.sort((a, b) => {return b.rawPosition - a.rawPosition});
-
-		for (let i = 0; i < roles.length; i++) {
-			console.log(`${roles[i].name}:    \t${roles[i].rawPosition}`);
-		}
-
-		roles[0].edit({name: "Panda Boi"}).catch(error => {console.log(error)});
-
-		return null
-	}),*/
-
 	new Command("Hex Color", function (message, args) {
 
 			if (args[1] == "FUCKME") {
@@ -785,6 +770,35 @@ const commandList =
 			return new PingMessage(message, ["Pong.", "**Pong! **"]);
 
 		}, "Ping the bot!", "tools"
+	),
+
+	new Command("Kick", function (message, args) {
+
+			let users = message.mentions.users.array();
+
+			if (users < 1) {
+				return "Specify users to kick.";
+			}
+
+			//message.content = message.content.substring(Prefix.length + this.call.length + 1);
+
+			for (let i = 0, l = users.length; i < l; i++) {
+
+				let replace = users[i].toString().replace("<@", "<@!");
+				replace = new RegExp(replace, "g");
+				message.content = message.content.replace(replace, "").trim();
+			}
+
+			let members = message.guild.members.cache;
+			for (let i = 0, l = users.length; i < l; i++) {
+
+				let member = members.get(users[i].id);
+				member.kick(message.content);
+			}
+
+			return `Kicked ${Tools.arrayIntoList(Tools.getMentionList(message, true) )}`;
+
+		}, "Kick a user.", "moderation", ["reason &| @user1 @user2 @user.."], false, ["KICK_MEMBERS"]
 	),
 ];
 
