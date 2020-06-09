@@ -531,13 +531,43 @@ const commandList =
 				let value = new Object()
 				value[message.channel.id.toString()] = {"vote": args[1]};
 
-				Tools.settings.write(message.guild, "channels", value, args[1], true);
+				Tools.settings.write(message.guild, "channels", value, true);
 				return `Channel vote setting set to **${args[1]}**.`;
 			} else {
 				return `**${args[1]}** is not a valid setting for voting.`;
 			}
 
 		}, "Setup this channel with react voting.", "settings", ["images | all | off"], false, ["ADMINISTRATOR"]
+	),
+
+	new Command("Stats", function (message, args) {
+
+			if (args[1]) {
+				if (args[2]) {
+					let value = new Object();
+					value[message.author.id.toString()] = {};
+					value[message.author.id.toString()].stats = {};
+					value[message.author.id.toString()].stats[args[1]] = args[2];
+					Tools.settings.write(message.guild, "users", value, true);
+					return `Set ${Tools.serverName(message.author, message.guild)}'s ${args[1]} to ${args[2]}`;
+				} else {
+					return "Specify a value for the stat."
+				}
+			} else {
+				return "Specify a stat to set.";
+			}
+
+		}, "Set player stats for DnD", "DnD", ["statname", "value"]
+	),
+
+	new Command("Stat List", function (message, args) {
+
+			let value = Tools.settings.read(message.guild, "users");
+			value = value[message.author.id].stats;
+
+			return JSON.stringify(value);
+
+		}, "Get your player stats for DnD", "DnD", []
 	),
 
 	new Command("Calculator", function (message, args) {
