@@ -769,14 +769,19 @@ const commandList =
 
 	new Command("Roll", function (message, args) {
 
-			if (!Number.isNaN(parseInt(args[1]) ) ) {
+			let rolls = parseInt(args[1]) || 2;
 
-				return Tools.randNumber(args[1]).toString();
-			}
+			let text = "Rolls: ", total = 0, succ = 0;
+			for (let i = 0; i < rolls; i++) {
+				let pick = Tools.randNumber(1, 6);
+				text += `${pick}${i != rolls - 1 ? ", " : ""}`;
+				total += pick;
+				succ += pick >= 4 ? 1 : 0;
+  			}
+			text =  `${text}\nTotal: ${total}\nSuccesses: ${succ}`;
 
-			return "Specify a valid number.";
-
-		}, "Roll a number die!", "tools", ["number"]
+			return [new TextMessage(message, text), new ReactEmote(message, "🎲")];
+		}, "Roll a number of dice!", "tools", ["number"]
 	),
 
 	new Command("Request", function (message, args) {
@@ -824,6 +829,35 @@ const commandList =
 			return `Kicked ${Tools.arrayIntoList(Tools.getMentionList(message, true) )}`;
 
 		}, "Kick a user.", "moderation", ["reason &| @user1 @user2 @user.."], false, ["KICK_MEMBERS"]
+	),
+
+	new Command("Ban", function (message, args) {
+
+			let users = message.mentions.users.array();
+
+			if (users < 1) {
+				return "Specify users to ban.";
+			}
+
+			//message.content = message.content.substring(Prefix.length + this.call.length + 1);
+
+			for (let i = 0, l = users.length; i < l; i++) {
+
+				let replace = users[i].toString().replace("<@", "<@!");
+				replace = new RegExp(replace, "g");
+				message.content = message.content.replace(replace, "").trim();
+			}
+
+			let members = message.guild.members.cache;
+			for (let i = 0, l = users.length; i < l; i++) {
+
+				let member = members.get(users[i].id);
+				member.ban({reason: message.content});
+			}
+
+			return `Banned ${Tools.arrayIntoList(Tools.getMentionList(message, true) )}`;
+
+		}, "Ban a user.", "moderation", ["reason &| @user1 @user2 @user.."], false, ["BAN_MEMBERS"]
 	),
 ];
 
