@@ -328,7 +328,7 @@ const commandList =
 			let text = `${Tools.serverName(message.author, message.guild)}${Tools.randArray(picks1)} ${Tools.randArray(picks2)} ${arr}${args[1] ? "'s" : ""}${Tools.randArray(picks3)}`;
 			return text;
 
-		}, "Give someone a boop on the snoot!", "interactions", ["@user1 @user2 @user.."]
+		}, "Ruffle someone's feathers!", "interactions", ["@user1 @user2 @user.."]
 	),
 
 	new Command("Feed", function (message, args)
