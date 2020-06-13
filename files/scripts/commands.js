@@ -99,6 +99,50 @@ class ReactEmote extends Responce {
 	}
 }
 
+class Usage {
+	constructor(label,  test) {
+		this.label = label,
+		this.test = test
+	}
+}
+
+class UsageString extends Usage {
+	constructor(label, options = []) {
+		super
+		(
+			label,
+			function (arg) {
+				if (typeof arg === 'string' || arg instanceof String) {
+					return options.length > 0 ? options.includes(arg) : true;
+				} else {
+					return null;
+				}	
+			}
+		);
+		this.options = options;
+	}
+}
+
+class UsageNumber extends Usage {
+	constructor(label, min = 0, max = Infinity) {
+		super
+		(
+			label,
+			function (arg) {
+				arg = parseInt(arg);
+				let typetest = typeof arg === 'number' || arg instanceof Number;
+				let rangeTest = arg >= min && arg <= max;
+
+				if (typetest && rangeTest) {
+					return arg;
+				} else {
+					return null;
+				}	
+			}
+		);
+	}
+}
+
 class Command {
 	constructor(name, runFunction = function () {}, description = "", category, usage = [], deleteMessage = false, permissions = [], call = false) {
 		this.name = name;
@@ -325,7 +369,7 @@ const commandList =
 			let picks2 = ["ruffles"];
 			let picks3 = [" feathers!", " feathers, squawk!"];
 
-			let text = `${Tools.serverName(message.author, message.guild)}${Tools.randArray(picks1)} ${Tools.randArray(picks2)} ${arr}${args[1] ? "'s" : ""}${Tools.randArray(picks3)}`;
+			let text = `${Tools.serverName(message.author, message.guild)}${Tools.randArray(picks1)} ${Tools.randArray(picks2)} ${arr}${args[0] ? "'s" : ""}${Tools.randArray(picks3)}`;
 			return text;
 
 		}, "Ruffle someone's feathers!", "interactions", ["@user1 @user2 @user.."]
@@ -343,9 +387,9 @@ const commandList =
 			}
 
 			let matches = [];
-			if (args[1]) {
+			if (args[0]) {
 				for (let i = 0, l = foodlist.length; i < l; i++) {
-					if (foodlist[i].includes(args[1]) ) {
+					if (foodlist[i].includes(args[0]) ) {
 						matches.push(foodlist[i]);
 					}
 				}
@@ -359,24 +403,24 @@ const commandList =
 
 	new Command("Foods", function (message, args)
 		{
-			if (args[1] == "add") {
-				let text = message.content.substring(Prefix.length + args[0].length + args[1].length + 2);
+			if (args[0] == "add") {
+				let text = message.content.substring(Prefix.length + args[0].length + args[0].length + 2);
 				Tools.settings.write(message.guild, "foods", [text], true);
 				return `Added \`${text}\` to the food list.`;
 			}
 
-			if (args[1] == "search") {
+			if (args[0] == "search") {
 				let foodlist = Tools.settings.read(message.guild, "foods");
 				let matches = [];
 
 				for (let i = 0, l = foodlist.length; i < l; i++) {
-					if (foodlist[i].includes(args[2]) ) {
+					if (foodlist[i].includes(args[1]) ) {
 						matches.push({text: foodlist[i], index: i});
 					}
 				}
 
 				if (matches.length == 0) {
-					return `No matches for \`${args[2]}\``;
+					return `No matches for \`${args[1]}\``;
 				}
 
 				let text = "Search results:\n";
@@ -387,18 +431,18 @@ const commandList =
 				return text;
 			}
 
-			if (args[1] == "remove") {
-				if (parseInt(args[2]) == NaN) {
+			if (args[0] == "remove") {
+				if (parseInt(args[1]) == NaN) {
 					return "Not a valid selection.";
 				} else {
 					let foodlist = Tools.settings.read(message.guild, "foods");
-					let removed = foodlist.splice(parseInt(args[2]), 1);
+					let removed = foodlist.splice(parseInt(args[1]), 1);
 					Tools.settings.write(message.guild, "foods", foodlist);
 					return `Removed \`${removed}\` from the food list.`;
 				}
 			}
 
-			if (args[1] == "rmlast") {
+			if (args[0] == "rmlast") {
 				let foodlist = Tools.settings.read(message.guild, "foods");
 				let removed = foodlist.pop();
 				Tools.settings.write(message.guild, "foods", foodlist);
@@ -449,7 +493,7 @@ const commandList =
 	new Command("Dance", function (message, args) {
 
 			let pickLength = FileSystem.readdirSync("./files/common/dance/").length;
-			let choice = parseInt(args[1]);
+			let choice = parseInt(args[0]);
 			let pick = choice > -1 ? choice : Tools.randNumber(pickLength)
 
 			let url = `./files/common/dance/dance${pick}.gif`;
@@ -460,7 +504,7 @@ const commandList =
 	new Command("Grant", function (message, args) {
 
 			let pickLength = FileSystem.readdirSync("./files/common/grant/").length;
-			let choice = parseInt(args[1]);
+			let choice = parseInt(args[0]);
 			let pick = choice > -1 ? choice : Tools.randNumber(pickLength)
 
 			let url = `./files/common/grant/grant${pick}.png`;
@@ -473,13 +517,13 @@ const commandList =
 	new Command("Fox", function (message, args) {
 
 			let pickLength = FileSystem.readdirSync("./files/common/fox/").length;
-			let choice = parseInt(args[1]);
+			let choice = parseInt(args[0]);
 			let pick = Tools.randNumber(pickLength - 1);
 
 			let url = `./files/common/fox/fox${pick}.png`;
 			let content = {content: pick, files: [url]};
 
-			if (args[1]) {
+			if (args[0]) {
 				let returnList =
 					[
 						new ReactEmote(message, "🔍"),
@@ -526,30 +570,33 @@ const commandList =
 
 	new Command("Vote", function (message, args) {
 			
-			if (args[1] == "images" || args[1] == "all"|| args[1] == "off") {
+			if (this.usage[0].test(args[0]) ) {
 
 				let value = new Object()
-				value[message.channel.id.toString()] = {"vote": args[1]};
+				value[message.channel.id.toString()] = {"vote": args[0]};
 
 				Tools.settings.write(message.guild, "channels", value, true);
-				return `Channel vote setting set to **${args[1]}**.`;
+				return `Channel vote setting set to **${args[0]}**.`;
 			} else {
-				return `**${args[1]}** is not a valid setting for voting.`;
+				return `Valid vote settings are ${Tools.arrayIntoList(this.usage[0].options, false)}`;
 			}
 
-		}, "Setup this channel with react voting.", "settings", ["images | all | off"], false, ["ADMINISTRATOR"]
+		}, "Setup this channel with react voting.", "settings",
+		[
+			new UsageString("setting", ["all", "images", "off"])
+		], false, ["ADMINISTRATOR"]
 	),
 
 	new Command("Stats", function (message, args) {
 
-			if (args[1]) {
-				if (args[2]) {
+			if (args[0]) {
+				if (args[1]) {
 					let value = new Object();
 					value[message.author.id.toString()] = {};
 					value[message.author.id.toString()].stats = {};
-					value[message.author.id.toString()].stats[args[1]] = args[2];
+					value[message.author.id.toString()].stats[args[0]] = args[1];
 					Tools.settings.write(message.guild, "users", value, true);
-					return `Set ${Tools.serverName(message.author, message.guild)}'s ${args[1]} to ${args[2]}`;
+					return `Set ${Tools.serverName(message.author, message.guild)}'s ${args[0]} to ${args[1]}`;
 				} else {
 					return "Specify a value for the stat."
 				}
@@ -588,20 +635,20 @@ const commandList =
 
 	new Command("Hex Color", function (message, args) {
 
-			if (args[1] == "FUCKME") {
+			if (args[0] == "FUCKME") {
 				return "OwO";
 			}
 
-			if (args[1] == null) {
+			if (args[0] == null) {
 				return `Specify a hex code.`;
 			}
 
-			if (args[1].replace(/[^a-f0-9]/gi,'').length != 6) {
-				return `**${args[1]}** is not a valid hex code.`;
+			if (args[0].replace(/[^a-f0-9]/gi,'').length != 6) {
+				return `**${args[0]}** is not a valid hex code.`;
 			}	
 
-			let colorName = Tools.colors.closest(args[1]);
-			let colorCode = Tools.colors.format(args[1]).substring(1);
+			let colorName = Tools.colors.closest(args[0]);
+			let colorCode = Tools.colors.format(args[0]).substring(1);
 			let url = `https://via.placeholder.com/50/${colorCode}/${colorCode}.png`;
 
 			let embed = new Discord.MessageEmbed()
@@ -728,7 +775,7 @@ const commandList =
 				return `${message.author} you don't have any fingers left!`;
 			}
 
-			if (args[1] == "yes") {
+			if (args[0] == "yes") {
 				fingers[players.indexOf(message.author)] --;
 
 				roundCount ++;
@@ -749,7 +796,7 @@ const commandList =
 				return text;
 			}
 
-			if (args[1] == "no") {
+			if (args[0] == "no") {
 				roundCount ++;
 				thisRound.push(message.author.id);
 
@@ -767,7 +814,7 @@ const commandList =
 
 	new Command("To Binary", function (message, args) {
 
-			if (Number.isNaN(parseInt(args[1]) ) ) {
+			if (Number.isNaN(parseInt(args[0]) ) ) {
 				let content = message.content.substring(Prefix.length + this.call.length + 1);
 
 				let text = "";
@@ -777,13 +824,13 @@ const commandList =
 				return text;
 			}
 
-			return parseInt(args[1]).toString(2);
+			return parseInt(args[0]).toString(2);
 		}, "Turn something into binary!", "tools", ["number"], false, [], "tobin"
 	),
 
 	new Command("To Hexadecimal", function (message, args) {
 
-			if (Number.isNaN(parseInt(args[1]) ) ) {
+			if (Number.isNaN(parseInt(args[0]) ) ) {
 				let content = message.content.substring(Prefix.length + this.call.length + 1);
 
 				let text = "";
@@ -793,13 +840,13 @@ const commandList =
 				return text.toUpperCase();
 			}
 
-			return parseInt(args[1]).toString(16).toUpperCase();
+			return parseInt(args[0]).toString(16).toUpperCase();
 		}, "Turn something into hexadecimal!", "tools", ["number"], false, [], "tohex"
 	),
 
 	new Command("Roll", function (message, args) {
 
-			let rolls = parseInt(args[1]) || 2;
+			let rolls = this.usage[0].test(args[0]) || 2;
 
 			let text = "Rolls: ", total = 0, succ = 0;
 			for (let i = 0; i < rolls; i++) {
@@ -811,7 +858,10 @@ const commandList =
 			text =  `${text}\nTotal: ${total}\nSuccesses: ${succ}`;
 
 			return [new TextMessage(message, text), new ReactEmote(message, "🎲")];
-		}, "Roll a number of dice!", "tools", ["number"]
+		}, "Roll a number of dice!", "tools",
+		[
+			new UsageNumber("rolls", 1, 15)
+		]
 	),
 
 	new Command("Request", function (message, args) {
@@ -906,12 +956,12 @@ function helpCommand (message, args) {
 	.setColor("64BF51")
 	.setFooter("This bot is a WIP by TheAlbinoDillo");
 
-	if (args[1] != undefined) {
-		if (commandCategoryList.includes(args[1]) ) {
+	if (args[0] != undefined) {
+		if (commandCategoryList.includes(args[0]) ) {
 			for (let i = 0, l = commandList.length; i < l; i++) {
 				let cli = commandList[i];
-				if (cli.category == args[1]) {
-					embed.setTitle(`Command category: ${args[1]}`)
+				if (cli.category == args[0]) {
+					embed.setTitle(`Command category: ${args[0]}`)
 					.addField(`**${cli.name}**${cli.onlyOwner ? "®" : ""}\n${cli.description}`,`${Prefix}${cli.call} ${usageList(cli)}`);
 				}
 			}
@@ -919,7 +969,7 @@ function helpCommand (message, args) {
 		}
 		let selected = -1;
 		for (let i = 0, l = commandList.length; i < l; i++) {
-			if (commandList[i].call == args[1]) {
+			if (commandList[i].call == args[0]) {
 				selected = i;
 			}
 		}

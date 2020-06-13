@@ -201,7 +201,7 @@ function formatHex (string) {
 	return text;
 }
 
-function arrayIntoList (array) {	//Turn an array into a human-readable list
+function arrayIntoList (array, and = true) {	//Turn an array into a human-readable list
 
 	let l = array.length;
 
@@ -211,10 +211,10 @@ function arrayIntoList (array) {	//Turn an array into a human-readable list
 
 	let text = "";
 	if (l <= 2) {
-		text += (l == 2) ? `${array[0]} and ${array[1]}` : `${array[0]}`;
+		text += (l == 2) ? `${array[0]} ${and ? "and" : "or"} ${array[1]}` : `${array[0]}`;
 	} else {
 		for (let i = 0; i < l; i++) {
-			text += `${(i == l - 1) ? " and " : ""}${array[i]}${(i < l - 2) ? ", " : ""}`;
+			text += `${(i == l - 1) ? ` ${and ? "and" : "or"} ` : ""}${array[i]}${(i < l - 2) ? ", " : ""}`;
 		}
 	}
 

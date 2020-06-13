@@ -322,6 +322,8 @@ function runCommand (message) {
 		}
 	}
 
+	args.shift();
+
 	if (!selectedCommand) {
 		botSend(message, `**${Commands.prefix}${args[0]}** is not a command.`);
 		return;
