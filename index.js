@@ -316,7 +316,7 @@ function runCommand (message) {
 
 	let selectedCommand = null;
 	for (let i = 0, l = Commands.commandList.length; i < l; i++) {
-		if (Commands.commandList[i].call.toLowerCase() == args[0].toLowerCase() ) {
+		if (Commands.commandList[i].calls.includes(args[0].toLowerCase() ) ) {
 			selectedCommand = Commands.commandList[i];
 			break;
 		}

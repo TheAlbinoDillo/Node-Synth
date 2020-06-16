@@ -144,7 +144,7 @@ class UsageNumber extends Usage {
 }
 
 class Command {
-	constructor(name, runFunction = function () {}, description = "", category, usage = [], deleteMessage = false, permissions = [], call = false) {
+	constructor(name, runFunction = function () {}, description = "", category, usage = [], deleteMessage = false, permissions = [], calls = []) {
 		this.name = name;
 		this.runFunction = runFunction;
 		this.description = description;
@@ -152,12 +152,12 @@ class Command {
 		this.usage = usage;
 		this.deleteMessage = deleteMessage;
 		this.permissions = permissions;
-		this.call = call ? call : name.toLowerCase().replace(/ /g, "");
+		this.calls = calls + [name.toLowerCase().replace(/ /g, "")]
 	}
 }
 
 class Interaction extends Command {
-	constructor(name, description, outputs, call, defaultWord = "themselves") {
+	constructor(name, description, outputs, calls = [], defaultWord = "themselves") {
 		super
 		(
 			name,
@@ -174,7 +174,7 @@ class Interaction extends Command {
 			["@user1 @user2 @user.."],
 			false,
 			[],
-			call ? call : name.toLowerCase().replace(/ /g, "")
+			calls
 		);
 		this.outputs = outputs;
 	}
@@ -198,7 +198,7 @@ const commandList =
 			[""],
 			["cuddles"],
 			["!"]
-		]
+		], ["cudd"]
 	),
 
 	new Interaction("Nuzzle", "Nuzzle with someone!",
@@ -206,7 +206,7 @@ const commandList =
 			[" cozily", " warmly"],
 			["nuzzles", "nuzzles with", "nuzzles into"],
 			["!"]
-		]
+		], ["nuzz"]
 	),
 
 	new Interaction("Snuggle", "Snuggle with someone!",
@@ -214,7 +214,7 @@ const commandList =
 			[" cozily", " warmly"],
 			["snuggles", "snuggles with", "snuggles into"],
 			["!"]
-		]
+		], ["snugg", "snug"]
 	),
 
 	new Interaction("High Five", "Give someone a high five!",
@@ -222,8 +222,7 @@ const commandList =
 			[""],
 			["high fives"],
 			["!"]
-		],
-		"high"
+		], ["high", "five"]
 	),
 
 	new Interaction("Tase", "Give someone a shock!!",
@@ -231,7 +230,7 @@ const commandList =
 			[""],
 			["tases","uses a taser on"],
 			["!",", take that!",", ouch!"]
-		]
+		], ["taze"]
 	),
 
 	new Interaction("Poke", "Poke poke poke someone!",
@@ -263,7 +262,7 @@ const commandList =
 			["", "", " puckers up and", " smiles and"],
 			["kisses", "kisses", "gives a big kiss to"],
 			["!", "!", " on the lips!", " on the cheek!"]
-		]
+		], ["smooch"]
 	),
 
 	new Interaction("Pet", "Give someone some nice pets!",
@@ -295,7 +294,7 @@ const commandList =
 			["", " playfully", " quickly", " angrily"],
 			["bites"],
 			["!", "!", " on the face!", " on the arm!", " on the tail!"]
-		]
+		], ["chomp"]
 	),
 
 	new Command("Bark", function (message, args)
@@ -465,7 +464,7 @@ const commandList =
 			.setFooter(`${g.region} • ${g.id} • ${g.owner.user.username}#${g.owner.user.discriminator}`);
 
 			return new TextMessage(message, embed);
-		}, "Get information about the server.", "tools", [], false, [], "serverinfo"
+		}, "Get information about the server.", "tools", [], false, [], ["serverinfo"]
 	),
 
 	new Command("Echo", function (message, args)
@@ -476,7 +475,7 @@ const commandList =
 
 	new Command("UwU Speak", function (message, args) {
 			return `${message.author} (${Prefix}${this.call}):\n${Tools.makeUwU(args.full)}`;
-		}, "Convert to UwU speak!", "fun", ["text"], true, [], "uwu"
+		}, "Convert to UwU speak!", "fun", ["text"], true, [], ["uwu"]
 	),
 
 	new Command("Decide", function (message, args) {
@@ -627,7 +626,7 @@ const commandList =
 			}
 
 			return text;
-		}, "Enslave the bot to do math!", "tools", ["expression"], false, [], "calc"
+		}, "Enslave the bot to do math!", "tools", ["expression"], false, [], ["calc"]
 	),
 
 	new Command("Test Error", "This is not supposed to be a string", "", null),
@@ -656,7 +655,7 @@ const commandList =
 
 			return new TextMessage(message, embed);
 
-		}, "Get a preview of a hex color!", "tools", ["hex code"], false, [], "hex"
+		}, "Get a preview of a hex color!", "tools", ["hex code"], false, [], ["hex"]
 	),
 
 	new Command("Never Setup", function(message, args) {
@@ -824,7 +823,7 @@ const commandList =
 			}
 
 			return parseInt(args[0]).toString(2);
-		}, "Turn something into binary!", "tools", ["number"], false, [], "tobin"
+		}, "Turn something into binary!", "tools", ["number"], false, [], ["tobin"]
 	),
 
 	new Command("To Hexadecimal", function (message, args) {
@@ -840,7 +839,7 @@ const commandList =
 			}
 
 			return parseInt(args[0]).toString(16).toUpperCase();
-		}, "Turn something into hexadecimal!", "tools", ["number"], false, [], "tohex"
+		}, "Turn something into hexadecimal!", "tools", ["number"], false, [], ["tohex"]
 	),
 
 	new Command("Roll", function (message, args) {
