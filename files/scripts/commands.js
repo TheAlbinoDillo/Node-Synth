@@ -404,7 +404,7 @@ const commandList =
 	new Command("Foods", function (message, args)
 		{
 			if (args[0] == "add") {
-				let text = message.content.substring(Prefix.length + args[0].length + args[0].length + 2);
+				let text = args.full.substring(args[1].length + 1);
 				Tools.settings.write(message.guild, "foods", [text], true);
 				return `Added \`${text}\` to the food list.`;
 			}
@@ -470,13 +470,12 @@ const commandList =
 
 	new Command("Echo", function (message, args)
 		{
-			let text = message.content.substring(Prefix.length).substring(this.call.length);
-			return text;
+			return args.full;
 		}, "Make the bot say what you say", "tools", ["text"], true, ["MANAGE_MESSAGES"]
 	),
 
 	new Command("UwU Speak", function (message, args) {
-			return `${message.author} (${Prefix}${this.call}):\n${Tools.makeUwU(message.content.substring(Prefix.length + args[0].length) )}`;
+			return `${message.author} (${Prefix}${this.call}):\n${Tools.makeUwU(args.full)}`;
 		}, "Convert to UwU speak!", "fun", ["text"], true, [], "uwu"
 	),
 
@@ -618,7 +617,7 @@ const commandList =
 	),
 
 	new Command("Calculator", function (message, args) {
-			let exp = message.content.substring(Prefix.length + args[0].length);
+			let exp = args.full;
 
 			var text = "";
 			try {
@@ -815,7 +814,7 @@ const commandList =
 	new Command("To Binary", function (message, args) {
 
 			if (Number.isNaN(parseInt(args[0]) ) ) {
-				let content = message.content.substring(Prefix.length + this.call.length + 1);
+				let content = args.full;
 
 				let text = "";
 				for (let i = 0, l = content.length; i < l; i++) {
@@ -831,7 +830,7 @@ const commandList =
 	new Command("To Hexadecimal", function (message, args) {
 
 			if (Number.isNaN(parseInt(args[0]) ) ) {
-				let content = message.content.substring(Prefix.length + this.call.length + 1);
+				let content = args.full;
 
 				let text = "";
 				for (let i = 0, l = content.length; i < l; i++) {
@@ -868,7 +867,7 @@ const commandList =
 			
 			let guild = "704494659400892458";
 			let channel = "718827126878371881";
-			let content = `**${message.author.username}#${message.author.discriminator}**:\n${message.content.substring(Prefix.length + this.call.length + 1)}\n`;
+			let content = `**${message.author.username}#${message.author.discriminator}**:\n${args.full}\n`;
 
 			return [new Transpose(content, guild, channel), new ReactEmote(message, "✅")];
 
@@ -889,8 +888,6 @@ const commandList =
 			if (users < 1) {
 				return "Specify users to kick.";
 			}
-
-			//message.content = message.content.substring(Prefix.length + this.call.length + 1);
 
 			for (let i = 0, l = users.length; i < l; i++) {
 
@@ -918,8 +915,6 @@ const commandList =
 			if (users < 1) {
 				return "Specify users to ban.";
 			}
-
-			//message.content = message.content.substring(Prefix.length + this.call.length + 1);
 
 			for (let i = 0, l = users.length; i < l; i++) {
 

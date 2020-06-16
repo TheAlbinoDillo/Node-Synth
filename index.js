@@ -322,12 +322,13 @@ function runCommand (message) {
 		}
 	}
 
-	args.shift();
-
 	if (!selectedCommand) {
 		botSend(message, `**${Commands.prefix}${args[0]}** is not a command.`);
 		return;
 	}
+
+	args.full = message.content.substring(args[0].length + Commands.prefix.length + 1);
+	args.shift();
 
 	let hasPerms = true;
 	for (let i = 0, l = selectedCommand.permissions.length; i < l; i++) {
