@@ -5,32 +5,6 @@ const Tools = require("./botTools.js");
 
 const Prefix = 'fg.';
 
-var gameChannel;
-var gameLocked = false;
-var players = [];
-var fingers = [];
-var thisRound = [];
-var roundCount = 0;
-var turnCount = 0;
-var asked = false;
-
-function nextRound () {
-	roundCount = 0;
-	turnCount++;
-	thisRound = [];
-	asked = false;
-
-	if (turnCount == players.length) {
-		turnCount = 0;
-	}
-
-	if (fingers[turnCount] < 1) {
-		turnCount ++;
-	}
-
-	return `${players[turnCount]} It's your turn! Use fg.NeverHaveIever <statement>`;
-}
-
 class Responce {
 	constructor(type = "text", content, guild, channel, message) {
 		let types = ["text", "edit", "react", "ping", "transpose"];
@@ -177,6 +151,54 @@ class Interaction extends Command {
 			calls
 		);
 		this.outputs = outputs;
+	}
+}
+
+class ImageShare extends Command {
+	constructor(name, type = ".png", filename) {
+
+		filename = filename || name.toLowerCase();
+
+		super
+		(
+			name,
+			function (message, args) {
+				let pickLength = FileSystem.readdirSync(`./files/common/${filename}/`).length;
+				let choice = parseInt(args[0]);
+				let pick = Tools.randNumber(pickLength - 1);
+
+				let url = `./files/common/${filename}/${filename}${pick}${type}`;
+				let content = {content: pick, files: [url]};
+
+				if (args[0]) {
+					let returnList =
+						[
+							new ReactEmote(message, "🔍"),
+							new TextMessage(message, content)
+						];
+
+					if (choice >= 0 && choice < pickLength) {
+
+						pick = choice;
+						url = `./files/common/${filename}/${filename}${pick}${type}`;
+						content = {content: pick, files: [url]};
+						returnList[1] = new TextMessage(message, content);
+
+						return returnList;
+					} else {
+						returnList.push(new ReactEmote(message, "❔") );
+						return returnList;
+					}
+				}
+
+				return new TextMessage(message, content);
+			},
+			`Get ${filename} pictures!`,
+			"fun",
+			[new UsageNumber("rolls")],
+			false,
+			[]
+		);
 	}
 }
 
@@ -488,63 +510,11 @@ const commandList =
 		}, "Randomly decide from values", "tools", ["option1","option2","option.."]
 	),
 
-	new Command("Dance", function (message, args) {
+	new ImageShare("Dance", ".gif"),
 
-			let pickLength = FileSystem.readdirSync("./files/common/dance/").length;
-			let choice = parseInt(args[0]);
-			let pick = choice > -1 ? choice : Tools.randNumber(pickLength)
+	new ImageShare("Grant"),
 
-			let url = `./files/common/dance/dance${pick}.gif`;
-			return {content: pick, files: [url]};
-		}, "Let's dance!", "fun"
-	),
-
-	new Command("Grant", function (message, args) {
-
-			let pickLength = FileSystem.readdirSync("./files/common/grant/").length;
-			let choice = parseInt(args[0]);
-			let pick = choice > -1 ? choice : Tools.randNumber(pickLength)
-
-			let url = `./files/common/grant/grant${pick}.png`;
-			let content = {content: pick, files: [url]};
-
-			return new TextMessage(message, content);
-		}, "Get a picture of the panda!", "fun"
-	),
-
-	new Command("Fox", function (message, args) {
-
-			let pickLength = FileSystem.readdirSync("./files/common/fox/").length;
-			let choice = parseInt(args[0]);
-			let pick = Tools.randNumber(pickLength - 1);
-
-			let url = `./files/common/fox/fox${pick}.png`;
-			let content = {content: pick, files: [url]};
-
-			if (args[0]) {
-				let returnList =
-					[
-						new ReactEmote(message, "🔍"),
-						new TextMessage(message, content)
-					];
-
-				if (choice >= 0 && choice < pickLength) {
-
-					pick = choice;
-					url = `./files/common/fox/fox${pick}.png`;
-					content = {content: pick, files: [url]};
-					returnList[1] = new TextMessage(message, content);
-
-					return returnList;
-				} else {
-					returnList.push(new ReactEmote(message, "❔") );
-					return returnList;
-				}
-			}
-
-			return new TextMessage(message, content);
-		}, "Get a picture of a cute fox!", "fun"
-	),
+	new ImageShare("Fox"),
 
 	new Command("Leave", function (message, args) {
 			Tools.disconnect(message.client);
@@ -583,26 +553,6 @@ const commandList =
 		[
 			new UsageString("setting", ["all", "images", "off"])
 		], false, ["ADMINISTRATOR"]
-	),
-
-	new Command("Stats", function (message, args) {
-
-			if (args[0]) {
-				if (args[1]) {
-					let value = new Object();
-					value[message.author.id.toString()] = {};
-					value[message.author.id.toString()].stats = {};
-					value[message.author.id.toString()].stats[args[0]] = args[1];
-					Tools.settings.write(message.guild, "users", value, true);
-					return `Set ${Tools.serverName(message.author, message.guild)}'s ${args[0]} to ${args[1]}`;
-				} else {
-					return "Specify a value for the stat."
-				}
-			} else {
-				return "Specify a stat to set.";
-			}
-
-		}, "Set player stats for DnD", "DnD", ["statname", "value"]
 	),
 
 	new Command("Stat List", function (message, args) {
@@ -656,158 +606,6 @@ const commandList =
 			return new TextMessage(message, embed);
 
 		}, "Get a preview of a hex color!", "tools", ["hex code"], false, [], ["hex"]
-	),
-
-	new Command("Never Setup", function(message, args) {
-
-			if (gameLocked) {
-				return "A game is already running.";
-			}
-
-			gameChannel = message.channel;
-
-			return `${message.channel} was set up for the game.`;
-
-		}, "Make this channel for the game.", "nevergame", [], false, ["MANAGE_MESSAGES"]
-	),
-
-	new Command("Never End", function(message, args) {
-
-			if (!gameLocked) {
-				return "No game was running.";
-			}
-
-			gameLocked = false;
-			players = [];
-			fingers = [];
-
-			return `The game was ended.`;
-
-		}, "End the game.", "nevergame", [], false, ["MANAGE_MESSAGES"]
-	),
-
-	new Command("Never Skip", function(message, args) {
-
-			roundCount++;
-			return nextRound();
-
-		}, "Skip this player's turn.", "nevergame", [], false, ["MANAGE_MESSAGES"]
-	),
-
-	new Command("Never Start", function(message, args) {
-
-			if (!gameChannel) {
-				return "Either no game channel has been set, or no a game is already running.";
-			}
-
-			if (players.length < 2) {
-				return "You need more players.";
-			}
-
-			for (let i = 0; i < players.length; i++) {
-				fingers[i] = 5;
-			}
-
-			var names = [];
-			for (let i = 0; i < players.length; i++) {
-				names.push(Tools.serverName(players[i], message.guild) );
-			}
-
-			gameLocked = true;
-
-			return `Game has been locked to new players and game is starting!\nPlayers are ${Tools.arrayIntoList(names)}\n\n${players[turnCount]} It's your turn!`;
-
-		}, "Locks the game from new players and starts!", "nevergame", [], false, ["MANAGE_MESSAGES"]
-	),
-
-	new Command("Never Join", function(message, args) {
-
-			if (message.channel != gameChannel || gameLocked) {
-				return "Either you're in the wrong channel, or a game is running.";
-			}
-
-			if (players.includes(message.author) ) {
-				return "You already joined this game.";
-			}
-
-			players.push(message.author);
-			return `${message.author} has joined the game!`;
-
-		}, "Join the current game", "nevergame", [], false, []
-	),
-
-	new Command("Never Have I Ever", function(message, args) {
-
-			if (players[turnCount] != message.author) {
-				return "You're not the leader this round."
-			}
-
-			asked = true;
-			thisRound.push(message.author.id);
-			roundCount++;
-
-			return "^";
-
-		}, "Ask the question for this round", "nevergame", [], false, []
-	),
-
-	new Command("Never", function(message, args) {
-
-			if (message.channel != gameChannel || !players.includes(message.author) ) {
-				return "Either you're in the wrong channel, or no game is running without you.";
-			}
-
-			if (players[turnCount] == message.author) {
-				return "You're the leader this turn. Use fg.NeverHaveIever";
-			}
-
-			if (thisRound.includes(message.author.id) ) {
-				return "You already played this round.";
-			}
-
-			if (!asked) {
-				return "Wait for the leader to ask for this round.";
-			}
-
-			if (fingers[players.indexOf(message.author)] < 1) {
-				return `${message.author} you don't have any fingers left!`;
-			}
-
-			if (args[0] == "yes") {
-				fingers[players.indexOf(message.author)] --;
-
-				roundCount ++;
-				
-				let text = `${message.author} has put a finger down and has ${fingers[players.indexOf(message.author)]} finger(s) left!\n`;
-
-				if (fingers[players.indexOf(message.author)] > 0) {
-					thisRound.push(message.author.id);
-				} else {
-					text = `${message.author} is out of the game!\n`;
-					players.splice(players.indexOf(message.author), 1);
-				}
-
-				if (players.length == thisRound.length) {
-					return text + nextRound();
-				}
-
-				return text;
-			}
-
-			if (args[0] == "no") {
-				roundCount ++;
-				thisRound.push(message.author.id);
-
-				if (players.length == thisRound.length) {
-					return nextRound();
-				} else {
-				 	return "^";
-				}
-			}
-
-			return "Use `fg.never yes` or `fg.never no`";
-
-		}, "Put your finger down", "nevergame", [], false, []
 	),
 
 	new Command("To Binary", function (message, args) {
@@ -945,6 +743,8 @@ for (let i = 0, l = commandList.length; i < l; i++) {
 
 function helpCommand (message, args) {
 
+	return new TextMessage(message, "Help command is currently WIP.");
+
 	let embed = new Discord.MessageEmbed()
 	//.setThumbnail(Client.user.avatarURL() )
 	.setColor("64BF51")
@@ -956,7 +756,7 @@ function helpCommand (message, args) {
 				let cli = commandList[i];
 				if (cli.category == args[0]) {
 					embed.setTitle(`Command category: ${args[0]}`)
-					.addField(`**${cli.name}**${cli.onlyOwner ? "®" : ""}\n${cli.description}`,`${Prefix}${cli.call} ${usageList(cli)}`);
+					.addField(`**${cli.name}**${cli.onlyOwner ? "®" : ""}\n${cli.description}`,`${Prefix}${cli.calls[cli.calls.length - 1]} ${usageList(cli)}`);
 				}
 			}
 			return new TextMessage(message, embed);
