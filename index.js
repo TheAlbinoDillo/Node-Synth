@@ -12,7 +12,6 @@ const Token = 'NjYyODI1ODA2OTY3NDcyMTI4.Xqzm2Q.I2y50w7Nu5QmgMqamCI9a3VuxMc';
 
 //Client variables
 var ClientLoggedIn = false;
-var textTrain = [{}, {}, {}, {}];
 
 //Setup ReadLine Interface
 const Interface = ReadLine.createInterface
