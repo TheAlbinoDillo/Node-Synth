@@ -12,9 +12,8 @@
   "author": "TheAlbinoArmadillo",
   "license": "ISC",
   "dependencies": {
-    "detect-rpi": "^1.4.0",
+    "diff": "^4.0.2",
     "discord.js": "^12.2.0",
-    "mathjs": "^7.0.0",
-    "request": "^2.88.2"
+    "mathjs": "^7.0.0"
   }
 }
