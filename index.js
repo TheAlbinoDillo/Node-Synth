@@ -5,6 +5,7 @@ const Discord = require("discord.js");
 const ReadLine = require("readline");
 const Tools = require("./files/scripts/botTools.js");
 const Commands = require("./files/scripts/commands.js");
+const Diff = require("diff");
 
 //Setup Discord Client
 const Client = new Discord.Client();
@@ -36,7 +37,16 @@ Client.on("messageUpdate", (oldMessage, newMessage) =>
 		ClientOnMessageUpdate(oldMessage, newMessage);
 	}
 );
-Client.on("guildMemberAdd", member => {  });
+Client.on("messageDelete", (message) =>
+	{
+		ClientOnMessageDelete(message);
+	}
+);
+Client.on("guildMemberAdd", member =>
+	{
+		ClientOnGuildMemberAdd(member);
+	}
+);
 
 //Setup Interface Events
 Interface.on('line', (input) => { InterfaceOnLine(input); });
@@ -102,28 +112,72 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 }
 
 function ClientOnMessageUpdate (oldMessage, newMessage) {	//Called when the Client receives a message edit
+
+	let logChannel = Tools.settings.read(newMessage.guild, "logchannel");
+	if (logChannel && !oldMessage.author.bot) {
+		let embed = new Discord.MessageEmbed()
+		.setTitle("📝 Message Edit")
+		.addField("👤 User:", oldMessage.author, true)
+		.addField("📲 Channel:", oldMessage.channel, true)
+		.addField("Original:", oldMessage.content)
+		.addField("Edited:", newMessage.content);
+
+		let diffText = "```diff\n";
+		let diffObj = Diff.diffWords(oldMessage.content, newMessage.content);
+		for (let i in diffObj) {
+			let suffix = i == diffObj.length - 1 ? "" : "\n";
+			if (diffObj[i].added) {
+				diffText += `+${diffObj[i].value}${suffix}`;
+			} else
+			if (diffObj[i].removed) {
+				diffText += `-${diffObj[i].value}${suffix}`;
+			}
+		}
+
+		embed.addField("📥 Difference:", `${diffText}\`\`\``)
+		.setFooter(`❄️ ${oldMessage.id} • 🗓️ ${new Date(oldMessage.createdTimestamp).toLocaleTimeString()} EST`);
+
+		let channel = oldMessage.guild.channels.cache.get(logChannel);
+
+		botSend(channel, embed);
+	}
+}
+
+function ClientOnMessageDelete (message) {	//Called when the Client receives a message edit
+
+	let logChannel = Tools.settings.read(message.guild, "logchannel");
+	if (logChannel && !message.author.bot) {
+		let embed = new Discord.MessageEmbed()
+		.setTitle("🗑️ Message Delete")
+		.addField("👤 User:", message.author, true)
+		.addField("📲 Channel:", message.channel, true)
+		.addField("Message:", message.content)
+		.setFooter(`❄️ ${message.id} • 🗓️ ${new Date(oldMessage.createdTimestamp).toLocaleTimeString()} EST`);
+
+		let channel = message.guild.channels.cache.get(logChannel);
+
+		botSend(channel, embed);
+	}
+}
+
+function ClientOnGuildMemberAdd (member) {
+
+	let embed = new Discord.MessageEmbed()
+	.setTitle("🆕 Member Joined")
+	.setThumbnail(member.displayAvatarURL() )
+	.addField("👤 User:", member.user, true)
+	.addField("❄️ ID:", member.id, true)
+	.addField("Creation:", `${new Date(member.user.createdAt).toLocaleTimeString()} EST`, true)
+	.setFooter(`🗓️ ${new Date(oldMessage.createdTimestamp).toLocaleTimeString()} EST`);
+
+	let channel = message.guild.channels.cache.get(logChannel);
+
+	botSend(channel, embed);	
 }
 
 //ReadLine Interface Called Events
 function InterfaceOnLine (input) {	//Called when the console receives command line input
-
-	let args = input.split(" ");
-	switch (args[0]) {
-		case "leave":
-			Tools.disconnect(Client);
-			break;
-		case "eval":
-			try {
-				console.log(eval(input.substring(5) ) );
-			} catch (error) {
-				console.error(error);
-			}
-			break;
-		case "cls":
-			console.clear();
-			break;
-	}
-}
+let args=input.split(" ");switch(args[0]){case "leave":Tools.disconnect(Client);break;case "eval":try{console.log(eval(input.substring(5)))}catch(error){console.error(error)}break;case "cls":console.clear();break}}
 
 //Client logon functions
 Connect(Token);

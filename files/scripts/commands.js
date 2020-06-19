@@ -731,6 +731,16 @@ const commandList =
 
 		}, "Ban a user.", "moderation", ["reason &| @user1 @user2 @user.."], false, ["BAN_MEMBERS"]
 	),
+
+	new Command("Set Log Channel", function (message, args) {
+
+			let value = message.channel.id;
+			Tools.settings.write(message.guild, "logchannel", value);
+
+			return "Channel set as log channel!";
+
+		}, "Set this channel as the logging channel", "moderation", [], false, ["ADMINISTRATOR"]
+	)
 ];
 
 for (let i = 0, l = commandList.length; i < l; i++) {
