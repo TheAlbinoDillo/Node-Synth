@@ -47,6 +47,11 @@ Client.on("guildMemberAdd", member =>
 		ClientOnGuildMemberAdd(member);
 	}
 );
+Client.on("guildMemberRemove", member =>
+	{
+		ClientOnGuildMemberRemove(member);
+	}
+);
 
 //Setup Interface Events
 Interface.on('line', (input) => { InterfaceOnLine(input); });
@@ -114,7 +119,7 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 function ClientOnMessageUpdate (oldMessage, newMessage) {	//Called when the Client receives a message edit
 
 	let logChannel = Tools.settings.read(newMessage.guild, "logchannel");
-	if (logChannel && !oldMessage.author.bot) {
+	if (logChannel && !oldMessage.author.bot && (oldMessage.content != newMessage.content) ) {
 		let embed = new Discord.MessageEmbed()
 		.setTitle("📝 Message Edit")
 		.addField("👤 User:", oldMessage.author, true)
@@ -135,7 +140,7 @@ function ClientOnMessageUpdate (oldMessage, newMessage) {	//Called when the Clie
 		}
 
 		embed.addField("📥 Difference:", `${diffText}\`\`\``)
-		.setFooter(`❄️ ${oldMessage.id} • 🗓️ ${new Date(oldMessage.createdTimestamp).toLocaleTimeString()} EST`);
+		.setFooter(`❄️ ${oldMessage.id} • 🗓️ ${new Date().toLocaleTimeString()} EST`);
 
 		let channel = oldMessage.guild.channels.cache.get(logChannel);
 
@@ -152,7 +157,7 @@ function ClientOnMessageDelete (message) {	//Called when the Client receives a m
 		.addField("👤 User:", message.author, true)
 		.addField("📲 Channel:", message.channel, true)
 		.addField("Message:", message.content)
-		.setFooter(`❄️ ${message.id} • 🗓️ ${new Date(oldMessage.createdTimestamp).toLocaleTimeString()} EST`);
+		.setFooter(`❄️ ${message.id} • 🗓️ ${new Date().toLocaleTimeString()} EST`);
 
 		let channel = message.guild.channels.cache.get(logChannel);
 
@@ -162,15 +167,31 @@ function ClientOnMessageDelete (message) {	//Called when the Client receives a m
 
 function ClientOnGuildMemberAdd (member) {
 
+	let logChannel = Tools.settings.read(member.guild, "logchannel");
 	let embed = new Discord.MessageEmbed()
 	.setTitle("🆕 Member Joined")
-	.setThumbnail(member.displayAvatarURL() )
+	.setThumbnail(member.user.displayAvatarURL() )
 	.addField("👤 User:", member.user, true)
 	.addField("❄️ ID:", member.id, true)
 	.addField("Creation:", `${new Date(member.user.createdAt).toLocaleTimeString()} EST`, true)
-	.setFooter(`🗓️ ${new Date(oldMessage.createdTimestamp).toLocaleTimeString()} EST`);
+	.setFooter(`🗓️ ${new Date().toLocaleTimeString()} EST`);
 
-	let channel = message.guild.channels.cache.get(logChannel);
+	let channel = member.guild.channels.cache.get(logChannel);
+
+	botSend(channel, embed);	
+}
+
+function ClientOnGuildMemberRemove (member) {
+
+	let logChannel = Tools.settings.read(member.guild, "logchannel");
+	let embed = new Discord.MessageEmbed()
+	.setTitle("⏏️ Member Left or Removed")
+	.setThumbnail(member.user.displayAvatarURL() )
+	.addField("👤 User:", member.user, true)
+	.addField("❄️ ID:", member.id, true)
+	.setFooter(`🗓️ ${new Date().toLocaleTimeString()} EST`);
+
+	let channel = member.guild.channels.cache.get(logChannel);
 
 	botSend(channel, embed);	
 }
