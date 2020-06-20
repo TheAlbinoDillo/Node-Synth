@@ -11,6 +11,12 @@ const Diff = require("diff");
 const Client = new Discord.Client();
 const Token = 'NjYyODI1ODA2OTY3NDcyMTI4.Xqzm2Q.I2y50w7Nu5QmgMqamCI9a3VuxMc';
 
+var consoleStatus =
+{
+	guild: null,
+	channel: null
+};
+
 //Client variables
 var ClientLoggedIn = false;
 
@@ -104,7 +110,11 @@ function voteHandling (message) {
 
 function ClientOnMessage (message) {	//Called when the Client receives a message
 
-	voteHandling(message);
+	if (message.channel == consoleStatus.channel) {
+		console.log(`${message.author.username}:\t${message.content}`);
+	}
+
+	//voteHandling(message);
 
 	if (message.content.toLowerCase().indexOf(Commands.prefix) == 0 && message.channel.guild) {
 		
@@ -198,7 +208,92 @@ function ClientOnGuildMemberRemove (member) {
 
 //ReadLine Interface Called Events
 function InterfaceOnLine (input) {	//Called when the console receives command line input
-let args=input.split(" ");switch(args[0]){case "leave":Tools.disconnect(Client);break;case "eval":try{console.log(eval(input.substring(5)))}catch(error){console.error(error)}break;case "cls":console.clear();break}}
+	let args = input.split(" ");
+	switch (args[0]) {
+		case "leave":
+			Tools.disconnect(Client);
+			break;
+		case "dir":
+			dir(args);
+			break;
+		case "send":
+			if (consoleStatus.guild != null && consoleStatus.channel != null) {
+				consoleStatus.channel.send(input.substring(5) );
+			}
+			break;
+		case "eval":
+			try {
+				console.log(eval(input.substring(5) ) )
+			} catch (error) {
+				console.error(error)
+			}
+			break;
+		case "cls":
+			console.clear();
+			break;
+	}
+}
+
+function dir (args) {
+
+	if (args[1] == "..") {
+		if (consoleStatus.channel != null) {
+			consoleStatus.channel = null;
+			console.log(`Client/${consoleStatus.guild.name}/`);
+			return;
+		}
+		if (consoleStatus.guild != null) {
+			consoleStatus.guild = null;
+			console.log(`Client/`);
+			return;
+		}
+		return;
+	}
+
+	if (args[1] != null) {
+		if (consoleStatus.guild == null) {
+			consoleStatus.guild = Client.guilds.cache.array()[parseInt(args[1])];
+			console.log("Set server to: " + consoleStatus.guild.name);
+			return;
+		}
+		if (consoleStatus.channel == null) {
+			consoleStatus.channel = consoleStatus.guild.channels.cache.array()[parseInt(args[1])];
+			console.log("Set channel to: " + consoleStatus.channel.name);
+			return;
+		}
+	}
+
+	let text = "Client/";
+	if (consoleStatus.guild == null) {
+
+		console.log(text);
+
+		let cgca = Client.guilds.cache.array();
+		for (let i = 0, l = cgca.length; i < l; i++) {
+			console.log(`${i >= 10 ? i : "0" + i}: ${cgca[i].name}`);
+		}
+		return;
+	} else {
+		text += consoleStatus.guild.name + "/";
+	}
+
+	if (consoleStatus.channel == null) {
+
+		console.log(text);
+
+		let cgcca = consoleStatus.guild.channels.cache.array();
+		for (let i = 0, l = cgcca.length; i < l; i++) {
+			console.log(`${i >= 10 ? i : "0" + i}: ${cgcca[i].type == "category" ? "----- " : ""}${cgcca[i].name} ${cgcca[i].type == "voice" ? "(VC)" : ""}`);
+		}
+		return;
+	} else {
+		text += consoleStatus.channel.name + "/";
+	}
+
+	console.log(text);
+}
+
+
 
 //Client logon functions
 Connect(Token);
