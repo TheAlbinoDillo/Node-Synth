@@ -400,7 +400,7 @@ const commandList =
 		{
 			let arr = Tools.arrayIntoList(Tools.getMentionList(message, true) ) || "themselves";
 
-			console.log(`${message.author.username} ${Prefix}${this.call}:\nFetching foodlist.\n`);
+			//console.log(`${message.author.username} ${Prefix}${this.call}:\nFetching foodlist.\n`);
 			let foodlist = Tools.settings.read(message.guild, "foods");
 
 			if (foodlist == null) {
@@ -425,7 +425,7 @@ const commandList =
 	new Command("Foods", function (message, args)
 		{
 			if (args[0] == "add") {
-				let text = args.full.substring(args[1].length + 1);
+				let text = args.full.substring(args[0].length + 1);
 				Tools.settings.write(message.guild, "foods", [text], true);
 				return `Added \`${text}\` to the food list.`;
 			}
