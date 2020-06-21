@@ -336,7 +336,7 @@ function botSend (channel, content) {	//Send a message to the specified channel
 		channel = channel.channel;
 	}
 
-	if (!channel instanceof Discord.Channel) {
+	if (!channel instanceof Discord.TextChannel) {
 		console.error("Did not provide a channel to botSend.\n");
 		return null;
 	}
