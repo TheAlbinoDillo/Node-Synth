@@ -110,6 +110,8 @@ function voteHandling (message) {
 
 function ClientOnMessage (message) {	//Called when the Client receives a message
 
+	if (message.channel instanceof Discord.DMChannel) return;
+
 	if (message.channel == consoleStatus.channel) {
 		console.log(`${message.author.username}:\t${message.content}`);
 	}
@@ -127,6 +129,8 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 }
 
 function ClientOnMessageUpdate (oldMessage, newMessage) {	//Called when the Client receives a message edit
+
+	if (newMessage.channel instanceof Discord.DMChannel) return;
 
 	let logChannel = Tools.settings.read(newMessage.guild, "logchannel");
 	if (logChannel && !oldMessage.author.bot && (oldMessage.content != newMessage.content) ) {
@@ -346,8 +350,6 @@ function botSend (channel, content) {	//Send a message to the specified channel
 			return null;
 		}
 	}
-
-	//console.log(channel);
 
 	let sent = channel.send(content);
 
