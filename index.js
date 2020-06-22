@@ -351,6 +351,7 @@ function botSend (channel, content) {	//Send a message to the specified channel
 		}
 	}
 
+	console.log(channel);
 	let sent = channel.send(content);
 
 	sent.then(message => {}).catch(error =>
