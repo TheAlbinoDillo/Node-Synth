@@ -6,6 +6,7 @@ const ReadLine = require("readline");
 const Tools = require("./files/scripts/botTools.js");
 const Commands = require("./files/scripts/commands.js");
 const Diff = require("diff");
+const fs = require("fs");
 
 //Setup Discord Client
 const Client = new Discord.Client();
@@ -351,7 +352,8 @@ function botSend (channel, content) {	//Send a message to the specified channel
 		}
 	}
 
-	console.log(channel);
+
+	fs.writeFileSync("testlog.txt", JSON.stringify(channel) );
 	let sent = channel.send(content);
 
 	sent.then(message => {}).catch(error =>
