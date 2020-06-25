@@ -337,7 +337,7 @@ function botSend (channel, content) {	//Send a message to the specified channel
 		channel = channel.channel;
 	}
 
-	if (!channel instanceof Discord.TextChannel) {
+	if (!(channel instanceof Discord.TextChannel) ) {
 		console.error("Did not provide a channel to botSend.\n");
 		return null;
 	}
@@ -352,8 +352,6 @@ function botSend (channel, content) {	//Send a message to the specified channel
 		}
 	}
 
-
-	fs.writeFileSync("testlog.txt", JSON.stringify(channel) );
 	let sent = channel.send(content);
 
 	sent.then(message => {}).catch(error =>
