@@ -18,6 +18,11 @@ var consoleStatus =
 	channel: null
 };
 
+process.on('uncaughtException', function(error) {
+	fs.writeFileSync("log", error.toString() );
+	process.exit();
+});
+
 //Client variables
 var ClientLoggedIn = false;
 
