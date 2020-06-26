@@ -35,87 +35,16 @@ const Interface = ReadLine.createInterface
 
 //Setup Discord Client Events
 Client.on("ready", () =>
-	{
-		console.log("Client is ready\n"); ClientOnReady();
-	}
-);
-Client.on("message", message =>
-	{
-		ClientOnMessage(message);
-	}
-);
-Client.on("messageUpdate", (oldMessage, newMessage) =>
-	{
-		ClientOnMessageUpdate(oldMessage, newMessage);
-	}
-);
-Client.on("messageDelete", (message) =>
-	{
-		ClientOnMessageDelete(message);
-	}
-);
-Client.on("guildMemberAdd", member =>
-	{
-		ClientOnGuildMemberAdd(member);
-	}
-);
-Client.on("guildMemberRemove", member =>
-	{
-		ClientOnGuildMemberRemove(member);
-	}
-);
-
-//Setup Interface Events
-Interface.on('line', (input) => { InterfaceOnLine(input); });
-
-//Discord Called Events
-function ClientOnReady () {	//Called when after Discord Client is logged in
+{
+	console.log("Client is ready\n");
 
 	if (Tools.isDebug) {
 		Activity("PLAYING", "Debugging");
 	}
-}
+});
 
-function voteHandling (message) {
-
-	let channelSettings = Tools.settings.read(message.guild, "channels");
-	if (channelSettings == null) {
-		return;
-	}
-
-	if (channelSettings[message.channel.id] == null) {
-		return;
-	}
-
-	let voteSetting = channelSettings[message.channel.id]["vote"];
-	if (!voteSetting || voteSetting == "off") {
-		return;
-	}
-
-	let react = function () {
-		botReact(message, ":symbol_reddit_vote_up:680935204050698329");
-		botReact(message, ":symbol_reddit_vote_down:680935348272103445");
-	}
-
-	if (voteSetting == "images" && !message.author.bot) {
-
-		let maa = message.attachments.array()[0];
-		if (maa != null) {
-			if (maa.width != null) {
-				react();
-			}
-		}
-		return;
-	}
-
-	if (voteSetting == "all") {
-		react();
-		return;
-	}
-}
-
-function ClientOnMessage (message) {	//Called when the Client receives a message
-
+Client.on("message", message =>
+{
 	if (message.channel instanceof Discord.DMChannel) return;
 
 	if (message.channel == consoleStatus.channel) {
@@ -132,10 +61,10 @@ function ClientOnMessage (message) {	//Called when the Client receives a message
 			runCommand(message);
 		}
 	}
-}
+});
 
-function ClientOnMessageUpdate (oldMessage, newMessage) {	//Called when the Client receives a message edit
-
+Client.on("messageUpdate", (oldMessage, newMessage) =>
+{
 	if (newMessage.channel instanceof Discord.DMChannel) return;
 
 	let logChannel = Tools.settings.read(newMessage.guild, "logchannel");
@@ -166,10 +95,10 @@ function ClientOnMessageUpdate (oldMessage, newMessage) {	//Called when the Clie
 
 		botSend(channel, embed);
 	}
-}
+});
 
-function ClientOnMessageDelete (message) {	//Called when the Client receives a message edit
-
+Client.on("messageDelete", (message) =>
+{
 	let logChannel = Tools.settings.read(message.guild, "logchannel");
 	if (logChannel && !message.author.bot) {
 		let embed = new Discord.MessageEmbed()
@@ -183,10 +112,10 @@ function ClientOnMessageDelete (message) {	//Called when the Client receives a m
 
 		botSend(channel, embed);
 	}
-}
+});
 
-function ClientOnGuildMemberAdd (member) {
-
+Client.on("guildMemberAdd", member =>
+{
 	let logChannel = Tools.settings.read(member.guild, "logchannel");
 	let embed = new Discord.MessageEmbed()
 	.setTitle("🆕 Member Joined")
@@ -198,11 +127,11 @@ function ClientOnGuildMemberAdd (member) {
 
 	let channel = member.guild.channels.cache.get(logChannel);
 
-	botSend(channel, embed);	
-}
+	botSend(channel, embed);
+});
 
-function ClientOnGuildMemberRemove (member) {
-
+Client.on("guildMemberRemove", member =>
+{
 	let logChannel = Tools.settings.read(member.guild, "logchannel");
 	let embed = new Discord.MessageEmbed()
 	.setTitle("⏏️ Member Left or Removed")
@@ -213,8 +142,14 @@ function ClientOnGuildMemberRemove (member) {
 
 	let channel = member.guild.channels.cache.get(logChannel);
 
-	botSend(channel, embed);	
-}
+	botSend(channel, embed);
+});
+
+//Setup Interface Events
+Interface.on('line', (input) =>
+{
+	InterfaceOnLine(input);
+});
 
 //ReadLine Interface Called Events
 function InterfaceOnLine (input) {	//Called when the console receives command line input
