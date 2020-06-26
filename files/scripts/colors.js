@@ -1,3 +1,5 @@
+"use strict";
+
 const fs = require("fs");
 let content = fs.readFileSync(`./files/common/hexcolors.json`);
 const obj = JSON.parse(content);

@@ -1,3 +1,5 @@
+"use strict";
+
 const FileSystem = require("fs");
 var Debug = false;
 

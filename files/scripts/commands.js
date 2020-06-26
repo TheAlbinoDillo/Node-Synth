@@ -1,3 +1,5 @@
+"use strict";
+
 const Discord = require("discord.js");
 const FileSystem = require("fs");
 const MathJS = require("mathjs");

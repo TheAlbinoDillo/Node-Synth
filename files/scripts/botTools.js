@@ -1,3 +1,5 @@
+"use strict";
+
 const FileSystem = require("fs");
 const Debug = require("./runningOnPi.js");
 const Color = require("./colors.js");
