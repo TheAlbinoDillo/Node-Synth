@@ -2,7 +2,6 @@
 
 //"Import" Dependencies
 const Discord = require("discord.js");
-const ReadLine = require("readline");
 const Tools = require("./files/scripts/botTools.js");
 const Commands = require("./files/scripts/commands.js");
 const Diff = require("diff");
@@ -12,12 +11,6 @@ const fs = require("fs");
 const Client = new Discord.Client();
 const Token = 'NjYyODI1ODA2OTY3NDcyMTI4.Xqzm2Q.I2y50w7Nu5QmgMqamCI9a3VuxMc';
 
-var consoleStatus =
-{
-	guild: null,
-	channel: null
-};
-
 process.on('uncaughtException', function(error) {
 	console.error(error);
 	fs.writeFileSync("log.txt", error.stack);
@@ -26,13 +19,6 @@ process.on('uncaughtException', function(error) {
 
 //Client variables
 var ClientLoggedIn = false;
-
-//Setup ReadLine Interface
-const Interface = ReadLine.createInterface
-({
-	input: process.stdin,
-	output: process.stdout
-});
 
 //Setup Discord Client Events
 Client.on("ready", () =>
@@ -147,101 +133,6 @@ function serverEvent (guild, title, user, time, message, edit) {
 
 	botSend(channel, embed);
 }
-
-//Setup Interface Events
-Interface.on('line', (input) =>
-{
-	InterfaceOnLine(input);
-});
-
-//ReadLine Interface Called Events
-function InterfaceOnLine (input) {	//Called when the console receives command line input
-	let args = input.split(" ");
-	switch (args[0]) {
-		case "leave":
-			Tools.disconnect(Client);
-			break;
-		case "dir":
-			dir(args);
-			break;
-		case "send":
-			if (consoleStatus.guild != null && consoleStatus.channel != null) {
-				consoleStatus.channel.send(input.substring(5) );
-			}
-			break;
-		case "eval":
-			try {
-				console.log(eval(input.substring(5) ) )
-			} catch (error) {
-				console.error(error)
-			}
-			break;
-		case "cls":
-			console.clear();
-			break;
-	}
-}
-
-function dir (args) {
-
-	if (args[1] == "..") {
-		if (consoleStatus.channel != null) {
-			consoleStatus.channel = null;
-			console.log(`Client/${consoleStatus.guild.name}/`);
-			return;
-		}
-		if (consoleStatus.guild != null) {
-			consoleStatus.guild = null;
-			console.log(`Client/`);
-			return;
-		}
-		return;
-	}
-
-	if (args[1] != null) {
-		if (consoleStatus.guild == null) {
-			consoleStatus.guild = Client.guilds.cache.array()[parseInt(args[1])];
-			console.log("Set server to: " + consoleStatus.guild.name);
-			return;
-		}
-		if (consoleStatus.channel == null) {
-			consoleStatus.channel = consoleStatus.guild.channels.cache.array()[parseInt(args[1])];
-			console.log("Set channel to: " + consoleStatus.channel.name);
-			return;
-		}
-	}
-
-	let text = "Client/";
-	if (consoleStatus.guild == null) {
-
-		console.log(text);
-
-		let cgca = Client.guilds.cache.array();
-		for (let i = 0, l = cgca.length; i < l; i++) {
-			console.log(`${i >= 10 ? i : "0" + i}: ${cgca[i].name}`);
-		}
-		return;
-	} else {
-		text += consoleStatus.guild.name + "/";
-	}
-
-	if (consoleStatus.channel == null) {
-
-		console.log(text);
-
-		let cgcca = consoleStatus.guild.channels.cache.array();
-		for (let i = 0, l = cgcca.length; i < l; i++) {
-			console.log(`${i >= 10 ? i : "0" + i}: ${cgcca[i].type == "category" ? "----- " : ""}${cgcca[i].name} ${cgcca[i].type == "voice" ? "(VC)" : ""}`);
-		}
-		return;
-	} else {
-		text += consoleStatus.channel.name + "/";
-	}
-
-	console.log(text);
-}
-
-
 
 //Client logon functions
 Connect(Token);
