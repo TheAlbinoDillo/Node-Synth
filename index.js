@@ -19,7 +19,8 @@ var consoleStatus =
 };
 
 process.on('uncaughtException', function(error) {
-	fs.writeFileSync("log", error.toString() );
+	console.error(error);
+	fs.writeFileSync("log.txt", error.stack);
 	process.exit();
 });
 
@@ -67,83 +68,79 @@ Client.on("messageUpdate", (oldMessage, newMessage) =>
 {
 	if (newMessage.channel instanceof Discord.DMChannel) return;
 
-	let logChannel = Tools.settings.read(newMessage.guild, "logchannel");
-	if (logChannel && !oldMessage.author.bot && (oldMessage.content != newMessage.content) ) {
-		let embed = new Discord.MessageEmbed()
-		.setTitle("📝 Message Edit")
-		.addField("👤 User:", oldMessage.author, true)
-		.addField("📲 Channel:", oldMessage.channel, true)
-		.addField("Original:", oldMessage.content)
-		.addField("Edited:", newMessage.content);
+	if (oldMessage.author.bot) return;
 
-		let diffText = "```diff\n";
-		let diffObj = Diff.diffWords(oldMessage.content, newMessage.content);
-		for (let i in diffObj) {
-			let suffix = i == diffObj.length - 1 ? "" : "\n";
-			if (diffObj[i].added) {
-				diffText += `+${diffObj[i].value}${suffix}`;
-			} else
-			if (diffObj[i].removed) {
-				diffText += `-${diffObj[i].value}${suffix}`;
-			}
-		}
+	if (oldMessage.content == newMessage.content) return;
 
-		embed.addField("📥 Difference:", `${diffText}\`\`\``)
-		.setFooter(`❄️ ${oldMessage.id} • 🗓️ ${new Date().toLocaleTimeString()} EST`);
+	serverEvent(newMessage.guild, "📝 Message Edit", newMessage.author, Date.now(), oldMessage, newMessage);
 
-		let channel = oldMessage.guild.channels.cache.get(logChannel);
-
-		botSend(channel, embed);
-	}
 });
 
 Client.on("messageDelete", (message) =>
 {
-	let logChannel = Tools.settings.read(message.guild, "logchannel");
-	if (logChannel && !message.author.bot) {
-		let embed = new Discord.MessageEmbed()
-		.setTitle("🗑️ Message Delete")
-		.addField("👤 User:", message.author, true)
-		.addField("📲 Channel:", message.channel, true)
-		.addField("Message:", message.content)
-		.setFooter(`❄️ ${message.id} • 🗓️ ${new Date().toLocaleTimeString()} EST`);
-
-		let channel = message.guild.channels.cache.get(logChannel);
-
-		botSend(channel, embed);
-	}
+	serverEvent(message.guild, "🗑️ Message Delete", message.author, Date.now(), message);
 });
 
 Client.on("guildMemberAdd", member =>
 {
-	let logChannel = Tools.settings.read(member.guild, "logchannel");
-	let embed = new Discord.MessageEmbed()
-	.setTitle("🆕 Member Joined")
-	.setThumbnail(member.user.displayAvatarURL() )
-	.addField("👤 User:", member.user, true)
-	.addField("❄️ ID:", member.id, true)
-	.addField("Creation:", `${new Date(member.user.createdAt).toLocaleTimeString()} EST`, true)
-	.setFooter(`🗓️ ${new Date().toLocaleTimeString()} EST`);
-
-	let channel = member.guild.channels.cache.get(logChannel);
-
-	botSend(channel, embed);
+	serverEvent(member.guild, "🆕 Member Joined", member.user, Date.now() );
 });
 
 Client.on("guildMemberRemove", member =>
 {
-	let logChannel = Tools.settings.read(member.guild, "logchannel");
-	let embed = new Discord.MessageEmbed()
-	.setTitle("⏏️ Member Left or Removed")
-	.setThumbnail(member.user.displayAvatarURL() )
-	.addField("👤 User:", member.user, true)
-	.addField("❄️ ID:", member.id, true)
-	.setFooter(`🗓️ ${new Date().toLocaleTimeString()} EST`);
+	serverEvent(member.guild, "⏏️ Member Left or Removed", member.user, Date.now() );
+});
 
-	let channel = member.guild.channels.cache.get(logChannel);
+function serverEvent (guild, title, user, time, message, edit) {
+
+	let logChannel = Tools.settings.read(guild, "logchannel");
+	let channel = guild.channels.cache.get(logChannel);
+
+	if (!logChannel) return;
+
+	let embed = new Discord.MessageEmbed()
+	.setTitle(title);
+
+	if (user) {
+		embed.setThumbnail(user.displayAvatarURL() )
+		.addField("👤 User:", user, true);
+
+		if (!message) embed.addField("❄️ ID:", user.id, true);
+	}
+
+	if (time) {
+		embed.setTimestamp(time);
+	}
+
+	if (message) {
+
+		var text = "Message:";
+		if (edit) text = "Original:"
+
+		embed.addField("📲 Channel:", message.channel, true)
+		.setFooter(`❄️ ${message.id}`)
+		.addField(text, message);
+	}
+
+	if (edit) {
+		let diffText = "";
+		let diffObj = Diff.diffWords(message.content, edit.content);
+		for (let i in diffObj) {
+			let suffix = i == diffObj.length - 1 ? "" : "\n";
+
+			let added = diffObj[i].added ? "+" : "";
+			let removed = diffObj[i].removed ? "-" : "";
+			if (added || removed) {
+				diffText += `${added || removed}${diffObj[i].value}${suffix}`;
+			}
+		}
+
+		embed.addField("Edited:", edit.content)
+		.addField("📥 Difference:", `\`\`\`diff\n${diffText}\`\`\``);
+	}
 
 	botSend(channel, embed);
-});
+}
 
 //Setup Interface Events
 Interface.on('line', (input) =>
