@@ -1,7 +1,0 @@
-server settings
-
-op bandwagon command
-
-automatic welcome
-
-inspect
