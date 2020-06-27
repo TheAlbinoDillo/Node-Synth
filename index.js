@@ -118,8 +118,14 @@ function serverEvent (guild, title, user, time, message, edit) {
 		if (edit) text = "Original:"
 
 		embed.addField("📲 Channel:", message.channel, true)
-		.setFooter(`❄️ ${message.id}`)
-		.addField(text, message);
+		.setFooter(`❄️ ${message.id}`);
+
+		let content = message.content;
+		let attachments = message.attachments.array();
+		for (let i = 0, l = attachments.length; i < l; i++) {
+			content += `\n${attachments[i].proxyURL}`;
+		}
+		embed.addField(text, content);
 	}
 
 	if (edit) {
