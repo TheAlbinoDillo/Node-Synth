@@ -1,10 +1,10 @@
 "use strict";
 
 const FileSystem = require("fs");
-const Debug = require("./runningOnPi.js");
 const Color = require("./colors.js");
+const debug = require("./runningOnPi.js");
 
-const settingsPath = Debug.isDebug ? "C:/Users/mojo4/AppData/Roaming/FurGunData/servers" : "/home/pi/fwg/settings/servers";
+const settingsPath = debug ? "C:/Users/mojo4/AppData/Roaming/FurGunData/servers" : "/home/pi/fwg/settings/servers";
 var cachedSettings = [];
 
 function serverName (user, guild, bold = true, removeSpecial = true) {	//Get the server nickname of a user and clean it up
@@ -244,7 +244,6 @@ function disconnect (client, seconds = 3) {
 
 module.exports =
 {
-	isDebug: Debug.isDebug,
 	serverName: serverName,
 	getMentionList: getMentionList,
 	settings:

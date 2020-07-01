@@ -1,16 +1,13 @@
 "use strict";
 
 const FileSystem = require("fs");
-var Debug = false;
+var debug = false;
 
 try {
 	var buffer = FileSystem.readFileSync("C:/Users/mojo4/AppData/Roaming/FurGunData/debug.json");
-	Debug = true;
+	debug = true;
 } catch (error) {
 	console.error("\nDid not find debug file, setting to Pi run.\n");
 }
 
-module.exports =
-{
-	isDebug: Debug
-};
+module.exports = debug;

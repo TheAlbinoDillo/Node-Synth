@@ -5,6 +5,7 @@ const Discord = require("discord.js");
 const Tools = require("./files/scripts/botTools.js");
 const Commands = require("./files/scripts/commands.js");
 const Diff = require("diff");
+const debug = require("./files/scripts/runningOnPi.js");
 const fs = require("fs");
 
 //Setup Discord Client
@@ -25,7 +26,7 @@ Client.on("ready", () =>
 {
 	console.log("Client is ready\n");
 
-	if (Tools.isDebug) {
+	if (debug) {
 		Activity("PLAYING", "Debugging");
 	}
 });
@@ -33,10 +34,6 @@ Client.on("ready", () =>
 Client.on("message", message =>
 {
 	if (message.channel instanceof Discord.DMChannel) return;
-
-	if (message.channel == consoleStatus.channel) {
-		console.log(`${message.author.username}:\t${message.content}`);
-	}
 
 	//voteHandling(message);
 
@@ -111,7 +108,7 @@ function serverEvent (guild, title, user, time, message, edit) {
 		for (let i = 0, l = attachments.length; i < l; i++) {
 			content += `\n${attachments[i].proxyURL}`;
 		}
-		embed.addField(text, content);
+		embed.addField(text || "null", content);
 	}
 
 	if (edit) {
