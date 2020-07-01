@@ -363,6 +363,13 @@ const commandList =
 		}, "Try to eat someone!", "interactions", ["@user1 @user2 @user.."]
 	),
 
+	new Command("Poop", function (message, args)
+		{
+			return "Why.";
+
+		}, "Poop?", "interactions", ["@user1 @user2 @user.."]
+	),
+
 	new Command("huh", function (message, args)
 		{
 			return "huh";
