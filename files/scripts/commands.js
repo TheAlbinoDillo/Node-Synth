@@ -219,10 +219,18 @@ const commandList =
 
 	new Interaction("Cuddle", "Cuddle up with someone!",
 		[
-			[""],
+			[" cozily", " warmly"],
 			["cuddles"],
 			["!"]
 		], ["cudd"]
+	),
+
+	new Interaction("Snuddle", "Snuddle with someone!",
+		[
+			[" cozily", " warmly", " happily", " adorably", ""],
+			["snuddles", "snuddles with", "snuddles into"],
+			["!", "! Awwww", "! (¬‿¬)"]
+		], ["snudd"]
 	),
 
 	new Interaction("Nuzzle", "Nuzzle with someone!",
