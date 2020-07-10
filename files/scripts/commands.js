@@ -618,7 +618,7 @@ const commandList =
 
 			let embed = new Discord.MessageEmbed()
 			.setThumbnail(url)
-			.addField(colorCode, colorName);
+			.addField("#" + colorCode, colorName);
 
 			return new TextMessage(message, embed);
 
