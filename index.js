@@ -76,6 +76,8 @@ Client.on("guildMemberRemove", member =>
 
 function serverEvent (guild, title, user, time, message, edit) {
 
+	console.log(`${guild}\n${title}\n${user}\n${time}\n${message}\n${edit}`);
+
 	let logChannel = Tools.settings.read(guild, "logchannel");
 	let channel = guild.channels.cache.get(logChannel);
 

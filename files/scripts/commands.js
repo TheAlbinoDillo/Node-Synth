@@ -233,6 +233,14 @@ const commandList =
 		], ["snudd"]
 	),
 
+	new Interaction("Lick", "Lick someone!",
+		[
+			[" slowly", ""],
+			["licks"],
+			["!", " on the arm!", " on the face!", " on the... well let's not go there..."]
+		], ["licc", "tonguepunch"]
+	),
+
 	new Interaction("Nuzzle", "Nuzzle with someone!",
 		[
 			[" cozily", " warmly"],
@@ -240,6 +248,8 @@ const commandList =
 			["!"]
 		], ["nuzz"]
 	),
+
+	// %user%[, cozily, warmly] %action%[ nuzzles[ with, into]] %users%!
 
 	new Interaction("Snuggle", "Snuggle with someone!",
 		[
@@ -356,11 +366,12 @@ const commandList =
 		}, "Tug on something.", "interactions", []
 	),
 
-	new Command("Vore", function (message, args)
-		{
-			return "No.";
-
-		}, "Try to eat someone!", "interactions", ["@user1 @user2 @user.."]
+	new Interaction("Vore", "Fukkin eat someone.",
+		[
+			["", " rapidly", " vorefully"],
+			["eats"],
+			["!", " in one gulp!"]
+		], ["nom"]
 	),
 
 	new Command("Poop", function (message, args)
