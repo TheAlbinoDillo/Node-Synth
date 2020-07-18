@@ -139,11 +139,36 @@ class Interaction extends Command {
 			name,
 			function (message, args)
 			{
-				let arr = Tools.arrayIntoList(Tools.getMentionList(message, true) ) || defaultWord;
-				let picks = this.outputs;
+				let replacements =
+				{
+					user: `**${message.member.displayName}**`,
+					users: Tools.arrayIntoList(Tools.getMentionList(message, true) ) || defaultWord
+				};
 
-				let text = `${Tools.serverName(message.author, message.guild)}${Tools.randArray(picks[0])} ${Tools.randArray(picks[1])} ${arr}${Tools.randArray(picks[2])}`;
-				return text;
+				let string = JSON.parse(this.outputs);
+			
+				let pickFrom = value =>
+				{
+					if (typeof value === 'string' || value instanceof String) {
+						return value;
+					}
+				
+					let choice = Math.floor(Math.random() * value.length);
+				
+					return pickFrom(value[choice]);	
+				};
+			
+				for (let i = 0, l = string.length; i < l; i++) {
+					string[i] = pickFrom(string[i]);
+				}
+			
+				string = string.join("");
+			
+				for (let replace in replacements) {
+					string = string.replace(`%${replace}%`, replacements[replace]);
+				}
+			
+				return string;
 			},
 			description = description,
 			"interactions",
@@ -210,133 +235,92 @@ const commandList =
 	new Command("Help", helpCommand, "Get help"),
 
 	new Interaction("Hug", "Give someone a hug!",
-		[
-			["", " quickly", " happily"],
-			["gives a hug to", "hugs"],
-			["!", ", how nice!", ", awwww."]
-		]
+
+		'["%user% ",["","quickly ","happily "],["gives a hug to","hugs"]," %users%",["!",", how nice!",", awwww."]]'
 	),
 
 	new Interaction("Cuddle", "Cuddle up with someone!",
-		[
-			[" cozily", " warmly"],
-			["cuddles"],
-			["!"]
-		], ["cudd"]
+
+		'["%user% ",["cozily ","warmly "],"cuddles %users%!"]'
+		,["cudd"]
 	),
 
 	new Interaction("Snuddle", "Snuddle with someone!",
-		[
-			[" cozily", " warmly", " happily", " adorably", ""],
-			["snuddles", "snuddles with", "snuddles into"],
-			["!", "! Awwww", "! (¬‿¬)"]
-		], ["snudd"]
+
+		'["%user% ",["cozily ","warmly ","happily ","adorably ",""],"snuddles ",["","with ","into "],"%users%!"]'
+		, ["snudd"]
 	),
 
 	new Interaction("Lick", "Lick someone!",
-		[
-			[" slowly", ""],
-			["licks"],
-			["!", " on the arm!", " on the face!", " on the... well let's not go there..."]
-		], ["licc", "tonguepunch"]
+
+		'["%user% ",["","slowly "],"licks %users% on the",[" arm"," face","... well let\'s not go there..."],"!"]'
+		, ["licc", "tonguepunch"]
 	),
 
 	new Interaction("Nuzzle", "Nuzzle with someone!",
-		[
-			[" cozily", " warmly"],
-			["nuzzles", "nuzzles with", "nuzzles into"],
-			["!"]
-		], ["nuzz"]
+
+		'["%user% ",["cozily ","warmly "],"nuzzles ",["","with ","into "],"%users%!"]'
+		, ["nuzz"]
 	),
 
-	// %user%[, cozily, warmly] %action%[ nuzzles[ with, into]] %users%!
-
 	new Interaction("Snuggle", "Snuggle with someone!",
-		[
-			[" cozily", " warmly"],
-			["snuggles", "snuggles with", "snuggles into"],
-			["!"]
-		], ["snugg", "snug"]
+
+		'["%user% ",["cozily ","warmly "],"snuggles ",["","with ","into "],"%users%!"]'
+		, ["snugg", "snug"]
 	),
 
 	new Interaction("High Five", "Give someone a high five!",
-		[
-			[""],
-			["high fives"],
-			["!"]
-		], ["high", "five"]
+
+		'["%user% high fives %users%!"]'
+		, ["high", "five"]
 	),
 
 	new Interaction("Tase", "Give someone a shock!!",
-		[
-			[""],
-			["tases","uses a taser on"],
-			["!",", take that!",", ouch!"]
-		], ["taze"]
+
+		'["%user% ",["tases","uses a taser on"]," %users%", [""," ouch",", take that"], "!"]'
+		, ["taze"]
 	),
 
 	new Interaction("Poke", "Poke poke poke someone!",
-		[
-			["", " rapidly"],
-			["pokes","poke poke pokes"],
-			["!","!","!","!","!", ", poke!",", pppppppppppoke!"]
-		]
+
+		'["%user% ",["","rapidly "],"pokes %users%",["","","","","", poke","", pppppppppppoke"],"!"]'
 	),
 
 	new Interaction("Spank", "Give someone the spanking they deserve!",
-		[
-			[""],
-			["spanks", "raises their arm and spanks"],
-			["!"," on the booty!"]
-		]
+
+		'["%user% ",["","raises their arm and "]," spanks %users%",[""," on the booty"],"!"]'
 	),
 
 	new Interaction("Slap", "Slap someone!",
-		[
-			[" quickly", ""],
-			["slaps"],
-			["!"," on the face!"]
-		]
+
+		'["%user% ",["","quickly "],"slaps %users%",[""," on the face"],"!"]'
 	),
 
 	new Interaction("Kiss", "Give someone a nice kiss!",
-		[
-			["", "", " puckers up and", " smiles and"],
-			["kisses", "kisses", "gives a big kiss to"],
-			["!", "!", " on the lips!", " on the cheek!"]
-		], ["smooch"]
+
+		'["%user%",["","puckers up and ","smiles and "],["kisses","gives a big kiss to"],"%users%",[" on the lips"," on the cheek"],"!"]'
+		, ["smooch"]
 	),
 
 	new Interaction("Pet", "Give someone some nice pets!",
-		[
-			[" softly"],
-			["pets","kneads their paws into"],
-			["!"]
-		]
+
+		'["%user% ",["","softly "],["pets","kneads their paws into"]," %users%!"]'
 	),
 
 	new Interaction("Pat", "Give someone some nice pats!",
-		[
-			[" softly"],
-			["pats"],
-			["!", " on the head!"]
-		]
+
+		'["%user% ",["","softly "],"pats %users%",[""," on the head"],"!"]'
 	),
 
 	new Interaction("Boop", "Give someone a boop on the snoot!",
-		[
-			["", " playfully", " quickly"],
-			["boops"],
-			["!", " on the snoot!", " on the nose!"]
-		]
+
+		'["%user% ",["","playfully ","quickly "],"boops %users%",[""," on the snoot"," on the nose"],"!"]'
 	),
 
 	new Interaction("Bite", "Give someone a bite! Rawr!",
-		[
-			["", " playfully", " quickly", " angrily"],
-			["bites"],
-			["!", "!", " on the face!", " on the arm!", " on the tail!"]
-		], ["chomp"]
+
+		'["%user% ",["","playfully ","quickly ","angrily "],"bites %users%",["",""," on the face"," on the arm"," on the tail"],"!"]'
+		, ["chomp"]
 	),
 
 	new Command("Bark", function (message, args)
@@ -367,11 +351,9 @@ const commandList =
 	),
 
 	new Interaction("Vore", "Fukkin eat someone.",
-		[
-			["", " rapidly", " vorefully"],
-			["eats"],
-			["!", " in one gulp!"]
-		], ["nom"]
+		
+		'["%user% ",["","rapidly ","vorefully "],"eats %users%",[""," in one gulp"],"!"]'
+		, ["nom"]
 	),
 
 	new Command("Poop", function (message, args)
