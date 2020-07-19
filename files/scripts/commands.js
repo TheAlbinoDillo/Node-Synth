@@ -298,7 +298,7 @@ const commandList =
 
 	new Interaction("Kiss", "Give someone a nice kiss!",
 
-		'["%user%",["","puckers up and ","smiles and "],["kisses","gives a big kiss to"],"%users%",[" on the lips"," on the cheek"],"!"]'
+		'["%user% ",["","puckers up and ","smiles and "],["kisses ","gives a big kiss to "],"%users%",[" on the lips"," on the cheek"],"!"]'
 		, ["smooch"]
 	),
 
