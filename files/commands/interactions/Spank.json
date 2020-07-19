@@ -1,0 +1,1 @@
+{"name":"Spank","calls":["spank"],"description":"Give someone the spanking they deserve!","script":["%user% ",["","raises their arm and "]," spanks %users%",[""," on the booty"],"!"]}

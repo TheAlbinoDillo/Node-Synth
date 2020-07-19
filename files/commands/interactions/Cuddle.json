@@ -1,0 +1,1 @@
+{"name":"Cuddle","calls":["cuddle","cudd"],"description":"Cuddle up with someone!","script":["%user% ",["cozily ","warmly "],"cuddles %users%!"]}

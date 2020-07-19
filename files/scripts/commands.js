@@ -128,7 +128,9 @@ class Command {
 		this.usage = usage;
 		this.deleteMessage = deleteMessage;
 		this.permissions = permissions;
-		this.calls = calls + [name.toLowerCase().replace(/ /g, "")]
+
+		calls.unshift(name.toLowerCase().replace(/ /g, "") );
+		this.calls = calls;
 	}
 }
 
@@ -145,7 +147,7 @@ class Interaction extends Command {
 					users: Tools.arrayIntoList(Tools.getMentionList(message, true) ) || defaultWord
 				};
 
-				let string = JSON.parse(this.outputs);
+				let string = this.outputs;
 			
 				let pickFrom = value =>
 				{
@@ -234,95 +236,6 @@ const commandList =
 [
 	new Command("Help", helpCommand, "Get help"),
 
-	new Interaction("Hug", "Give someone a hug!",
-
-		'["%user% ",["","quickly ","happily "],["gives a hug to","hugs"]," %users%",["!",", how nice!",", awwww."]]'
-	),
-
-	new Interaction("Cuddle", "Cuddle up with someone!",
-
-		'["%user% ",["cozily ","warmly "],"cuddles %users%!"]'
-		,["cudd"]
-	),
-
-	new Interaction("Snuddle", "Snuddle with someone!",
-
-		'["%user% ",["cozily ","warmly ","happily ","adorably ",""],"snuddles ",["","with ","into "],"%users%!"]'
-		, ["snudd"]
-	),
-
-	new Interaction("Lick", "Lick someone!",
-
-		'["%user% ",["","slowly "],"licks %users% on the",[" arm"," face","... well let\'s not go there..."],"!"]'
-		, ["licc", "tonguepunch"]
-	),
-
-	new Interaction("Nuzzle", "Nuzzle with someone!",
-
-		'["%user% ",["cozily ","warmly "],"nuzzles ",["","with ","into "],"%users%!"]'
-		, ["nuzz"]
-	),
-
-	new Interaction("Snuggle", "Snuggle with someone!",
-
-		'["%user% ",["cozily ","warmly "],"snuggles ",["","with ","into "],"%users%!"]'
-		, ["snugg", "snug"]
-	),
-
-	new Interaction("High Five", "Give someone a high five!",
-
-		'["%user% high fives %users%!"]'
-		, ["high", "five"]
-	),
-
-	new Interaction("Tase", "Give someone a shock!!",
-
-		'["%user% ",["tases","uses a taser on"]," %users%", [""," ouch",", take that"], "!"]'
-		, ["taze"]
-	),
-
-	new Interaction("Poke", "Poke poke poke someone!",
-
-		'["%user% ",["","rapidly "],"pokes %users%",["","","","","", poke","", pppppppppppoke"],"!"]'
-	),
-
-	new Interaction("Spank", "Give someone the spanking they deserve!",
-
-		'["%user% ",["","raises their arm and "]," spanks %users%",[""," on the booty"],"!"]'
-	),
-
-	new Interaction("Slap", "Slap someone!",
-
-		'["%user% ",["","quickly "],"slaps %users%",[""," on the face"],"!"]'
-	),
-
-	new Interaction("Kiss", "Give someone a nice kiss!",
-
-		'["%user% ",["","puckers up and ","smiles and "],["kisses ","gives a big kiss to "],"%users%",[" on the lips"," on the cheek"],"!"]'
-		, ["smooch"]
-	),
-
-	new Interaction("Pet", "Give someone some nice pets!",
-
-		'["%user% ",["","softly "],["pets","kneads their paws into"]," %users%!"]'
-	),
-
-	new Interaction("Pat", "Give someone some nice pats!",
-
-		'["%user% ",["","softly "],"pats %users%",[""," on the head"],"!"]'
-	),
-
-	new Interaction("Boop", "Give someone a boop on the snoot!",
-
-		'["%user% ",["","playfully ","quickly "],"boops %users%",[""," on the snoot"," on the nose"],"!"]'
-	),
-
-	new Interaction("Bite", "Give someone a bite! Rawr!",
-
-		'["%user% ",["","playfully ","quickly ","angrily "],"bites %users%",["",""," on the face"," on the arm"," on the tail"],"!"]'
-		, ["chomp"]
-	),
-
 	new Command("Bark", function (message, args)
 		{
 			let picks1 = ["", " Woof Woof!", " Woof!", " Ruff!", " Ruff Ruff!", " Arrwf!", " Awrf!", " Awrf awrf!"];
@@ -348,12 +261,6 @@ const commandList =
 			return text;
 
 		}, "Tug on something.", "interactions", []
-	),
-
-	new Interaction("Vore", "Fukkin eat someone.",
-		
-		'["%user% ",["","rapidly ","vorefully "],"eats %users%",[""," in one gulp"],"!"]'
-		, ["nom"]
 	),
 
 	new Command("Poop", function (message, args)
@@ -752,6 +659,15 @@ const commandList =
 		}, "Set this channel as the logging channel", "moderation", [], false, ["ADMINISTRATOR"]
 	)
 ];
+
+let dir = FileSystem.readdirSync(`./files/commands/interactions`);
+dir.forEach( function(e, i) {
+
+	let obj = JSON.parse(FileSystem.readFileSync(`./files/commands/interactions/${e}`) );
+
+	let int = new Interaction(obj.name, obj.description, obj.script, obj.calls);
+	commandList.push(int);
+});
 
 for (let i = 0, l = commandList.length; i < l; i++) {
 

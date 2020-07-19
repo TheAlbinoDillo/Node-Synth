@@ -1,0 +1,1 @@
+{"name":"Slap","calls":["slap"],"description":"Slap someone!","script":["%user% ",["","quickly "],"slaps %users%",[""," on the face"],"!"]}

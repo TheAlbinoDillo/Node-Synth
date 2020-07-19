@@ -1,0 +1,1 @@
+{"name":"Hug","calls":["hug"],"description":"Give someone a hug!","script":["%user% ",["","quickly ","happily "],["gives a hug to","hugs"]," %users%",["!",", how nice!",", awwww."]]}
