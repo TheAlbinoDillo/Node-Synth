@@ -1,12 +1,11 @@
 "use strict";
 
 const Discord = require("discord.js");
-const fs = require("fs");
+const FileSystem = require("fs");
 const MathJS = require("mathjs");
 const Tools = require("./botTools.js");
 
 const Prefix = 'fg.';
-const imageBase = JSON.parse(fs.readFileSync("./files/common/images.json"));
 
 class Responce {
 	constructor(type = "text", content, guild, channel, message) {
@@ -185,48 +184,47 @@ class Interaction extends Command {
 }
 
 class ImageShare extends Command {
-	constructor(name, albumName) {
+	constructor(name, type = ".png", filename) {
 
-		albumName = albumName || name.toLowerCase();
+		filename = filename || name.toLowerCase();
 
 		super
 		(
 			name,
 			function (message, args) {
+				let pickLength = FileSystem.readdirSync(`./files/common/${filename}/`).length;
+				let choice = parseInt(args[0]);
+				let pick = Tools.randNumber(pickLength - 1);
 
-				let returnUrl = (index, reaction) =>
-				{
-					let url = imageBase[albumName][index].link;
-					let content = {files: [url]};
+				let url = `./files/common/${filename}/${filename}${pick}${type}`;
+				let content = {content: pick, files: [url]};
 
-					let msg = new TextMessage(message, content);
-					let returnList = [msg];
+				if (args[0]) {
+					let returnList =
+						[
+							new ReactEmote(message, "🔍"),
+							new TextMessage(message, content)
+						];
 
-					if (reaction) {
-						returnList.push(new ReactEmote(message, reaction) );
+					if (choice >= 0 && choice < pickLength) {
+
+						pick = choice;
+						url = `./files/common/${filename}/${filename}${pick}${type}`;
+						content = {content: pick, files: [url]};
+						returnList[1] = new TextMessage(message, content);
+
+						return returnList;
+					} else {
+						returnList.push(new ReactEmote(message, "❔") );
+						return returnList;
 					}
-
-					return returnList;
-				};
-
-				let pick = this.usage[0].test(args[0]);
-				if (pick) {
-
-					let list = [];
-					imageBase[albumName].forEach( function(e, i) {
-						if (e.tags.includes(args[0]) ) {
-							list.push(i);
-						}
-					});
-
-					return returnUrl(Tools.randArray(list), "🔍");
 				}
 
-				return returnUrl(Tools.randNumber(imageBase[albumName].length - 1), "🎲");
+				return new TextMessage(message, content);
 			},
-			`Get ${albumName} pictures!`,
+			`Get ${filename} pictures!`,
 			"fun",
-			[new UsageString("tag")],
+			[new UsageNumber("rolls")],
 			false,
 			[]
 		);
@@ -428,6 +426,12 @@ const commandList =
 			return text;
 		}, "Randomly decide from values", "tools", ["option1","option2","option.."]
 	),
+
+	new ImageShare("Dance", ".gif"),
+
+	new ImageShare("Grant"),
+
+	new ImageShare("Fox"),
 
 	new Command("Leave", function (message, args) {
 			Tools.disconnect(message.client);
@@ -656,16 +660,10 @@ const commandList =
 	)
 ];
 
-for (let album in imageBase) {
-
-	let img = new ImageShare(album);
-	commandList.push(img);
-}
-
-let dir = fs.readdirSync(`./files/commands/interactions`);
+let dir = FileSystem.readdirSync(`./files/commands/interactions`);
 dir.forEach( function(e, i) {
 
-	let obj = JSON.parse(fs.readFileSync(`./files/commands/interactions/${e}`) );
+	let obj = JSON.parse(FileSystem.readFileSync(`./files/commands/interactions/${e}`) );
 
 	let int = new Interaction(obj.name, obj.description, obj.script, obj.calls);
 	commandList.push(int);
