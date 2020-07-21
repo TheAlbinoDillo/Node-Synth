@@ -242,6 +242,34 @@ function disconnect (client, seconds = 3) {
 	}, seconds * 1000);
 }
 
+function pickFrom (value) {
+
+	if (typeof value === 'string' || value instanceof String) {
+		return value;
+	}
+			
+	let choice = Math.floor(Math.random() * value.length);
+			
+	return pickFrom(value[choice]);	
+}
+
+function JSONscript (replacements, script) {
+
+	let string = script.slice();
+			
+	for (let i = 0, l = string.length; i < l; i++) {
+		string[i] = pickFrom(string[i]);
+	}
+			
+	string = string.join("");
+			
+	for (let replace in replacements) {
+		string = string.replace(`%${replace}%`, replacements[replace]);
+	}
+			
+	return string;
+}
+
 module.exports =
 {
 	serverName: serverName,
@@ -262,5 +290,6 @@ module.exports =
 	},
 	disconnect: disconnect,
 	formatBin: formatBin,
-	formatHex: formatHex
+	formatHex: formatHex,
+	JSONscript: JSONscript
 };

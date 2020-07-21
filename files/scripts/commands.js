@@ -148,30 +148,7 @@ class Interaction extends Command {
 					users: Tools.arrayIntoList(Tools.getMentionList(message, true) ) || defaultWord
 				};
 
-				let string = this.outputs;
-			
-				let pickFrom = value =>
-				{
-					if (typeof value === 'string' || value instanceof String) {
-						return value;
-					}
-				
-					let choice = Math.floor(Math.random() * value.length);
-				
-					return pickFrom(value[choice]);	
-				};
-			
-				for (let i = 0, l = string.length; i < l; i++) {
-					string[i] = pickFrom(string[i]);
-				}
-			
-				string = string.join("");
-			
-				for (let replace in replacements) {
-					string = string.replace(`%${replace}%`, replacements[replace]);
-				}
-			
-				return string;
+				return Tools.JSONscript(replacements, this.outputs);
 			},
 			description = description,
 			"interactions",
