@@ -1,1 +1,19 @@
-{"name":"Pet","calls":["pet"],"description":"Give someone some nice pets!","script":["%user% ",["","softly "],["pets","kneads their paws into"]," %users%!"]}
+{
+	"name": "Pet",
+	"calls": [
+		"pet"
+	],
+	"description": "Give someone some nice pets!",
+	"script": [
+		"%user% ",
+		[
+			"",
+			"softly "
+		],
+		[
+			"pets",
+			"kneads their paws into"
+		],
+		" %users%!"
+	]
+}

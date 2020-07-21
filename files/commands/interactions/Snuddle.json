@@ -1,1 +1,25 @@
-{"name":"Snuddle","calls":["snuddle","snudd"],"description":"Snuddle with someone!","script":["%user% ",["cozily ","warmly ","happily ","adorably ",""],"snuddles ",["","with ","into "],"%users%!"]}
+{
+	"name": "Snuddle",
+	"calls": [
+		"snuddle",
+		"snudd"
+	],
+	"description": "Snuddle with someone!",
+	"script": [
+		"%user% ",
+		[
+			"cozily ",
+			"warmly ",
+			"happily ",
+			"adorably ",
+			""
+		],
+		"snuddles ",
+		[
+			"",
+			"with ",
+			"into "
+		],
+		"%users%!"
+	]
+}

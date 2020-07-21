@@ -1,1 +1,22 @@
-{"name":"Vore","calls":["vore","nom"],"description":"Fukkin eat someone.","script":["%user% ",["","rapidly ","vorefully "],"eats %users%",[""," in one gulp"],"!"]}
+{
+	"name": "Vore",
+	"calls": [
+		"vore",
+		"nom"
+	],
+	"description": "Fukkin eat someone.",
+	"script": [
+		"%user% ",
+		[
+			"",
+			"rapidly ",
+			"vorefully "
+		],
+		"eats %users%",
+		[
+			"",
+			" in one gulp"
+		],
+		"!"
+	]
+}

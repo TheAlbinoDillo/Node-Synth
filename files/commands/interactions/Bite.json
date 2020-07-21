@@ -1,1 +1,26 @@
-{"name":"Bite","calls":["bite","chomp"],"description":"Give someone a bite! Rawr!","script":["%user% ",["","playfully ","quickly ","angrily "],"bites %users%",["",""," on the face"," on the arm"," on the tail"],"!"]}
+{
+	"name": "Bite",
+	"calls": [
+		"bite",
+		"chomp"
+	],
+	"description": "Give someone a bite! Rawr!",
+	"script": [
+		"%user% ",
+		[
+			"",
+			"playfully ",
+			"quickly ",
+			"angrily "
+		],
+		"bites %users%",
+		[
+			"",
+			"",
+			" on the face",
+			" on the arm",
+			" on the tail"
+		],
+		"!"
+	]
+}

@@ -1,1 +1,20 @@
-{"name":"Pat","calls":["pat"],"description":"Give someone some nice pats!","script":["%user% ",["","softly "],"pats %users%",[""," on the head"],"!"]}
+{
+	"name": "Pat",
+	"calls": [
+		"pat"
+	],
+	"description": "Give someone some nice pats!",
+	"script": [
+		"%user% ",
+		[
+			"",
+			"softly "
+		],
+		"pats %users%",
+		[
+			"",
+			" on the head"
+		],
+		"!"
+	]
+}

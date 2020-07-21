@@ -1,1 +1,22 @@
-{"name":"Boop","calls":["boop"],"description":"Give someone a boop on the snoot!","script":["%user% ",["","playfully ","quickly "],"boops %users%",[""," on the snoot"," on the nose"],"!"]}
+{
+	"name": "Boop",
+	"calls": [
+		"boop"
+	],
+	"description": "Give someone a boop on the snoot!",
+	"script": [
+		"%user% ",
+		[
+			"",
+			"playfully ",
+			"quickly "
+		],
+		"boops %users%",
+		[
+			"",
+			" on the snoot",
+			" on the nose"
+		],
+		"!"
+	]
+}

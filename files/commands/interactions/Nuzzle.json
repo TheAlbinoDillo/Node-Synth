@@ -1,1 +1,26 @@
-{"name":"Nuzzle","calls":["nuzzle","nuzz","nuzzl","nuzle","nuzl","nuz"],"description":"Nuzzle with someone!","script":["%user% ",["cozily ","warmly "],"nuzzles ",["","with ","into "],"%users%!"]}
+{
+	"name": "Nuzzle",
+	"calls": [
+		"nuzzle",
+		"nuzz",
+		"nuzzl",
+		"nuzle",
+		"nuzl",
+		"nuz"
+	],
+	"description": "Nuzzle with someone!",
+	"script": [
+		"%user% ",
+		[
+			"cozily ",
+			"warmly "
+		],
+		"nuzzles ",
+		[
+			"",
+			"with ",
+			"into "
+		],
+		"%users%!"
+	]
+}
