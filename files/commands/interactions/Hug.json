@@ -21,5 +21,10 @@
 			", how nice!",
 			", awwww."
 		]
-	]
+	],
+        "self": [
+                "%user% wraps their arms around themselves and ",
+                ["", "tightly "],
+                "squeezes!"
+        ]
 }
