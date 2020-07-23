@@ -175,7 +175,7 @@ class ImageShare extends Command {
 				{
 					let img = imageBase[albumName][index];
                                         let txt = `\`${img.tags.join(", ")}\``;
-					let content = {files: [url.link]};
+					let content = {files: [img.link]};
 
 					let msg = new TextMessage(message, content);
 					let returnList = [msg];
