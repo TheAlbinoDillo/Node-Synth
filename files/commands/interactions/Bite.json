@@ -22,5 +22,15 @@
 			" on the tail"
 		],
 		"!"
+	],
+	"self": [
+		["", "Hey, stop that! "],
+		"%user% bites themselves on the ",
+		[
+			"arm",
+			"hand",
+			"foot"
+		],
+		"!"
 	]
 }
