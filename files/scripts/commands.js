@@ -2,10 +2,9 @@
 
 const Discord = require("discord.js");
 const fs = require("fs");
-const MathJS = require("mathjs");
 const Tools = require("./botTools.js");
 
-const Prefix = 'fg.';
+const prefix = 'fg.';
 const imageBase = JSON.parse(fs.readFileSync("./files/common/images.json"));
 
 class Responce {
@@ -241,30 +240,6 @@ class ImageShare extends Command {
 var commandCategoryList = new Array();
 const commandList =
 [
-	new Command("Help", helpCommand, "Get help"),
-
-	new Command("Wag", function (message, args)
-		{
-			let picks1 = ["", " rapidly", " happily", " adorably"]
-			let picks2 = ["", " *wag wag wag*", " awwwwww.", " *wag wags*", " *waggies*"];
-
-			let text = `${Tools.serverName(message.author, message.guild)}${Tools.randArray(picks1)} wags their tail!${Tools.randArray(picks2)}`;
-			return text;
-
-		}, "Wag your tail!", "actions", []
-	),
-
-	new Command("Purr", function (message, args)
-		{
-			let picks1 = ["", " softly", " happily", " adorably"]
-			let picks2 = ["", " *purr*", " awwwwww.", " *purrrrr*"];
-
-			let text = `${Tools.serverName(message.author, message.guild)}${Tools.randArray(picks1)} purrs!${Tools.randArray(picks2)}`;
-			return text;
-
-		}, "Purr like a kitty!", "actions", []
-	),
-
 	new Command("Feed", function (message, args)
 		{
 			let arr = Tools.arrayIntoList(Tools.getMentionList(message, true) ) || "themselves";
@@ -380,9 +355,15 @@ const commandList =
 	),
 
 	new Command("Leave", function (message, args) {
-			Tools.disconnect(message.client);
+			Tools.disconnect(message.client, 2);
 			return "Disconnecting...";
 		}, "Disconnect the bot.", null, [], false, ["ADMINISTRATOR"]
+	),
+
+	new Command("Restart", function (message, args) {
+			Tools.disconnect(message.client, 5);
+			return "Restarting...";
+		}, "Restart the bot.", null, [], false, ["ADMINISTRATOR"]
 	),
 
 	new Command("List Emotes", function (message, args) {
@@ -399,77 +380,32 @@ const commandList =
 		}, "List all the server's emotes.", null, [], true, ["ADMINISTRATOR"]
 	),
 
-	new Command("Vote", function (message, args) {
-			
-			if (this.usage[0].test(args[0]) ) {
-
-				let value = new Object()
-				value[message.channel.id.toString()] = {"vote": args[0]};
-
-				Tools.settings.write(message.guild, "channels", value, true);
-				return `Channel vote setting set to **${args[0]}**.`;
-			} else {
-				return `Valid vote settings are ${Tools.arrayIntoList(this.usage[0].options, false)}`;
-			}
-
-		}, "Setup this channel with react voting.", "settings",
-		[
-			new UsageString("setting", ["all", "images", "off"])
-		], false, ["ADMINISTRATOR"]
-	),
-
-	new Command("Stat List", function (message, args) {
-
-			let value = Tools.settings.read(message.guild, "users");
-			value = value[message.author.id].stats;
-
-			return JSON.stringify(value);
-
-		}, "Get your player stats for DnD", "DnD", []
-	),
-
-	new Command("Calculator", function (message, args) {
-			let exp = args.full;
-
-			var text = "";
-			try {
-				text = MathJS.evaluate(exp).toString();
-			} catch (error) {
-				text = error.message;
-			}
-
-			return text;
-		}, "Enslave the bot to do math!", "tools", ["expression"], false, [], ["calc"]
-	),
-
-	new Command("Test Error", "This is not supposed to be a string", "", null),
-
-	new Command("Hex Color", function (message, args) {
-
-			if (args[0] == "FUCKME") {
-				return "OwO";
-			}
-
-			if (args[0] == null) {
-				return `Specify a hex code.`;
-			}
-
-			if (args[0].replace(/[^a-f0-9]/gi,'').length != 6) {
-				return `**${args[0]}** is not a valid hex code.`;
-			}	
-
-			let colorName = Tools.colors.closest(args[0]);
-			let colorCode = Tools.colors.format(args[0]).substring(1);
-			let url = `https://via.placeholder.com/50/${colorCode}/${colorCode}.png`;
-
-			let embed = new Discord.MessageEmbed()
-			.setThumbnail(url)
-			.addField("#" + colorCode, colorName);
-
-			return new TextMessage(message, embed);
-
-		}, "Get a preview of a hex color!", "tools", ["hex code"], false, [], ["hex"]
-	),
+//	new Command("Hex Color", function (message, args) {
+//
+//			if (args[0] == "FUCKME") {
+//				return "OwO";
+//			}
+//
+//			if (args[0] == null) {
+//				return `Specify a hex code.`;
+//			}
+//
+//			if (args[0].replace(/[^a-f0-9]/gi,'').length != 6) {
+//				return `**${args[0]}** is not a valid hex code.`;
+//			}	
+//
+//			let colorName = Tools.colors.closest(args[0]);
+//			let colorCode = Tools.colors.format(args[0]).substring(1);
+//			let url = `https://via.placeholder.com/50/${colorCode}/${colorCode}.png`;
+//
+//			let embed = new Discord.MessageEmbed()
+//			.setThumbnail(url)
+//			.addField("#" + colorCode, colorName);
+//
+//			return new TextMessage(message, embed);
+//
+//		}, "Get a preview of a hex color!", "tools", ["hex code"], false, [], ["hex"]
+//	),
 
 	new Command("To Binary", function (message, args) {
 
@@ -595,29 +531,48 @@ const commandList =
 		}, "Ban a user.", "moderation", ["reason &| @user1 @user2 @user.."], false, ["BAN_MEMBERS"]
 	),
 
-	new Command("Set Log Channel", function (message, args) {
+	new Command("Set Log Channel", (message, args) =>
+	{
 
-			let value = message.channel.id;
-			Tools.settings.write(message.guild, "logchannel", value);
+		let value = message.channel.id;
+		Tools.settings.write(message.guild, "logchannel", value);
 
-			return "Channel set as log channel!";
+		return "Channel set as log channel!";
 
-		}, "Set this channel as the logging channel", "moderation", [], false, ["ADMINISTRATOR"]
-	)
+	}, "Set this channel as the logging channel", "moderation", [], false, ["ADMINISTRATOR"])
 ];
 
-for (let album in imageBase) {
-
+for (let album in imageBase)
+{
 	let img = new ImageShare(album);
 	commandList.push(img);
 }
 
 let dir = fs.readdirSync(`./files/commands/interactions`);
-dir.forEach( function(e, i) {
-
+dir.forEach( (e, i) =>
+{
 	let obj = JSON.parse(fs.readFileSync(`./files/commands/interactions/${e}`) );
 
 	let int = new Interaction(obj.name, obj.description, obj.script, obj.self, obj.calls);
+	commandList.push(int);
+});
+
+dir = fs.readdirSync(`./files/commands/tools`);
+dir.forEach( (e, i) =>
+{
+	let script = require(`./../commands/tools/${e}`);
+
+	let int = new Command
+	(
+		script.name,
+		script.runFunction,
+		script.description,
+		"tools",
+		script.usage,
+		script.deleteMessage,
+		script.permissions,
+		script.calls
+	);
 	commandList.push(int);
 });
 
@@ -629,69 +584,9 @@ for (let i = 0, l = commandList.length; i < l; i++) {
 	}
 }
 
-function helpCommand (message, args) {
-
-	return new TextMessage(message, "Help command is currently WIP.");
-
-	let embed = new Discord.MessageEmbed()
-	//.setThumbnail(Client.user.avatarURL() )
-	.setColor("64BF51")
-	.setFooter("This bot is a WIP by TheAlbinoDillo");
-
-	if (args[0] != undefined) {
-		if (commandCategoryList.includes(args[0]) ) {
-			for (let i = 0, l = commandList.length; i < l; i++) {
-				let cli = commandList[i];
-				if (cli.category == args[0]) {
-					embed.setTitle(`Command category: ${args[0]}`)
-					.addField(`**${cli.name}**${cli.onlyOwner ? "®" : ""}\n${cli.description}`,`${Prefix}${cli.calls[cli.calls.length - 1]} ${usageList(cli)}`);
-				}
-			}
-			return new TextMessage(message, embed);
-		}
-		let selected = -1;
-		for (let i = 0, l = commandList.length; i < l; i++) {
-			if (commandList[i].call == args[0]) {
-				selected = i;
-			}
-		}
-		if (selected > -1) {
-			let cls = commandList[selected];
-			embed.setTitle(`Command: ${cls.name} ${cls.onlyOwner ? "[Restricted]" : ""}`)
-			.addField(cls.description, `${Prefix}${cls.call} ${usageList(cls)}`);
-			
-			return new TextMessage(message, embed);
-		}
-	}
-	embed.setTitle(`FurGun commands list`);
-
-	for (let i = 0, l = commandCategoryList.length; i < l; i++) {
-
-		let ccli = commandCategoryList[i];
-		if (ccli == "unlisted") {
-			continue;
-		}
-		embed.addField(`${ccli}`,`${Prefix}help ${ccli}`);
-	}
-
-	return new TextMessage(message, embed);
-}
-
-function usageList (command) {
-
-	if (command.usage == undefined) {
-		return "";
-	}
-
-	let list = new Array();
-	for (let i = 0, l = command.usage.length; i < l; i++) {
-		list[i] = ` <${command.usage[i]}>`;
-	}
-	return list;
-}
-
 module.exports =
 {
+	TextMessage: TextMessage,
 	commandList: commandList,
-	prefix: Prefix
+	prefix: prefix
 };

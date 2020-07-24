@@ -232,14 +232,10 @@ function randNumber (max, min = 0) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function disconnect (client, seconds = 3) {
-
-	console.log(`Disconnecting Client and ending nodeJS script in ${seconds} second${(seconds != 1) ? "s" : ""}...\n`);
-
-	client.setTimeout( () => {
-		client.destroy();
-		process.exit(621);
-	}, seconds * 1000);
+function disconnect (client, exitcode)
+{
+	client.destroy();
+	process.exit(exitcode);
 }
 
 function pickFrom (value) {

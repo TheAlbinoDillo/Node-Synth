@@ -8,6 +8,8 @@ const Diff = require("diff");
 const debug = require("./files/scripts/runningOnPi.js");
 const fs = require("fs");
 
+console.log(Commands)
+
 //Setup Discord Client
 const Client = new Discord.Client();
 const Token = 'NjYyODI1ODA2OTY3NDcyMTI4.Xqzm2Q.I2y50w7Nu5QmgMqamCI9a3VuxMc';
