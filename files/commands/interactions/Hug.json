@@ -22,9 +22,12 @@
 			", awwww."
 		]
 	],
-        "self": [
-                "%user% wraps their arms around themselves and ",
-                ["", "tightly "],
-                "squeezes!"
-        ]
+	"self": [
+		"%user% wraps their arms around themselves and ",
+		[
+			"",
+			"tightly "
+		],
+		"squeezes!"
+	]
 }
