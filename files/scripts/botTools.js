@@ -234,8 +234,12 @@ function randNumber (max, min = 0) {
 
 function disconnect (client, exitcode)
 {
-	client.destroy();
-	process.exit(exitcode);
+	client.setTimeout( () =>
+	{
+		client.destroy();
+		process.exit(exitcode);
+		
+	}, 500);
 }
 
 function pickFrom (value) {
