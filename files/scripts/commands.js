@@ -174,7 +174,8 @@ class ImageShare extends Command {
 				let returnUrl = (index, reactions) =>
 				{
 					let img = imageBase[albumName][index];
-                                        let txt = `\`${img.tags.join(", ")}\``;
+
+					let txt = `\`${img.tags.join(", ")}\``;
 					let content = {content: txt, files: [img.link]};
 
 					let msg = new TextMessage(message, content);
@@ -190,6 +191,8 @@ class ImageShare extends Command {
 					return returnList;
 				};
 
+				let randAll = Tools.randNumber(imageBase[albumName].length - 1);
+
 				let pick = this.usage[0].test(args[0]);
 				if (pick) {
 
@@ -200,14 +203,14 @@ class ImageShare extends Command {
 						}
 					});
 
-					if (list) {
+					if (list.length > 0) {
 						return returnUrl(Tools.randArray(list), ["🔍", "✅"]);
 					} else {
-						return returnUrl(Tools.randArray(list), ["🔍", "❌", "🎲"]);
+						return returnUrl(randAll, ["🔍", "❌", "🎲"]);
 					}
 				}
 
-				return returnUrl(Tools.randNumber(imageBase[albumName].length - 1), ["🎲"]);
+				return returnUrl(randAll, ["🎲"]);
 			},
 			`Get ${albumName} pictures!`,
 			"fun",
