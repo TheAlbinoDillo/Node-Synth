@@ -171,7 +171,7 @@ class ImageShare extends Command {
 			name,
 			function (message, args) {
 
-				let returnUrl = (index, reaction) =>
+				let returnUrl = (index, reactions) =>
 				{
 					let img = imageBase[albumName][index];
                                         let txt = `\`${img.tags.join(", ")}\``;
@@ -180,8 +180,11 @@ class ImageShare extends Command {
 					let msg = new TextMessage(message, content);
 					let returnList = [msg];
 
-					if (reaction) {
-						returnList.push(new ReactEmote(message, reaction) );
+					if (reactions) {
+						reactions.forEach( (e) =>
+						{
+							returnList.push(new ReactEmote(message, e) );
+						});
 					}
 
 					return returnList;
@@ -197,10 +200,14 @@ class ImageShare extends Command {
 						}
 					});
 
-					return returnUrl(Tools.randArray(list), "🔍");
+					if (list) {
+						return returnUrl(Tools.randArray(list), ["🔍", "✅"]);
+					} else {
+						return returnUrl(Tools.randArray(list), ["🔍", "❌", "🎲"]);
+					}
 				}
 
-				return returnUrl(Tools.randNumber(imageBase[albumName].length - 1), "🎲");
+				return returnUrl(Tools.randNumber(imageBase[albumName].length - 1), ["🎲"]);
 			},
 			`Get ${albumName} pictures!`,
 			"fun",
