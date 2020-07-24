@@ -277,7 +277,7 @@ function pinReact (message, count = 6, time = 3000000) {
 		{
 			if (collected.array()[0]) {
 				if (reason == "time" && collected.array()[0].count > 0) {
-					botReact(message, "⏰");
+					botReact(message, "⌚");
 				}
 			}
 		}
