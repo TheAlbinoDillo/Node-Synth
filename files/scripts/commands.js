@@ -243,47 +243,6 @@ const commandList =
 [
 	new Command("Help", helpCommand, "Get help"),
 
-	new Command("Bark", function (message, args)
-		{
-			let picks1 = ["", " Woof Woof!", " Woof!", " Ruff!", " Ruff Ruff!", " Arrwf!", " Awrf!", " Awrf awrf!"];
-
-			let text = `${Tools.serverName(message.author, message.guild)} barks!${Tools.randArray(picks1)}`;
-			return text;
-
-		}, "Bark to be heard!", "actions", []
-	),
-
-	new Command("Tug", function (message, args)
-		{
-			let picks1 = [
-				"off a mattress tag! That's illegal!",
-				"on a german frag grenade activator! Better run!",
-				"on their shoelaces... now they have to tie them again.",
-				"on their own tail, that's cute, I guess.",
-				"on the leaf of a plant, it came off, unsurprisingly.",
-				"on a loose thread of their shirt, now it's a bit longer."
-				];
-
-			let text = `${Tools.serverName(message.author, message.guild)} tugs ${Tools.randArray(picks1)}`;
-			return text;
-
-		}, "Tug on something.", "interactions", []
-	),
-
-	new Command("Poop", function (message, args)
-		{
-			return "Why.";
-
-		}, "Poop?", "interactions", ["@user1 @user2 @user.."]
-	),
-
-	new Command("huh", function (message, args)
-		{
-			return "huh";
-
-		}, "huh", null, ["huh"]
-	),
-
 	new Command("Wag", function (message, args)
 		{
 			let picks1 = ["", " rapidly", " happily", " adorably"]
@@ -304,20 +263,6 @@ const commandList =
 			return text;
 
 		}, "Purr like a kitty!", "actions", []
-	),
-
-	new Command("Ruffle", function (message, args)
-		{
-			let arr = Tools.arrayIntoList(Tools.getMentionList(message, true) ) || "their own";
-
-			let picks1 = ["", " gently", " softly"];
-			let picks2 = ["ruffles"];
-			let picks3 = [" feathers!", " feathers, squawk!"];
-
-			let text = `${Tools.serverName(message.author, message.guild)}${Tools.randArray(picks1)} ${Tools.randArray(picks2)} ${arr}${args[0] ? "'s" : ""}${Tools.randArray(picks3)}`;
-			return text;
-
-		}, "Ruffle someone's feathers!", "interactions", ["@user1 @user2 @user.."]
 	),
 
 	new Command("Feed", function (message, args)

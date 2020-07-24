@@ -1,0 +1,22 @@
+{
+	"name": "Bark",
+	"calls": [
+		"bark",
+		"bork"
+	],
+	"description": "Bark to be heard!",
+	"script": [
+		"%user% barks",
+		[
+			"",
+			" Woof Woof",
+			" Woof",
+			" Ruff",
+			" Ruff Ruff",
+			" Arrwf",
+			" Awrf",
+			" Awrf awrf"
+		],
+		"!"
+	]
+}
