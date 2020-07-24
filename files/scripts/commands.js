@@ -136,7 +136,7 @@ class Command {
 }
 
 class Interaction extends Command {
-	constructor(name, description, outputs, calls = [], defaultWord = "themselves") {
+	constructor(name, description, others, self, calls = [], defaultWord = "themselves") {
 		super
 		(
 			name,
@@ -145,10 +145,23 @@ class Interaction extends Command {
 				let replacements =
 				{
 					user: `**${message.member.displayName}**`,
-					users: Tools.arrayIntoList(Tools.getMentionList(message, true) ) || defaultWord
+					users: Tools.arrayIntoList(Tools.getMentionList(message, true) )
 				};
 
-				return Tools.JSONscript(replacements, this.outputs);
+				let parseScript = (script) =>
+				{
+					return Tools.JSONscript(replacements, script);
+				};
+
+				if (!replacements.users && !this.self) {
+					replacements.users = defaultWord;
+				}
+
+				if (replacements.users) {
+					return parseScript(this.others);
+				} else {
+					return parseScript(this.self);
+				}
 			},
 			description = description,
 			"interactions",
@@ -157,7 +170,8 @@ class Interaction extends Command {
 			[],
 			calls
 		);
-		this.outputs = outputs;
+		this.others = others;
+		this.self = self;
 	}
 }
 
@@ -171,12 +185,15 @@ class ImageShare extends Command {
 			name,
 			function (message, args) {
 
-				let returnUrl = (index, reactions) =>
+				let returnUrl = (index, reactions, showTags = true) =>
 				{
 					let img = imageBase[albumName][index];
+					let content = {files: [img.link]};
 
-					let txt = `\`${img.tags.join(", ")}\``;
-					let content = {content: txt, files: [img.link]};
+					if (showTags) {
+						let txt = `\`${img.tags.join(", ")}\``;
+						content.content = txt;
+					}
 
 					let msg = new TextMessage(message, content);
 					let returnList = [msg];
@@ -204,7 +221,7 @@ class ImageShare extends Command {
 					});
 
 					if (list.length > 0) {
-						return returnUrl(Tools.randArray(list), ["🔍", "✅"]);
+						return returnUrl(Tools.randArray(list), ["🔍", "✅"], false);
 					} else {
 						return returnUrl(randAll, ["🔍", "❌", "🎲"]);
 					}
@@ -655,7 +672,7 @@ dir.forEach( function(e, i) {
 
 	let obj = JSON.parse(fs.readFileSync(`./files/commands/interactions/${e}`) );
 
-	let int = new Interaction(obj.name, obj.description, obj.script, obj.calls);
+	let int = new Interaction(obj.name, obj.description, obj.script, obj.self, obj.calls);
 	commandList.push(int);
 });
 
