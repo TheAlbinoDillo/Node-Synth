@@ -335,6 +335,7 @@ function runCommand (message) {
 	}
 
 	args.full = message.content.substring(args[0].length + Commands.prefix.length + 1);
+	args.command = `${Commands.prefix}${args[0]}`;
 	args.shift();
 
 	let hasPerms = true;
@@ -360,7 +361,7 @@ function runCommand (message) {
 	}
 
 	if (!hasPerms && message.author.id != OwnerID) {
-		errorReact(message, "⛔", `${Tools.serverName(message.author, message.guild)} does not have permission to use **${Commands.prefix}${args[0]}**`);
+		errorReact(message, "⛔", `${Tools.serverName(message.author, message.guild)} does not have permission to use **${args.command}**`);
 		return;
 	}
 
