@@ -178,13 +178,6 @@ function readSetting (guild, valueTag = null) {
 	return settings[valueTag];
 }
 
-function makeUwU (string) {
-
-	let text = string.replace(/R/g, 'W').replace(/r/g, 'w').replace(/L/g, 'W').replace(/l/g, 'w');
-
-	return text;
-}
-
 function arrayIntoList (array, and = true) {	//Turn an array into a human-readable list
 
 	let l = array.length;
@@ -261,7 +254,6 @@ module.exports =
 		read: readSetting,
 		write: writeSetting
 	},
-	makeUwU: makeUwU,
 	arrayIntoList: arrayIntoList,
 	randArray: randArray,
 	randNumber: randNumber,

@@ -144,7 +144,8 @@ class Interaction extends Command {
 				let replacements =
 				{
 					user: `**${message.member.displayName}**`,
-					users: Tools.arrayIntoList(Tools.getMentionList(message, true) )
+					users: Tools.arrayIntoList(Tools.getMentionList(message, true) ),
+					args_full: args.full
 				};
 
 				let parseScript = (script) =>
@@ -337,27 +338,6 @@ const commandList =
 		}, "Get information about the server.", "tools", [], false, [], ["serverinfo"]
 	),
 
-	new Command("Echo", function (message, args)
-		{
-			return args.full;
-		}, "Make the bot say what you say", "tools", ["text"], true, ["MANAGE_MESSAGES"]
-	),
-
-	new Command("UwU Speak", function (message, args) {
-			return `${message.author} (${Prefix}${this.call}):\n${Tools.makeUwU(args.full)}`;
-		}, "Convert to UwU speak!", "fun", ["text"], true, [], ["uwu"]
-	),
-
-	new Command("Decide", function (message, args) {
-
-			let arr = args.slice();
-			arr.shift();
-			let pick = Math.floor(Math.random() * arr.length);
-			let text = `Deciding from:\n${Tools.arrayIntoList(arr)}\nWinner is: **${arr[pick]}**`;
-			return text;
-		}, "Randomly decide from values", "tools", ["option1","option2","option.."]
-	),
-
 	new Command("Leave", function (message, args) {
 			Tools.disconnect(message.client, 2);
 			return "Disconnecting...";
@@ -367,7 +347,7 @@ const commandList =
 	new Command("Restart", function (message, args) {
 			Tools.disconnect(message.client, 5);
 			return "Restarting...";
-		}, "Restart the bot.", null, [], false, ["ADMINISTRATOR"]
+		}, "Restart the bot.", null, [], false, ["ADMINISTRATOR"], ["reboot"]
 	),
 
 	new Command("List Emotes", function (message, args) {
@@ -410,38 +390,6 @@ const commandList =
 
 		}, "Get a preview of a hex color!", "tools", ["hex code"], false, [], ["hex"]
 	),
-
-//	new Command("To Binary", function (message, args) {
-//
-//			if (Number.isNaN(parseInt(args[0]) ) ) {
-//				let content = args.full;
-//
-//				let text = "";
-//				for (let i = 0, l = content.length; i < l; i++) {
-//					text += `\`${Tools.formatBin(content.charCodeAt(i) )}\` `;
-//				}
-//				return text;
-//			}
-//
-//			return parseInt(args[0]).toString(2);
-//		}, "Turn something into binary!", "tools", ["number"], false, [], ["tobin"]
-//	),
-
-//	new Command("To Hexadecimal", function (message, args) {
-//
-//			if (Number.isNaN(parseInt(args[0]) ) ) {
-//				let content = args.full;
-//
-//				let text = "";
-//				for (let i = 0, l = content.length; i < l; i++) {
-//					text += `\`${Tools.formatHex(content.charCodeAt(i) )}\` `;
-//				}
-//				return text.toUpperCase();
-//			}
-//
-//			return parseInt(args[0]).toString(16).toUpperCase();
-//		}, "Turn something into hexadecimal!", "tools", ["number"], false, [], ["tohex"]
-//	),
 
 	new Command("Roll", function (message, args) {
 
