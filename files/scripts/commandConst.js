@@ -68,8 +68,22 @@ class ReactEmote extends Responce {
 	}
 }
 
+class Command {
+	constructor(name, runFunction = function () {}, description = "", category, usage = [], deleteMessage = false, permissions = [], calls = []) {
+		this.name = name;
+		this.runFunction = runFunction;
+		this.description = description;
+		this.category = category;
+		this.usage = usage;
+		this.deleteMessage = deleteMessage;
+		this.permissions = permissions;
+		this.calls = calls;
+	}
+}
+
 module.exports =
 {
+	Command: Command,
 	Responce: Responce,
 	TextMessage: TextMessage,
 	Transpose: Transpose,
