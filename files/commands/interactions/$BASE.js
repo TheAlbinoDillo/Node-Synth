@@ -4,36 +4,38 @@ const fs = require("fs");
 const Command = require("./../../scripts/commandConst.js");
 const Tools = require("./../../scripts/botTools.js");
 
+function run (message, args)
+{
+	let replacements =
+	{
+		user: `**${message.member.displayName}**`,
+		users: Tools.arrayIntoList(Tools.getMentionList(message, true) ),
+		args_full: args.full
+	};
+
+	let parseScript = (script) =>
+	{
+		return Tools.JSONscript(replacements, script);
+	};
+
+	if (!replacements.users && !this.self) {
+		replacements.users = defaultWord;
+	}
+
+	if (replacements.users) {
+		return parseScript(this.others);
+	} else {
+		return parseScript(this.self);
+	}
+}
+
 class Interaction extends Command.Command {
 	constructor(name, description, others, self, calls = [], defaultWord = "themselves") {
 		super
 		(
 			name,
-			function (message, args)
-			{
-				let replacements =
-				{
-					user: `**${message.member.displayName}**`,
-					users: Tools.arrayIntoList(Tools.getMentionList(message, true) ),
-					args_full: args.full
-				};
-
-				let parseScript = (script) =>
-				{
-					return Tools.JSONscript(replacements, script);
-				};
-
-				if (!replacements.users && !this.self) {
-					replacements.users = defaultWord;
-				}
-
-				if (replacements.users) {
-					return parseScript(this.others);
-				} else {
-					return parseScript(this.self);
-				}
-			},
-			description = description,
+			run,
+			description,
 			"interactions",
 			["@user1 @user2 @user.."],
 			false,
