@@ -54,7 +54,7 @@ commandsDir.forEach( (commandsDirElement) =>
 
 			subDir.forEach( (e) =>
 			{
-				if (e != base)
+				if (isScript(e) && e != base)
 				{
 					addCommand(path, e, commandsDirElement);
 				}
