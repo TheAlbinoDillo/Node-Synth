@@ -8,8 +8,6 @@ const Diff = require("diff");
 const debug = require("./files/scripts/runningOnPi.js");
 const fs = require("fs");
 
-console.log(Commands)
-
 //Setup Discord Client
 const Client = new Discord.Client();
 const Token = 'NjYyODI1ODA2OTY3NDcyMTI4.Xqzm2Q.I2y50w7Nu5QmgMqamCI9a3VuxMc';
@@ -19,9 +17,6 @@ process.on('uncaughtException', function(error) {
 	fs.writeFileSync("log.txt", error.stack);
 	process.exit();
 });
-
-//Client variables
-var ClientLoggedIn = false;
 
 //Setup Discord Client Events
 Client.on("ready", () =>
@@ -137,16 +132,24 @@ function serverEvent (guild, title, user, time, message, edit) {
 Connect(Token);
 function Connect (token, seconds = 3) {
 
+	if (ClientLoggedIn === undefined)
+	{
+		var ClientLoggedIn = false;
+	}
+
 	if (ClientLoggedIn) return;
 	console.log("\nAttempting to connect to Discord...\n");
 
-	Client.login(Token).then(token => {
+	Client.login(Token).then(token =>
+	{
 		console.log(`Logged in with token starting with: "${token.substring(0, 5)}"\n`);
 		ClientLoggedIn = true;
 
-	}).catch(error => {
+	}).catch(error =>
+	{
 		console.error(`Failed to connect to Discord:\n${error.message}\nTrying again in ${seconds} second${(seconds != 1) ? "s" : ""}...\n`);
-		Client.setTimeout( () => {
+		Client.setTimeout( () =>
+		{
 			Connect(token, seconds);
 		}, seconds * 1000);
 	});

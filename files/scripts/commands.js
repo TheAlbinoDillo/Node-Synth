@@ -380,64 +380,64 @@ const commandList =
 		}, "List all the server's emotes.", null, [], true, ["ADMINISTRATOR"]
 	),
 
-//	new Command("Hex Color", function (message, args) {
+	new Command("Hex Color", function (message, args) {
+
+			if (args[0] == "FUCKME") {
+				return "OwO";
+			}
+
+			if (args[0] == null) {
+				return `Specify a hex code.`;
+			}
+
+			if (args[0].replace(/[^a-f0-9]/gi,'').length != 6) {
+				return `**${args[0]}** is not a valid hex code.`;
+			}	
+
+			let colorName = Tools.colors.closest(args[0]);
+			let colorCode = Tools.colors.format(args[0]).substring(1);
+			let url = `https://via.placeholder.com/50/${colorCode}/${colorCode}.png`;
+
+			let embed = new Discord.MessageEmbed()
+			.setThumbnail(url)
+			.addField("#" + colorCode, colorName);
+
+			return new TextMessage(message, embed);
+
+		}, "Get a preview of a hex color!", "tools", ["hex code"], false, [], ["hex"]
+	),
+
+//	new Command("To Binary", function (message, args) {
 //
-//			if (args[0] == "FUCKME") {
-//				return "OwO";
+//			if (Number.isNaN(parseInt(args[0]) ) ) {
+//				let content = args.full;
+//
+//				let text = "";
+//				for (let i = 0, l = content.length; i < l; i++) {
+//					text += `\`${Tools.formatBin(content.charCodeAt(i) )}\` `;
+//				}
+//				return text;
 //			}
 //
-//			if (args[0] == null) {
-//				return `Specify a hex code.`;
-//			}
-//
-//			if (args[0].replace(/[^a-f0-9]/gi,'').length != 6) {
-//				return `**${args[0]}** is not a valid hex code.`;
-//			}	
-//
-//			let colorName = Tools.colors.closest(args[0]);
-//			let colorCode = Tools.colors.format(args[0]).substring(1);
-//			let url = `https://via.placeholder.com/50/${colorCode}/${colorCode}.png`;
-//
-//			let embed = new Discord.MessageEmbed()
-//			.setThumbnail(url)
-//			.addField("#" + colorCode, colorName);
-//
-//			return new TextMessage(message, embed);
-//
-//		}, "Get a preview of a hex color!", "tools", ["hex code"], false, [], ["hex"]
+//			return parseInt(args[0]).toString(2);
+//		}, "Turn something into binary!", "tools", ["number"], false, [], ["tobin"]
 //	),
 
-	new Command("To Binary", function (message, args) {
-
-			if (Number.isNaN(parseInt(args[0]) ) ) {
-				let content = args.full;
-
-				let text = "";
-				for (let i = 0, l = content.length; i < l; i++) {
-					text += `\`${Tools.formatBin(content.charCodeAt(i) )}\` `;
-				}
-				return text;
-			}
-
-			return parseInt(args[0]).toString(2);
-		}, "Turn something into binary!", "tools", ["number"], false, [], ["tobin"]
-	),
-
-	new Command("To Hexadecimal", function (message, args) {
-
-			if (Number.isNaN(parseInt(args[0]) ) ) {
-				let content = args.full;
-
-				let text = "";
-				for (let i = 0, l = content.length; i < l; i++) {
-					text += `\`${Tools.formatHex(content.charCodeAt(i) )}\` `;
-				}
-				return text.toUpperCase();
-			}
-
-			return parseInt(args[0]).toString(16).toUpperCase();
-		}, "Turn something into hexadecimal!", "tools", ["number"], false, [], ["tohex"]
-	),
+//	new Command("To Hexadecimal", function (message, args) {
+//
+//			if (Number.isNaN(parseInt(args[0]) ) ) {
+//				let content = args.full;
+//
+//				let text = "";
+//				for (let i = 0, l = content.length; i < l; i++) {
+//					text += `\`${Tools.formatHex(content.charCodeAt(i) )}\` `;
+//				}
+//				return text.toUpperCase();
+//			}
+//
+//			return parseInt(args[0]).toString(16).toUpperCase();
+//		}, "Turn something into hexadecimal!", "tools", ["number"], false, [], ["tohex"]
+//	),
 
 	new Command("Roll", function (message, args) {
 
