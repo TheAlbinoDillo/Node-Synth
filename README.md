@@ -1,4 +1,4 @@
-# Bot-FurGun
-Bot for the Furries With Guns Discord Server
+# Node Synth
+Bot for furry Discord servers
 
-Written with Discord.js in NodeJS
+Written with discord.js in Node.js
