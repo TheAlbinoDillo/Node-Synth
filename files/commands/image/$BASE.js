@@ -40,12 +40,12 @@ class ImageShare extends Command.Command {
 
 				let randAll = Tools.randNumber(images.length - 1);
 
-				let pick = args[0];
+				let pick = args[0].toLowerCase();
 				if (pick) {
 
 					let list = [];
 					images.forEach( function(e, i) {
-						if (e.tags.includes(args[0]) ) {
+						if (e.tags.includes(pick) ) {
 							list.push(i);
 						}
 					});
