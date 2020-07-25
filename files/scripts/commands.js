@@ -41,7 +41,6 @@ commandsDir.forEach( (commandsDirElement) =>
 	if (isScript(commandsDirElement) )
 	{
 		addCommand(requirePath, commandsDirElement, "unlisted");
-		console.log("Added Command:", commandsDirElement);
 	}
 	else
 	{
@@ -76,7 +75,6 @@ commandsDir.forEach( (commandsDirElement) =>
 				let path = `${requirePath}/${commandsDirElement}`;
 
 				addCommand(path, subDirElement, "unlisted");
-				console.log("Added Command:", subDirElement);
 			}	
 		});
 	}
