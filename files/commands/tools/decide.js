@@ -1,5 +1,7 @@
 "use strict";
 
+const Discord = require("discord.js");
+const Command = require("./../../scripts/commandConst.js");
 const Tools = require("./../../scripts/botTools.js");
 
 function run (message, args)
@@ -10,9 +12,12 @@ function run (message, args)
 	arr.list = Tools.arrayIntoList(arr.choices);
 	arr.choice = arr.choices[arr.pick];
 
-	let text = `Deciding from:\n${arr.list}\nWinner is: **${arr.choice}**`;
+	let embed = new Discord.MessageEmbed()
+	.setThumbnail("https://i.imgur.com/0GaxXO3.png")
+	.addField("Deciding from:", arr.list)
+	.addField("Winner is:", arr.choice);
 
-	return text;
+	return new Command.TextMessage(message, embed);
 }
 
 module.exports =

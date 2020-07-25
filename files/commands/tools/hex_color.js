@@ -14,12 +14,15 @@ function run (message, args)
 		return `Specify a hex code.`;
 	}
 
-	if (args[0].replace(/[^a-f0-9]/gi,'').length != 6) {
-		return `**${args[0]}** is not a valid hex code.`;
-	}	
+	let clean = args[0].replace(/#/g, "");
+	console.log(clean);
 
-	let colorName = Tools.colors.closest(args[0]);
-	let colorCode = Tools.colors.format(args[0]).substring(1);
+	if (args[0].replace(/[^a-f0-9]/gi,'').length != 6) {
+		return `**${clean}** is not a valid hex code.`;
+	}
+
+	let colorName = Tools.colors.closest(clean);
+	let colorCode = Tools.colors.format(clean).substring(1);
 	let url = `https://via.placeholder.com/50/${colorCode}/${colorCode}.png`;
 
 	let embed = new Discord.MessageEmbed()

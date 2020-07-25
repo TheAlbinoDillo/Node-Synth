@@ -24,7 +24,7 @@ function run (message, args)
 		}
 		return text;
 	}
-	return parseInt(args[0]).toString(2);
+	return `\`0b${parseInt(args[0]).toString(2)}\``;
 }
 
 module.exports =

@@ -11,10 +11,12 @@ function calculate (expression)
 {
 	let text = "";
 
+	if (!expression) return "Provide an expression to calculate."
+
 	try
 	{
 		let answer = MathJS.evaluate(expression);
-		text = answer.toString();
+		text = `\`${expression}\` = **${answer}**`;
 	}
 	catch (error)
 	{

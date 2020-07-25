@@ -18,5 +18,13 @@
 			", take that"
 		],
 		"!"
+	],
+	"self": [
+		"%user% tases themselves",
+		[
+			"!",
+			"...",
+			", they must like it."
+		]
 	]
 }

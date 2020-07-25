@@ -10,6 +10,8 @@ module.exports =
 	],
 	runFunction: (message, args) =>
 	{
+		if (!args.full) return "_ _";
+		
 		return args.full.trim();
 	},
 	usage: ["text"],

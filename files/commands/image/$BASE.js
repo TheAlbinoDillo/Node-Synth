@@ -60,7 +60,7 @@ class ImageShare extends Command.Command {
 				return returnUrl(randAll, ["🎲"]);
 			},
 			`Get ${name} pictures!`,
-			"fun",
+			"images",
 			["tag"],
 			false,
 			[],

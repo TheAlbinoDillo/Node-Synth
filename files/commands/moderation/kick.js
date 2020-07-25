@@ -7,7 +7,7 @@ function run (message, args)
 	let users = message.mentions.users.array();
 
 	if (users < 1) {
-		return "Specify users to ban.";
+		return "Specify users to kick.";
 	}
 
 	for (let i = 0, l = users.length; i < l; i++)
@@ -21,9 +21,9 @@ function run (message, args)
 	for (let i = 0, l = users.length; i < l; i++)
 	{
 		let member = members.get(users[i].id);
-		member.ban({reason: message.content});
+		member.kick({reason: message.content});
 	}
-	return `Banned ${Tools.arrayIntoList(Tools.getMentionList(message, true) )}`;
+	return `Kicked ${Tools.arrayIntoList(Tools.getMentionList(message, true) )}`;
 }
 
 module.exports =

@@ -4,7 +4,14 @@ const Command = require("./../../scripts/commandConst.js");
 
 function run (message, args)
 {
-	return new Command.PingMessage(message, ["Pong.", "**Pong! **"]);
+	let display = ["Pong.", "**Pong! **"];
+
+	if (message.content.indexOf("marco") === 3)
+	{
+		display = ["Polo.", "**Polo! **"];
+	}
+
+	return new Command.PingMessage(message, display);
 }
 
 module.exports =

@@ -22,7 +22,7 @@ function run (message, args)
 		}
 		return text.toUpperCase();
 	}
-	return parseInt(args[0]).toString(16).toUpperCase();
+	return `\`0x${parseInt(args[0]).toString(16).toUpperCase()}\``;
 }
 
 module.exports =

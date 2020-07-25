@@ -3,12 +3,27 @@
 function run (message, args)
 {
 	let commandList = require("./../scripts/commands.js").commandList;
-	let commandNames = [];
+	let commandCategories = {};
+
 	commandList.forEach( (e) =>
 	{
-		commandNames.push(e.name);
+		if (commandCategories[e.category] === undefined)
+		{
+			commandCategories[e.category] = [];
+		}
 	});
-	return commandNames.join(", ");
+	
+	commandList.forEach( (e) =>
+	{
+		commandCategories[e.category].push(e.name);
+	});
+
+	let text = "";
+	for (let category in commandCategories)
+	{
+		text += `**${category}:**\n${commandCategories[category].join(", ")}\n`;
+	}
+	return text;
 }
 
 module.exports =

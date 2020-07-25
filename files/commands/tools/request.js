@@ -1,5 +1,6 @@
 "use strict";
 
+const Command = require("./../../scripts/commandConst.js");
 const Tools = require("./../../scripts/botTools.js");
 
 function run (message, args)
