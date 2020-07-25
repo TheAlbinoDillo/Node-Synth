@@ -10,8 +10,8 @@
 		"%user% ",
 		[
 			"",
-			" gently",
-			" softly"
+			"gently ",
+			"softly "
 		],
 		"ruffles %users%'s feathers",
 		[
