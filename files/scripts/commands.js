@@ -187,15 +187,19 @@ class ImageShare extends Command {
 				let returnUrl = (index, reactions, showTags = true) =>
 				{
 					let img = imageBase[albumName][index];
-					let content = {files: [img.link]};
+					let content = img.link;
+					let returnList = [];
 
-					if (showTags) {
-						let txt = `\`${img.tags.join(", ")}\``;
-						content.content = txt;
+					if (showTags)
+					{
+						let tags = `\`${img.tags.join(", ")}\`\n`;
+						let msg = new TextMessage(message, tags);
+
+						returnList.push(msg);
 					}
 
 					let msg = new TextMessage(message, content);
-					let returnList = [msg];
+					returnList.push(msg);
 
 					if (reactions) {
 						reactions.forEach( (e) =>
