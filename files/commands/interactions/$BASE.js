@@ -19,10 +19,10 @@ function run (message, args)
 	};
 
 	if (!replacements.users && !this.self) {
-		replacements.users = defaultWord;
+		replacements.users = this.defaultWord;
 	}
 
-	if (replacements.users) {
+	if (replacements.users || !this.self) {
 		return parseScript(this.others);
 	} else {
 		return parseScript(this.self);
@@ -44,6 +44,7 @@ class Interaction extends Command.Command {
 		);
 		this.others = others;
 		this.self = self;
+		this.defaultWord = defaultWord;
 	}
 }
 

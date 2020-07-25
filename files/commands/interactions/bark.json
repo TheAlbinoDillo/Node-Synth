@@ -5,17 +5,16 @@
 		"bork"
 	],
 	"description": "Bark to be heard!",
-	"script": [
-		"%user% barks",
+	"self": [
+		"%user% barks! ",
 		[
-			"",
-			" Woof Woof",
-			" Woof",
-			" Ruff",
-			" Ruff Ruff",
-			" Arrwf",
-			" Awrf",
-			" Awrf awrf"
+			"Woof Woof",
+			"Woof",
+			"Ruff",
+			"Ruff Ruff",
+			"Arrwf",
+			"Awrf",
+			"Awrf awrf"
 		],
 		"!"
 	]
