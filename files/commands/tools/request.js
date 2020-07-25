@@ -1,5 +1,6 @@
 "use strict";
 
+const Discord = require("discord.js");
 const Command = require("./../../scripts/commandConst.js");
 const Tools = require("./../../scripts/botTools.js");
 
@@ -7,9 +8,13 @@ function run (message, args)
 {		
 	let guild = "704494659400892458";
 	let channel = "718827126878371881";
-	let content = `**${message.author.username}#${message.author.discriminator}**:\n${args.full}\n`;
 
-	return [new Command.Transpose(content, guild, channel), new Command.ReactEmote(message, "✅")];
+	let embed = new Discord.MessageEmbed()
+	.setTitle(`Request from ${message.author.username}#${message.author.discriminator}`)
+	.setThumbnail(message.author.displayAvatarURL() )
+	.addField(`${message.guild.name}/#${message.channel.name}`, args.full);
+
+	return [new Command.Transpose(embed, guild, channel), new Command.ReactEmote(message, "✅")];
 }
 
 module.exports =
