@@ -27,6 +27,7 @@ Client.on("ready", () =>
 	if (debug) {
 		Activity("PLAYING", "Debugging");
 	}
+
 });
 
 Client.on("message", message =>
