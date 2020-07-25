@@ -25,6 +25,5 @@ module.exports =
 		"uwu",
 		"uwuspeak"
 	],
-	runFunction: run,
-	usage: []
+	runFunction: run
 };

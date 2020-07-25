@@ -5,10 +5,10 @@ const Tools = require("./../../scripts/botTools.js");
 function run (message, args)
 {
 	let arr = {};
-	arr.choices =  args.full.slice();
-	arr.pick =  Math.floor(Math.random() * arr.choices.length);
-	arr.list =  Tools.arrayIntoList(arr.choices[arr.pick]);
-	arr.choice =  arr.choices[arr.pick];
+	arr.choices = args.full.split(" ");
+	arr.pick = Math.floor(Math.random() * arr.choices.length);
+	arr.list = Tools.arrayIntoList(arr.choices);
+	arr.choice = arr.choices[arr.pick];
 
 	let text = `Deciding from:\n${arr.list}\nWinner is: **${arr.choice}**`;
 

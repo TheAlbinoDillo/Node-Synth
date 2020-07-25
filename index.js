@@ -11,6 +11,7 @@ const fs = require("fs");
 //Setup Discord Client
 const Client = new Discord.Client();
 const Token = 'NjYyODI1ODA2OTY3NDcyMTI4.Xqzm2Q.I2y50w7Nu5QmgMqamCI9a3VuxMc';
+const OwnerID = "619014359770857483";
 
 process.on('uncaughtException', function(error) {
 	console.error(error);
@@ -31,8 +32,6 @@ Client.on("ready", () =>
 Client.on("message", message =>
 {
 	if (message.channel instanceof Discord.DMChannel) return;
-
-	//voteHandling(message);
 
 	if (message.content.toLowerCase().indexOf(Commands.prefix) == 0 && message.channel.guild) {
 		
@@ -339,14 +338,28 @@ function runCommand (message) {
 	args.shift();
 
 	let hasPerms = true;
-	for (let i = 0, l = selectedCommand.permissions.length; i < l; i++) {
-		if (message.member.permissions.has(selectedCommand.permissions[i]) == false) {
+	for (let i = 0, l = selectedCommand.permissions.length; i < l; i++)
+	{
+		let scpi = selectedCommand.permissions[i];
+
+		if (scpi === "BOT_OWNER")
+		{
+			if (message.author.id != OwnerID)
+			{
+				hasPerms = false;
+				break;				
+			}
+			continue;
+		}
+
+		if (message.member.permissions.has(scpi) === false)
+		{
 			hasPerms = false;
 			break;
 		}
 	}
 
-	if (!hasPerms && message.author.id != "619014359770857483") {
+	if (!hasPerms && message.author.id != OwnerID) {
 		errorReact(message, "⛔", `${Tools.serverName(message.author, message.guild)} does not have permission to use **${Commands.prefix}${args[0]}**`);
 		return;
 	}
@@ -382,12 +395,11 @@ function runCommand (message) {
 					botReact(cmd.message, cmd.content);
 					break;
 				case "ping":
-					botSend(cmd.message, cmd.content[0]).
-					then(message => {
-						botEdit(message, cmd.content[1])
-						.then(edited => {
-							botEdit(edited, `\`${edited.editedTimestamp - message.createdTimestamp}ms\``, true);
-						});
+					botSend(cmd.message, cmd.content[0]). then(pingmessage =>
+					{
+						let pingtime = pingmessage.createdTimestamp - message.createdTimestamp;
+
+						botEdit(pingmessage, `${cmd.content[1]}\`${pingtime}ms\``);
 					});
 					break;
 			}

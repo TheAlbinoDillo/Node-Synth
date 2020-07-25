@@ -7,74 +7,6 @@ const Tools = require("./botTools.js");
 const prefix = 'fg.';
 const imageBase = JSON.parse(fs.readFileSync("./files/common/images.json"));
 
-class Responce {
-	constructor(type = "text", content, guild, channel, message) {
-		let types = ["text", "edit", "react", "ping", "transpose"];
-		if (!types.includes(type) ) {
-			console.error("Responce type not valid.\n");
-			return null;
-		}
-
-		this.type = type,
-		this.content = content,
-		this.guild = guild,
-		this.channel = channel,
-		this.message = message
-	}
-}
-
-class TextMessage extends Responce {
-	constructor(message, content) {
-		super
-		(
-			"text",
-			content,
-			message.guild,
-			message.channel,
-			message
-		);
-	}
-}
-
-class Transpose extends Responce {
-	constructor(content, guild, channel) {
-		super
-		(
-			"transpose",
-			content,
-			guild,
-			channel,
-			null
-		);
-	}
-}
-
-class PingMessage extends Responce {
-	constructor(message, content) {
-		super
-		(
-			"ping",
-			content,
-			message.guild,
-			message.channel,
-			message
-		);
-	}
-}
-
-class ReactEmote extends Responce {
-	constructor(message, emote) {
-		super
-		(
-			"react",
-			emote,
-			message.guild,
-			message.channel,
-			message
-		);
-	}
-}
-
 class Usage {
 	constructor(label,  test) {
 		this.label = label,
@@ -322,46 +254,16 @@ const commandList =
 		}, "Add a food to the food list.", "settings", ["add [text] | rmlast | search [text] | remove [number]"], false, ["MANAGE_CHANNELS"]
 	),
 
-	new Command("Server Information", function (message, args) {
-			let g = message.guild;
-			let url = `https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png`;
-
-			let embed = new Discord.MessageEmbed()
-			.setTitle(`Information for ${g.name}`)
-			.setThumbnail(url)
-			.addField("Server Owner:", Tools.serverName(g.owner.user, g), true)
-			.addField("Created On:", `${g.createdAt.toLocaleString('default',{month:'long'})} ${g.createdAt.getFullYear()}`, true)
-			.addField("Member Count:", `${g.memberCount} users`, true)
-			.setFooter(`${g.region} • ${g.id} • ${g.owner.user.username}#${g.owner.user.discriminator}`);
-
-			return new TextMessage(message, embed);
-		}, "Get information about the server.", "tools", [], false, [], ["serverinfo"]
-	),
-
 	new Command("Leave", function (message, args) {
 			Tools.disconnect(message.client, 2);
 			return "Disconnecting...";
-		}, "Disconnect the bot.", null, [], false, ["ADMINISTRATOR"]
+		}, "Disconnect the bot.", null, [], false, ["BOT_OWNER"]
 	),
 
 	new Command("Restart", function (message, args) {
 			Tools.disconnect(message.client, 5);
 			return "Restarting...";
-		}, "Restart the bot.", null, [], false, ["ADMINISTRATOR"], ["reboot"]
-	),
-
-	new Command("List Emotes", function (message, args) {
-			
-			let emotes = message.guild.emojis.cache.array();
-			let list = [];
-
-			for (let i = 0, l = emotes.length; i < l; i++) {
-				list.push(emotes[i].toString() );
-			}
-
-			return list;
-
-		}, "List all the server's emotes.", null, [], true, ["ADMINISTRATOR"]
+		}, "Restart the bot.", null, [], false, ["BOT_OWNER"], ["reboot"]
 	),
 
 	new Command("Hex Color", function (message, args) {
@@ -485,7 +387,6 @@ const commandList =
 
 	new Command("Set Log Channel", (message, args) =>
 	{
-
 		let value = message.channel.id;
 		Tools.settings.write(message.guild, "logchannel", value);
 
@@ -523,7 +424,7 @@ dir.forEach( (e, i) =>
 		script.usage,
 		script.deleteMessage,
 		script.permissions,
-		script.calls
+		script.calls,
 	);
 	commandList.push(int);
 });
@@ -538,7 +439,6 @@ for (let i = 0, l = commandList.length; i < l; i++) {
 
 module.exports =
 {
-	TextMessage: TextMessage,
 	commandList: commandList,
 	prefix: prefix
 };

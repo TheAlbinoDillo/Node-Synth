@@ -35,5 +35,5 @@ module.exports =
 		"tohexadecimal"
 	],
 	runFunction: run,
-	usage: []
+	usage: ["text"]
 };

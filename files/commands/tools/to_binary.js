@@ -39,5 +39,5 @@ module.exports =
 		"tobinary"
 	],
 	runFunction: run,
-	usage: []
+	usage: ["text"]
 };
