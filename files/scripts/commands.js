@@ -74,13 +74,11 @@ commandsDir.forEach( (commandsDirElement) =>
 			{
 				let path = `${requirePath}/${commandsDirElement}`;
 
-				addCommand(path, subDirElement, "unlisted");
+				addCommand(path, subDirElement, commandsDirElement);
 			}	
 		});
 	}
 });
-
-console.log(commandList);
 
 module.exports =
 {
