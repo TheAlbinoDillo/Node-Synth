@@ -1,29 +1,26 @@
 "use strict";
 
+const Discord = require("discord.js");
+const Command = require("./../../scripts/commandConst.js");
 const MathJS = require("mathjs");
 
 function run (message, args)
 {
-	return calculate(args.full);
-}
-
-function calculate (expression)
-{
-	let text = "";
-
-	if (!expression) return "Provide an expression to calculate."
+	let embed = new Discord.MessageEmbed()
+	.setTitle(`Calculator`)
+	.setThumbnail("https://i.imgur.com/lUBOk8j.png");
 
 	try
 	{
-		let answer = MathJS.evaluate(expression);
-		text = `\`${expression}\` = **${answer}**`;
+		let answer = MathJS.evaluate(args.full);
+		embed.addField(`${args.full} =`, `${answer}`);
 	}
 	catch (error)
 	{
-		text = error.message;
+		embed.addField("Error:", error.message);
 	}
 
-	return text;
+	return new Command.TextMessage(message, embed);
 }
 
 module.exports =

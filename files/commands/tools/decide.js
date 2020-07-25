@@ -13,7 +13,7 @@ function run (message, args)
 	arr.choice = arr.choices[arr.pick];
 
 	let embed = new Discord.MessageEmbed()
-	.setThumbnail("https://i.imgur.com/0GaxXO3.png")
+	.setThumbnail("https://i.imgur.com/RTZu7Nn.png")
 	.addField("Deciding from:", arr.list)
 	.addField("Winner is:", arr.choice);
 

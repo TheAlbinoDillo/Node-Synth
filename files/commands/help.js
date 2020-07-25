@@ -25,7 +25,7 @@ function run (message, args)
 
 	let embed = new Discord.MessageEmbed()
 	.setTitle(`Help for ${Client.user.username}`)
-	.setThumbnail(Client.user.avatarURL() );
+	.setThumbnail("https://i.imgur.com/zfVwbiK.png");
 
 	for (let category in commandCategories)
 	{
