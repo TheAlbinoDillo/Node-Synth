@@ -10,7 +10,7 @@ const fs = require("fs");
 
 //Setup Discord Client
 const Client = new Discord.Client();
-const Token = readJSON("./../Bot-FurGun_Token").token;
+const Token = Tools.token;
 const OwnerID = "619014359770857483";
 
 process.on('uncaughtException', function(error) {
