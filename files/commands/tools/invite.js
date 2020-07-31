@@ -8,12 +8,11 @@ function run (message, args)
 
 module.exports =
 {
-	name: "Server Information",
-	description: "Get information about the server.",
+	name: "Invite",
+	description: "Get an ivite link for the bot!",
 	calls:
 	[
-		"sinfo",
-		"serverinfo"
+		"invite"
 	],
 	runFunction: run
 };
