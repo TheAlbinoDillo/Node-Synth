@@ -4,7 +4,6 @@
 const Discord = require("discord.js");
 const Tools = require("./files/scripts/botTools.js");
 const Commands = require("./files/scripts/commands.js");
-const Diff = require("diff");
 const debug = require("./files/scripts/runningOnPi.js");
 const fs = require("fs");
 
@@ -22,13 +21,43 @@ process.on('uncaughtException', function(error) {
 //Setup Discord Client Events
 Client.on("ready", () =>
 {
+	let eventsPath = "./files/events";
+	let eventsDir = fs.readdirSync(eventsPath);
+	eventsDir.forEach( (e) =>
+	{
+		let ext = ".js";
+		let withoutExt = e.substring(0, e.length - ext.length);
+	
+		let runFunction = require(`${eventsPath}/${withoutExt}`).runFunction;
+		Client.on(withoutExt, (arg1, arg2) =>
+		{
+			try
+			{
+				runFunction(arg1, arg2);
+			}
+			catch (error)
+			{
+				console.error(error);
+			}
+		});
+	});
+
 	console.log("Client is ready\n");
 
 	if (debug) {
 		Activity("PLAYING", "Debugging");
 	}
-
 });
+
+function serverEvent (argsObj) {
+
+	let logChannel = Tools.settings.read(argsObj.guild, "logchannel");
+	let channel = argsObj.guild.channels.cache.get(logChannel);
+
+	if (!logChannel) return;
+
+	botSend(channel, {embed: argsObj.embed});
+}
 
 Client.on("message", (message) =>
 {
@@ -333,3 +362,8 @@ function runCommand (message) {
 		botDelete(message);
 	}
 }
+
+module.exports =
+{
+	serverEvent: serverEvent
+};
