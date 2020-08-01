@@ -1,25 +1,25 @@
 "use strict";
 
 //"Import" Dependencies
-const Discord = require("discord.js");
-const Tools = require("./files/scripts/botTools.js");
-const Commands = require("./files/scripts/commands.js");
+const discord = require("discord.js");
+const tools = require("./files/scripts/botTools.js");
+const commands = require("./files/scripts/commands.js");
 const debug = require("./files/scripts/runningOnPi.js");
 const fs = require("fs");
 
-//Setup Discord Client
-const Client = new Discord.Client();
-const Token = Tools.token;
-const OwnerID = "619014359770857483";
+//Setup discord client
+const client = new discord.Client();
+const token = tools.token;
+const ownerID = "619014359770857483";
 
-process.on('uncaughtException', function(error) {
+process.on('uncaughtException', (error) =>
+{
 	console.error(error);
-	fs.writeFileSync("log.txt", error.stack);
+	fs.writeFileSync("log.txt", new Date.toJSON() + "\n" + error.stack);
 	process.exit();
 });
 
-//Setup Discord Client Events
-Client.on("ready", () =>
+function setupEvents ()
 {
 	let eventsPath = "./files/events";
 	let eventsDir = fs.readdirSync(eventsPath);
@@ -29,7 +29,7 @@ Client.on("ready", () =>
 		let withoutExt = e.substring(0, e.length - ext.length);
 	
 		let runFunction = require(`${eventsPath}/${withoutExt}`).runFunction;
-		Client.on(withoutExt, (arg1, arg2) =>
+		client.on(withoutExt, (arg1, arg2) =>
 		{
 			try
 			{
@@ -41,17 +41,28 @@ Client.on("ready", () =>
 			}
 		});
 	});
+}
 
-	console.log("Client is ready\n");
+//Setup discord client Events
+client.on("ready", () =>
+{
+	setupEvents();
 
-	if (debug) {
+	console.log("client is ready\n");
+
+	if (debug)
+	{
 		Activity("PLAYING", "Debugging");
+	}
+	else
+	{
+		Activity("PLAYING", "fg.help");
 	}
 });
 
-function serverEvent (argsObj) {
-
-	let logChannel = Tools.settings.read(argsObj.guild, "logchannel");
+function serverEvent (argsObj)
+{
+	let logChannel = tools.settings.read(argsObj.guild, "logchannel");
 	let channel = argsObj.guild.channels.cache.get(logChannel);
 
 	if (!logChannel) return;
@@ -59,11 +70,11 @@ function serverEvent (argsObj) {
 	botSend(channel, {embed: argsObj.embed});
 }
 
-Client.on("message", (message) =>
+client.on("message", (message) =>
 {
-	if (message.channel instanceof Discord.DMChannel) return;
+	if (message.channel instanceof discord.DMChannel) return;
 
-	if (message.content.toLowerCase().indexOf(Commands.prefix) == 0 && message.channel.guild) {
+	if (message.content.toLowerCase().indexOf(commands.prefix) == 0 && message.channel.guild) {
 		
 		if (message.author.bot) {
 			console.log(`Bot (${message.author.username}) tried using a command:\n${message.content}\n`);
@@ -73,8 +84,8 @@ Client.on("message", (message) =>
 	}
 });
 
-//Client logon functions
-Connect(Token);
+//client logon functions
+Connect(token);
 function Connect (token, seconds = 3) {
 
 	if (ClientLoggedIn === undefined)
@@ -83,42 +94,42 @@ function Connect (token, seconds = 3) {
 	}
 
 	if (ClientLoggedIn) return;
-	console.log("\nAttempting to connect to Discord...\n");
+	console.log("\nAttempting to connect to discord...\n");
 
-	Client.login(Token).then(token =>
+	client.login(token).then(token =>
 	{
 		console.log(`Logged in with token starting with: "${token.substring(0, 5)}"\n`);
 		ClientLoggedIn = true;
 
 	}).catch(error =>
 	{
-		console.error(`Failed to connect to Discord:\n${error.message}\nTrying again in ${seconds} second${(seconds != 1) ? "s" : ""}...\n`);
-		Client.setTimeout( () =>
+		console.error(`Failed to connect to discord:\n${error.message}\nTrying again in ${seconds} second${(seconds != 1) ? "s" : ""}...\n`);
+		client.setTimeout( () =>
 		{
 			Connect(token, seconds);
 		}, seconds * 1000);
 	});
 }
 
-function Activity (type = "WATCHING", activity = `${Commands.prefix}help`) {
+function Activity (type = "WATCHING", activity = `${commands.prefix}help`) {
 
-	Client.user.setActivity(activity, { type: type }).then(presence => {
+	client.user.setActivity(activity, { type: type }).then(presence => {
 		//console.log(`Activity set to "${presence.activities[0].name}".\n`);
 	}).catch(error => {
 		console.error(`Could not set activity:\n${error.message}\n`);
 	});
 }
 
-//Client message functions
+//client message functions
 function botSend (channel, content) {	//Send a message to the specified channel
 
 	let message;
-	if (channel instanceof Discord.Message) {
+	if (channel instanceof discord.Message) {
 		message = channel;
 		channel = channel.channel;
 	}
 
-	if (!(channel instanceof Discord.TextChannel) ) {
+	if (!(channel instanceof discord.TextChannel) ) {
 		console.error("Did not provide a channel to botSend.\n");
 		return null;
 	}
@@ -265,23 +276,23 @@ function runCommand (message) {
 		message.content = message.content.replace("<@", " <@");
 	}
 
-	let args = message.content.substring(Commands.prefix.length).split(" ");
+	let args = message.content.substring(commands.prefix.length).split(" ");
 
 	let selectedCommand = null;
-	for (let i = 0, l = Commands.commandList.length; i < l; i++) {
-		if (Commands.commandList[i].calls.includes(args[0].toLowerCase() ) ) {
-			selectedCommand = Commands.commandList[i];
+	for (let i = 0, l = commands.commandList.length; i < l; i++) {
+		if (commands.commandList[i].calls.includes(args[0].toLowerCase() ) ) {
+			selectedCommand = commands.commandList[i];
 			break;
 		}
 	}
 
 	if (!selectedCommand) {
-		botSend(message, `**${Commands.prefix}${args[0]}** is not a command.`);
+		botSend(message, `**${commands.prefix}${args[0]}** is not a command.`);
 		return;
 	}
 
-	args.full = message.content.substring(args[0].length + Commands.prefix.length + 1);
-	args.command = `${Commands.prefix}${args[0]}`;
+	args.full = message.content.substring(args[0].length + commands.prefix.length + 1);
+	args.command = `${commands.prefix}${args[0]}`;
 	args.shift();
 
 	let hasPerms = true;
@@ -291,7 +302,7 @@ function runCommand (message) {
 
 		if (scpi === "BOT_OWNER")
 		{
-			if (message.author.id != OwnerID)
+			if (message.author.id != ownerID)
 			{
 				hasPerms = false;
 				break;				
@@ -306,8 +317,8 @@ function runCommand (message) {
 		}
 	}
 
-	if (!hasPerms && message.author.id != OwnerID) {
-		errorReact(message, "⛔", `${Tools.serverName(message.author, message.guild)} does not have permission to use **${args.command}**`);
+	if (!hasPerms && message.author.id != ownerID) {
+		errorReact(message, "⛔", `${tools.serverName(message.author, message.guild)} does not have permission to use **${args.command}**`);
 		return;
 	}
 
@@ -335,7 +346,7 @@ function runCommand (message) {
 					botSend(cmd.message, cmd.content);
 					break;
 				case "transpose":
-					let channel = Client.guilds.cache.get(cmd.guild).channels.cache.get(cmd.channel);
+					let channel = client.guilds.cache.get(cmd.guild).channels.cache.get(cmd.channel);
 					botSend(channel, cmd.content);
 					break;
 				case "react":
