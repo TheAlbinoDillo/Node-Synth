@@ -1,10 +1,17 @@
 "use strict";
 
+const index = require("./../../index.js");
+
 function run (message)
 {
 	let embed =
 	{
 		"title": "🗑️ Message Delete",
+		"color": 16711680,
+		"thumbnail":
+		{
+			"url": message.author.displayAvatarURL()
+		},
 		"fields":
 		[
 			{
@@ -24,19 +31,15 @@ function run (message)
 		],
 		"footer":
 		{
-			"text": `❄️ ${message.id} • `
+			"text": `❄️ ${message.id}`
 		},
-		"timestamp": new Date(message.createdTimestamp).toJSON();
+		"timestamp": new Date(message.createdTimestamp).toJSON()
 	};
 
-	return embed;
+	index.serverEvent({guild: message.guild, embed: embed});
 }
-
-Client.on("messageDelete", (message) =>
-{
-	serverEvent(message.guild, "🗑️ Message Delete", message.author, Date.now(), message);
-});
 
 module.exports =
 {
+	runFunction: run
 };
