@@ -30,7 +30,7 @@ Client.on("ready", () =>
 
 });
 
-Client.on("message", message =>
+Client.on("message", (message) =>
 {
 	if (message.channel instanceof Discord.DMChannel) return;
 
@@ -43,90 +43,6 @@ Client.on("message", message =>
 		}
 	}
 });
-
-Client.on("messageUpdate", (oldMessage, newMessage) =>
-{
-	if (newMessage.channel instanceof Discord.DMChannel) return;
-
-	if (oldMessage.author.bot) return;
-
-	if (oldMessage.content == newMessage.content) return;
-
-	serverEvent(newMessage.guild, "📝 Message Edit", newMessage.author, Date.now(), oldMessage, newMessage);
-
-});
-
-Client.on("messageDelete", (message) =>
-{
-	serverEvent(message.guild, "🗑️ Message Delete", message.author, Date.now(), message);
-});
-
-Client.on("guildMemberAdd", member =>
-{
-	serverEvent(member.guild, "🆕 Member Joined", member.user, Date.now() );
-});
-
-Client.on("guildMemberRemove", member =>
-{
-	serverEvent(member.guild, "⏏️ Member Left or Removed", member.user, Date.now() );
-});
-
-function serverEvent (guild, title, user, time, message, edit) {
-
-	let logChannel = Tools.settings.read(guild, "logchannel");
-	let channel = guild.channels.cache.get(logChannel);
-
-	if (!logChannel) return;
-
-	let embed = new Discord.MessageEmbed()
-	.setTitle(title);
-
-	if (user) {
-		embed.setThumbnail(user.displayAvatarURL() )
-		.addField("👤 User:", user, true);
-
-		if (!message) embed.addField("❄️ ID:", user.id, true);
-	}
-
-	if (time) {
-		embed.setTimestamp(time);
-	}
-
-	if (message) {
-
-		var text = "Message:";
-		if (edit) text = "Original:"
-
-		embed.addField("📲 Channel:", message.channel, true)
-		.setFooter(`❄️ ${message.id}`);
-
-		let content = message.content;
-		let attachments = message.attachments.array();
-		for (let i = 0, l = attachments.length; i < l; i++) {
-			content += `\n${attachments[i].proxyURL}`;
-		}
-		embed.addField(text || "null", content);
-	}
-
-	if (edit) {
-		let diffText = "";
-		let diffObj = Diff.diffWords(message.content, edit.content);
-		for (let i in diffObj) {
-			let suffix = i == diffObj.length - 1 ? "" : "\n";
-
-			let added = diffObj[i].added ? "+" : "";
-			let removed = diffObj[i].removed ? "-" : "";
-			if (added || removed) {
-				diffText += `${added || removed}${diffObj[i].value}${suffix}`;
-			}
-		}
-
-		embed.addField("Edited:", edit.content)
-		.addField("📥 Difference:", `\`\`\`diff\n${diffText}\`\`\``);
-	}
-
-	botSend(channel, embed);
-}
 
 //Client logon functions
 Connect(Token);
