@@ -1,7 +1,11 @@
 {
 	"name": "Hug",
 	"calls": [
-		"hug"
+		"hug",
+		"hugg",
+		"hugs",
+		"huggy",
+		"huggies"
 	],
 	"description": "Give someone a hug!",
 	"script": [
