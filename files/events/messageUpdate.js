@@ -7,6 +7,8 @@ function run (oldMessage, newMessage)
 {
 	if (newMessage.author.bot) return;
 
+	if (oldMessage.content == newMessage.content) return;
+	
 	let diffText = "";
 	let diffObj = diff.diffWords(oldMessage.content, newMessage.content);
 
