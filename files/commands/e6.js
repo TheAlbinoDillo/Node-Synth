@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 function run(){
-fetch​(​"https://e621.net/posts.json",{​
-    method​: ​'get',​
+fetch​(​"https:/"+
+"/e621.net/posts.json",{​method​: ​'get',​
     headers: 
 {​ 
     'User-Agent': ​"Node-Synth/1.0 (by thealbinoarmadillo on e621)" ​}​,​
