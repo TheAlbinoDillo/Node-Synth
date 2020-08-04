@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
 function run(){
-fetch​(​'https://e621.net/posts.json',​ 
+fetch​(​"https://e621.net/posts.json",
 {​
     method​: ​'get',​
     headers: 
