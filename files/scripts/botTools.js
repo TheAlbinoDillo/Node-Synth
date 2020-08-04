@@ -4,12 +4,22 @@ const FileSystem = require("fs");
 const Color = require("./colors.js");
 const debug = require("./runningOnPi.js");
 
+String.endsWith = (suffix) =>
+{
+	return this.indexOf(suffix) === this.length - suffix.length;
+};
+
+String.startsWith = (prefix) =>
+{
+	return this.indexOf(prefix) === 0;
+};
+
 const settingsPath = debug ? "C:/Users/mojo4/AppData/Roaming/FurGunData/servers" : "/home/pi/fwg/settings/servers";
 var cachedSettings = [];
 
 function serverName (user, guild, bold = true, removeSpecial = true) {	//Get the server nickname of a user and clean it up
 
-	if (guild == undefined) {
+	if (guild === undefined) {
 		console.error("A guild was not provided. Did not get server name of user.\n")
 	}
 
@@ -42,7 +52,7 @@ function getMentionList (message, returnNames, removeSelf = true, removeBots = f
 	for (let i = 0, l = rawMentions.length; i < l; i++) {	//Remove the user writing the message or any bots
 		
 		let rmi = rawMentions[i];
-		if ( !( (rmi == message.author && removeSelf) /*|| (rmi.bot && removeBots)*/ ) ) {
+		if ( !( (rmi === message.author && removeSelf) /*|| (rmi.bot && removeBots)*/ ) ) {
 			mentions.push(rmi);
 		}
 	}

@@ -12,12 +12,14 @@ const client = new discord.Client();
 const token = tools.token;
 const ownerID = "619014359770857483";
 
+//Log all uncaught errors to log file and exit process
 process.on('uncaughtException', (error) =>
 {
 	console.error(error);
 	fs.writeFileSync("log.txt", new Date.toJSON() + "\n" + error.stack);
 	process.exit();
 });
+
 
 function setupEvents ()
 {
@@ -48,7 +50,7 @@ client.on("ready", () =>
 {
 	setupEvents();
 
-	console.log("client is ready\n");
+	console.log("Client is ready\n");
 
 	if (debug)
 	{
@@ -69,20 +71,6 @@ function serverEvent (argsObj)
 
 	botSend(channel, {embed: argsObj.embed});
 }
-
-client.on("message", (message) =>
-{
-	if (message.channel instanceof discord.DMChannel) return;
-
-	if (message.content.toLowerCase().indexOf(commands.prefix) == 0 && message.channel.guild) {
-		
-		if (message.author.bot) {
-			console.log(`Bot (${message.author.username}) tried using a command:\n${message.content}\n`);
-		} else {
-			runCommand(message);
-		}
-	}
-});
 
 //client logon functions
 Connect(token);
@@ -376,5 +364,6 @@ function runCommand (message) {
 
 module.exports =
 {
-	serverEvent: serverEvent
+	serverEvent: serverEvent,
+	runCommand: runCommand
 };

@@ -27,18 +27,12 @@ let addCommand = (path, filename, category) =>
 	commandList.push(cmd);
 };
 
-let isScript = (name) =>
-{
-	let suffix = ".js";
-	return name.indexOf(suffix) == name.length - suffix.length;
-};
-
 let requirePath = "./../commands";
 let readPath = "./files/commands"
 let commandsDir = fs.readdirSync(readPath);
 commandsDir.forEach( (commandsDirElement) =>
 {
-	if (isScript(commandsDirElement) )
+	if (commandsDirElement.endsWith(".js") )
 	{
 		addCommand(requirePath, commandsDirElement, "unlisted");
 	}
@@ -53,7 +47,7 @@ commandsDir.forEach( (commandsDirElement) =>
 
 			subDir.forEach( (e) =>
 			{
-				if (isScript(e) && e != base)
+				if (e.endsWith(".js") && e != base)
 				{
 					addCommand(path, e, commandsDirElement);
 				}
@@ -70,7 +64,7 @@ commandsDir.forEach( (commandsDirElement) =>
 
 		subDir.forEach( (subDirElement) =>
 		{
-			if (isScript(subDirElement) )
+			if (subDirElement.endsWith(".js") )
 			{
 				let path = `${requirePath}/${commandsDirElement}`;
 

@@ -73,16 +73,10 @@ class ImageShare extends Command.Command {
 let commands = [];
 let path = "./files/commands/image";
 
-let isJSON = (name) =>
-{
-	let suffix = ".json";
-	return name.indexOf(suffix) == name.length - suffix.length;
-};
-
 let dir = fs.readdirSync(path);
 dir.forEach( (e) =>
 {
-	if (!isJSON(e) ) return;
+	if (!e.endsWith(".json") ) return;
 
 	let imgObj = JSON.parse(fs.readFileSync(`${path}/${e}`) );
 
