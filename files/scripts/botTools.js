@@ -28,13 +28,16 @@ function serverName (user, guild, bold = true, removeSpecial = true) {	//Get the
 	//let regex = /([^\u0000-\u007f])/gi;
 
 	if (removeSpecial && name != null) {	//Remove emojis and symbol characters, uppercase the first letter
-		name = name.replace(/[-_]/g,' ').replace(regex, '').trim();
+		name = name.replace(/[-_]/g,' ').replace(regex, '');
 
 		if (name.length <= 1) {
 			name = null;
 		} else {
 			name = `${name[0].toUpperCase()}${name.substring(1)}`;
 		}
+
+		name = name.replace(/\(([^\)]+)\)/g, "");
+		name = name.trim();
 	}
 
 	if (user.id == "662825806967472128") {

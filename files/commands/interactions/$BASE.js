@@ -8,7 +8,7 @@ function run (message, args)
 {
 	let replacements =
 	{
-		user: `**${message.member.displayName}**`,
+		user: `${Tools.serverName(message.author, message.guild)}`,
 		users: Tools.arrayIntoList(Tools.getMentionList(message, true) ),
 		args_full: args.full
 	};

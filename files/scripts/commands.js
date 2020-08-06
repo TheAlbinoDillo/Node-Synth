@@ -5,7 +5,7 @@ const Discord = require("discord.js");
 const Tools = require("./botTools.js");
 const CommandConst = require("./commandConst");
 
-const prefix = 'fg.';
+const prefix = "fg";
 
 let commandList = [];
 
