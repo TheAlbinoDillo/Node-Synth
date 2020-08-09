@@ -10,7 +10,7 @@ const fs = require("fs");
 //Setup discord client
 const client = new discord.Client();
 const token = tools.token;
-const ownerID = "619014359770857483";
+const ownerID = tools.owner;
 
 //Log all uncaught errors to log file and exit process
 process.on('uncaughtException', (error) =>

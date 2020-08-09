@@ -261,6 +261,7 @@ function JSONscript (replacements, script) {
 module.exports =
 {
 	token: readJSON("./../Bot-FurGun_Token").token,
+	owner: readJSON("./../Bot-FurGun_Token").owner,
 	serverName: serverName,
 	getMentionList: getMentionList,
 	settings:
