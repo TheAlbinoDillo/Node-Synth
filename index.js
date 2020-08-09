@@ -260,37 +260,33 @@ function errorReact (message, emoji, respondWith, time = 180000) {
 
 function runCommand (message) {
 
-	let reggie = `(?<prefix>^${commands.prefix}(?:\\. |[^a-z0-9?]))(?<command>[^\\s]+) ?(?<args>.+)*`;
-	let reg = new RegExp(reggie, "gi");
-	let test = reg.exec(message.content);
-
-	let reg2 = new RegExp("\\w+|\"[^\"]*\"", "g");
-
-	console.log(test);
-	console.log( reg2.exec(test.args) );
-
 	if (message.mentions.users.size > 0) {
 		message.content = message.content.replace("<@", " <@");
 	}
 
-	let args = message.content.substring(commands.prefix.length + 1).split(" ");
+	let commandExp = /(?<prefix>^fg(?:\. |[^a-z0-9?]))(?<command>[^\s]+) ?(?<args>.+)*/gi;
+	let argsExp = /[^\s]+|(?:"[^"]*"|`[^`]*`|'[^']*')/g;
+
+	let test = commandExp.exec(message.content);
+
+	let options = [];
+	if (test.groups.args)
+	{
+		options = test.groups.args.match(argsExp);
+	}
 
 	let selectedCommand = null;
 	for (let i = 0, l = commands.commandList.length; i < l; i++) {
-		if (commands.commandList[i].calls.includes(args[0].toLowerCase() ) ) {
+		if (commands.commandList[i].calls.includes(test.groups.command.toLowerCase() ) ) {
 			selectedCommand = commands.commandList[i];
 			break;
 		}
 	}
 
 	if (!selectedCommand) {
-		botSend(message, `**${args[0]}** is not a command.`);
+		botSend(message, `**${test.groups.command}** is not a command.`);
 		return;
 	}
-
-	args.full = message.content.substring(args[0].length + commands.prefix.length + 1);
-	args.command = `${commands.prefix}${args[0]}`;
-	args.shift();
 
 	let hasPerms = true;
 	for (let i = 0, l = selectedCommand.permissions.length; i < l; i++)
@@ -320,7 +316,7 @@ function runCommand (message) {
 	}
 
 	command: try {
-		let value = selectedCommand.runFunction(message, args);
+		let value = selectedCommand.runFunction(message, options);
 
 		if (!value) {
 			break command;
