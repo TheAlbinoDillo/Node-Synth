@@ -16,9 +16,9 @@ function makeUwU (string)
 	return "```UωU:\n\n" + string + "```";
 }
 
-function run (message, args)
+function run (message, options)
 {
-	return makeUwU(args.full);
+	return makeUwU(options.join(" ") );
 }
 
 module.exports =
