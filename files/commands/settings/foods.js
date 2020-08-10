@@ -7,7 +7,7 @@ const Tools = require("./../../scripts/botTools.js");
 function run (message, args)
 {
 	if (args[0] == "add") {
-		let text = args.full.substring(args[0].length + 1);
+		let text = args.join(" ");
 		Tools.settings.write(message.guild, "foods", [text], true);
 		return `Added \`${text}\` to the food list.`;
 	}

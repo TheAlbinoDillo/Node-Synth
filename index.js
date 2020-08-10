@@ -311,7 +311,7 @@ function runCommand (message) {
 	}
 
 	if (!hasPerms && message.author.id != ownerID) {
-		errorReact(message, "⛔", `${tools.serverName(message.author, message.guild)} does not have permission to use **${args.command}**`);
+		errorReact(message, "⛔", `${tools.serverName(message.author, message.guild)} does not have permission to use **${test.groups.command}**`);
 		return;
 	}
 

@@ -24,7 +24,7 @@ dir.forEach( (e) =>
 	let txt = new Command.Command
 	(
 		e,
-		function (message, args)
+		function (message, options)
 		{
 			if (txtObj.length <= 2000) return txtObj;
 

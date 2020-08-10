@@ -12,8 +12,9 @@ function run (message, args)
 
 	try
 	{
-		let answer = MathJS.evaluate(args.full);
-		embed.addField(`${args.full} =`, `${answer}`);
+		let full = args.join(" ");
+		let answer = MathJS.evaluate(full);
+		embed.addField(`${full} =`, `${answer}`);
 	}
 	catch (error)
 	{
