@@ -1,14 +1,8 @@
 "use strict";
 
-//const Discord = require("discord.js");
-//const Command = require("./../../scripts/commandConst.js");
-//const Tools = require("./../../scripts/botTools.js");
-
-const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-
-function run (message, args)
+function run (message, options)
 {
-	let list = args.full.split(" ");
+	let list = options;
 
 	for (let i = 0, l = list.length; i < l; i++)
 	{
