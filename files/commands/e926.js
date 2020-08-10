@@ -1,7 +1,14 @@
 const fetch = require("node-fetch");
 
-function run (message, args) {
-	fetch("https://e926.net/posts.json?limit=1tags=order%3Arandom+red_panda",
+function run (message, options) {
+
+        if (!message.channel.nsfw) return "NSFW only";
+        
+        let base = "https://e926.net/posts.json?tags=";
+        let url = base + options.join("+");
+        url = encodeURI(url);
+
+	fetch(url,
 	{
 		method: "get",
 		headers:
@@ -15,5 +22,5 @@ module.exports =
 {
 	runFunction:run,
 	permissions:["BOT_OWNER"],
-	calls:["e926", "e9"]
+	calls:["e621", "e6"]
 };
