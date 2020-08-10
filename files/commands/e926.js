@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 
 function run (message, options) {
 
-        if (!message.channel.nsfw) return "NSFW only";
+        //if (!message.channel.nsfw) return "NSFW only";
         
         let base = "https://e926.net/posts.json?tags=";
         let url = base + options.join("+");
@@ -22,5 +22,5 @@ module.exports =
 {
 	runFunction:run,
 	permissions:["BOT_OWNER"],
-	calls:["e621", "e6"]
+	calls:["e926", "e9"]
 };
