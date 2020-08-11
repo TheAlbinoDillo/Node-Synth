@@ -258,6 +258,33 @@ function JSONscript (replacements, script) {
 	return string;
 }
 
+function botSendDM (user, content) {	//Send a DM message to a user
+
+	let name = user.username;
+
+	if (user.dmChannel == undefined) {
+		user.createDM().then(channel => {
+			console.log(`Created a DM channel for ${name}`);
+			botSendDM(user, content);
+		}).catch(error => {
+			console.error(`Error creating a DM channel for ${name}:\n${error.message}\n`);
+		});
+
+		return;
+	}
+
+	//if (content.trim() == "") {
+	//	console.error("DM content is empty, this would fail. Did not DM user.\n");
+	//	return null;
+	//}
+
+	user.dmChannel.send(content).then(message => {
+		console.log(`Sent a DM to ${name}:\n${content}\n`);
+	}).catch(error => {
+		console.error(`Error sending a DM to ${name}${error.message}`);
+	});
+}
+
 module.exports =
 {
 	token: readJSON("./../Bot-FurGun_Token").token,
@@ -278,5 +305,6 @@ module.exports =
 		format: Color.format
 	},
 	disconnect: disconnect,
-	JSONscript: JSONscript
+	JSONscript: JSONscript,
+	botSendDM: botSendDM
 };
