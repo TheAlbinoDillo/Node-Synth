@@ -179,33 +179,6 @@ function botReact (message, emote) {
 	});
 }
 
-function pinReact (message, count = 6, time = 3000000) {
-
-	let collector = message.createReactionCollector( (reaction, user) => 
-	{
-		return reaction.emoji.name == "📌" && !user.bot;
-	}, {time: time});
-
-	collector.on("collect", (reaction, user) =>
-		{
-			if (collector.collected.array()[0].count == count) {
-				message.pin().then().catch();
-				collector.stop("complete");
-			}
-		}
-	);
-
-	collector.on("end", (collected, reason) =>
-		{
-			if (collected.array()[0]) {
-				if (reason == "time" && collected.array()[0].count > 0) {
-					botReact(message, "⌚");
-				}
-			}
-		}
-	);
-}
-
 function errorReact (message, emoji, respondWith, time = 180000) {
 
 	botReact(message, emoji);
