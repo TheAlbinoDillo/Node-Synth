@@ -51,11 +51,24 @@ function run (message, options) {
 				{
 					return reaction.emoji.name === "💾" && !user.bot;
 
-				}, {time: 180000});
+				}, {time: 3600000});
 		
+			collector.sentTo = [];
 			collector.on("collect", (reaction, user) =>
 				{
+					if (collector.sentTo.includes(user.id) ) return;
+
+					collector.sentTo.push(user.id);
+
 					tools.botSendDM(user, sent.embeds[0]);
+				}
+			);
+			
+			collector.on("end", (collected, reason) =>
+				{
+					if (reason == "time") {
+						botReact(message, "⏰");
+					}
 				}
 			);
 		});
