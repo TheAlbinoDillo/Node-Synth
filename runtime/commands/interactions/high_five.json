@@ -1,0 +1,12 @@
+{
+	"name": "High Five",
+	"calls": [
+		"highfive",
+		"high",
+		"five"
+	],
+	"description": "Give someone a high five!",
+	"script": [
+		"%user% high fives %users%!"
+	]
+}

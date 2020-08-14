@@ -1,0 +1,17 @@
+{
+	"name":"Growl",
+	"calls":["grr", "growl"],
+	"script":
+	[
+		"%user% growls ",
+		["", " loudly "],
+		"at %users%!"
+	],
+	"self":
+	[
+		["", "Grr! "],
+		"%user% growls",
+		["", " and sneers"],
+		"!"
+	]
+}

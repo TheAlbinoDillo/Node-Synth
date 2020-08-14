@@ -1,0 +1,24 @@
+{
+	"name": "Snuggle",
+	"calls": [
+		"snuggle",
+		"snugg",
+		"snug",
+		"snuggl"
+	],
+	"description": "Snuggle with someone!",
+	"script": [
+		"%user% ",
+		[
+			"cozily ",
+			"warmly "
+		],
+		"snuggles ",
+		[
+			"",
+			"with ",
+			"into "
+		],
+		"%users%!"
+	]
+}
