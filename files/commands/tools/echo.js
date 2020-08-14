@@ -8,7 +8,7 @@ module.exports =
 	[
 		"echo"
 	],
-	runFunction: (message, args) =>
+	runFunction: async (message, args) =>
 	{
 		if (!args) return "_ _";
 		

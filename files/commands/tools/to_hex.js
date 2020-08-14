@@ -1,15 +1,6 @@
 "use strict";
 
-function formatHex (string) {
-
-	let text = string.toString(16);
-	while (text.length < 2) {
-		text = `0${text}`;
-	}
-	return text;
-}
-
-function run (message, args)
+async function run (message, args)
 {
 	if (Number.isNaN(parseInt(args[0]) ) )
 	{
@@ -23,6 +14,15 @@ function run (message, args)
 		return text.toUpperCase();
 	}
 	return `\`0x${parseInt(args[0]).toString(16).toUpperCase()}\``;
+}
+
+function formatHex (string) {
+
+	let text = string.toString(16);
+	while (text.length < 2) {
+		text = `0${text}`;
+	}
+	return text;
 }
 
 module.exports =

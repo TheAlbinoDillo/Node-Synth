@@ -264,6 +264,16 @@ function runCommand (message) {
 	command: try {
 		let value = selectedCommand.runFunction(message, options);
 
+		if (value instanceof Promise)
+		{
+			value.then( (msg) =>
+			{
+				botSend(message, msg);
+			});
+
+			break command;
+		}
+
 		if (!value) {
 			break command;
 		}
@@ -311,6 +321,14 @@ function runCommand (message) {
 	if (selectedCommand.deleteMessage) {
 		botDelete(message);
 	}
+}
+
+class ReactionFunction
+{
+	constructor(emoji, func)
+	{
+		
+	};
 }
 
 module.exports =

@@ -1,7 +1,7 @@
 "use strict";
 
 const fs = require("fs");
-const Command = require("./../../scripts/commandConst.js");
+const commands = require("./../../scripts/commands.js");
 const Tools = require("./../../scripts/botTools.js");
 
 function run (message, args)
@@ -29,7 +29,7 @@ function run (message, args)
 	}
 }
 
-class Interaction extends Command.Command {
+class Interaction extends commands.Command {
 	constructor(name, description, others, self, calls = [], defaultWord = "themselves") {
 		super
 		(
@@ -48,7 +48,7 @@ class Interaction extends Command.Command {
 	}
 }
 
-let commands = [];
+let newcommands = [];
 let path = "./files/commands/interactions";
 
 let isJSON = (name) =>
@@ -74,7 +74,7 @@ dir.forEach( (e) =>
 		intObj.defaultWord
 	);
 
-	commands.push(int);
+	newcommands.push(int);
 });
 
-module.exports = commands;
+module.exports = newcommands;

@@ -1,7 +1,25 @@
 "use strict";
 
-const Discord = require("discord.js");
-const Command = require("./../../scripts/commandConst.js");
+async function run (message, args)
+{
+	let embed =
+	{
+		title: "Reverse Text",
+		fields:
+		[
+			{
+				name: "Original:",
+				value: args.full
+			},
+			{
+				name: "Reversed:",
+				value: reverse(args.full)
+			}
+		]
+	};
+
+	return {embed: embed};
+}
 
 function reverse (text)
 {
@@ -11,16 +29,6 @@ function reverse (text)
 		output += text[i];
 	}
 	return output;
-}
-
-function run (message, args)
-{
-	let embed = new Discord.MessageEmbed()
-	.setTitle(`Reverse Text`)
-	.addField("Original:", args.full)
-	.addField("Reversed:", reverse(args.full) );
-
-	return new Command.TextMessage(message, embed);
 }
 
 module.exports =

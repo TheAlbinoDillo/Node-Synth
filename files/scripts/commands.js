@@ -3,17 +3,46 @@
 const fs = require("fs");
 const Discord = require("discord.js");
 const Tools = require("./botTools.js");
-const CommandConst = require("./commandConst");
 
 const prefix = "fg";
-
 let commandList = [];
+
+class Command
+{
+	constructor
+	(
+		name,
+		runFunction = function () {},
+		description = "",
+		category,
+		usage = [],
+		deleteMessage = false,
+		permissions = [],
+		calls = []
+	){
+		this.name = name;
+		this.runFunction = runFunction;
+		this.description = description;
+		this.category = category;
+		this.usage = usage;
+		this.deleteMessage = deleteMessage;
+		this.permissions = permissions;
+		this.calls = calls;
+	}
+}
+
+module.exports =
+{
+	commandList: commandList,
+	prefix: prefix,
+	Command: Command
+};
 
 let addCommand = (path, filename, category) =>
 {
 	let commandObject = require(`${path}/${filename}`);
 
-	let cmd = new CommandConst.Command
+	let cmd = new Command
 	(
 		commandObject.name,
 		commandObject.runFunction,
@@ -73,9 +102,3 @@ commandsDir.forEach( (commandsDirElement) =>
 		});
 	}
 });
-
-module.exports =
-{
-	commandList: commandList,
-	prefix: prefix
-};

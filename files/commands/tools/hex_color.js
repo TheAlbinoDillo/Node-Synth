@@ -1,7 +1,5 @@
 "use strict";
 
-const Discord = require("discord.js");
-const Command = require("./../../scripts/commandConst.js");
 const Tools = require("./../../scripts/botTools.js");
 
 function run (message, args)
@@ -25,11 +23,23 @@ function run (message, args)
 	let colorCode = Tools.colors.format(clean).substring(1);
 	let url = `https://via.placeholder.com/50/${colorCode}/${colorCode}.png`;
 
-	let embed = new Discord.MessageEmbed()
-	.setThumbnail(url)
-	.addField("#" + colorCode, colorName);
+	let embed =
+	{
+		title: "Hex Color",
+		thumbnail:
+		{
+			url: url
+		},
+		fields:
+		[
+			{
+				name: "#" + colorCode,
+				value: colorName
+			}
+		]
+	};
 
-	return new Command.TextMessage(message, embed);
+	return {embed: embed};
 }
 
 module.exports =

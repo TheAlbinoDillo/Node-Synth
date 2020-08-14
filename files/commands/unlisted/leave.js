@@ -1,8 +1,8 @@
 "use strict";
 
-const Tools = require("./../scripts/botTools.js");
+const Tools = require("./../../scripts/botTools.js");
 
-function run (message, args)
+async function run (message, args)
 {
 	Tools.disconnect(message.client, 2);
 	return "Disconnecting...";

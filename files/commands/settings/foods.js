@@ -1,10 +1,9 @@
 "use strict";
 
 const Discord = require("discord.js");
-const Command = require("./../../scripts/commandConst.js");
 const Tools = require("./../../scripts/botTools.js");
 
-function run (message, args)
+async function run (message, args)
 {
 	if (args[0] == "add") {
 		let text = args.join(" ");

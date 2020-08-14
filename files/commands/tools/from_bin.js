@@ -1,6 +1,6 @@
 "use strict";
 
-function run (message, args)
+async function run (message, args)
 {
 	return parseInt(args.full, 2).toString();
 }

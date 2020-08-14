@@ -1,11 +1,15 @@
 "use strict";
 
+async function run (message, options)
+{
+	return makeUwU(options.join(" ") );
+}
+
 function makeUwU (string)
 {
 	string = string.replace(/`/g, "");
 
-	string = string.replace(/(?:r|l)/g, "w");
-	string = string.replace(/(?:R|L)/g, "W");
+	string = string.replace(/(?:r|l)/gi, "w");
 
 	string = string.replace(/n([aeiou])/g, 'ny$1');
 	string = string.replace(/N([aeiou])/g, 'Ny$1');
@@ -14,11 +18,6 @@ function makeUwU (string)
 	string = string.replace(/ove/g, "uv");
 
 	return "```UωU:\n\n" + string + "```";
-}
-
-function run (message, options)
-{
-	return makeUwU(options.join(" ") );
 }
 
 module.exports =

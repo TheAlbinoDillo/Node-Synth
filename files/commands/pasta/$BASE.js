@@ -1,9 +1,9 @@
 "use strict";
 
 const fs = require("fs");
-const Command = require("./../../scripts/commandConst.js");
+const commands = require("./../../scripts/commands.js");
 
-let commands = [];
+let newcommands = [];
 let path = "./files/commands/pasta";
 
 let isTxt = (name) =>
@@ -21,7 +21,7 @@ dir.forEach( (e) =>
 
 	e = e.substring(0, e.length - 4);
 
-	let txt = new Command.Command
+	let txt = new commands.Command
 	(
 		e,
 		function (message, options)
@@ -51,7 +51,7 @@ dir.forEach( (e) =>
 		[e.toLowerCase()]
 	);
 
-	commands.push(txt);
+	newcommands.push(txt);
 });
 
-module.exports = commands;
+module.exports = newcommands;

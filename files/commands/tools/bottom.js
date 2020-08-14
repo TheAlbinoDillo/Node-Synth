@@ -1,6 +1,6 @@
 "use strict";
 
-function run (message, options)
+async function run (message, options)
 {
 	let list = options;
 

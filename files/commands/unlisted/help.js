@@ -1,11 +1,8 @@
 "use strict";
 
-const Discord = require("discord.js");
-const Command = require("./../scripts/commandConst.js");
-
-function run (message, args)
+async function run (message, args)
 {
-	let commandList = require("./../scripts/commands.js").commandList;
+	let commandList = require("./../../scripts/commands.js").commandList;
 	let commandCategories = {};
 
 	commandList.forEach( (e) =>
@@ -21,19 +18,27 @@ function run (message, args)
 		commandCategories[e.category].push(e.calls[0]);
 	});
 
-	let Client = message.client;
-
-	let embed = new Discord.MessageEmbed()
-	.setTitle(`Help for ${Client.user.username}`)
-	.setThumbnail("https://i.imgur.com/zfVwbiK.png");
+	let embed =
+	{
+		title: `Help for ${message.client.user.username}`,
+		thumbnail:
+		{
+			url: "https://i.imgur.com/zfVwbiK.png"
+		},
+		fields: []
+	};
 
 	for (let category in commandCategories)
 	{
 		if (category === "unlisted") continue;
 
-		embed.addField(category, commandCategories[category].join(", ") );
+		embed.fields.push(
+		{
+			name: category,
+			value: commandCategories[category].join(", ")
+		});
 	}
-	return new Command.TextMessage(message, embed);
+	return {embed: embed};
 }
 
 module.exports =

@@ -1,17 +1,8 @@
 "use strict";
 
-const Command = require("./../../scripts/commandConst.js");
-
-function run (message, args)
+async function run (message, args)
 {
-	let display = ["Pong.", "**Pong! **"];
-
-	if (message.content.indexOf("marco") === 3)
-	{
-		display = ["Polo.", "**Polo! **"];
-	}
-
-	return new Command.PingMessage(message, display);
+	return "Tell Grant to fix this";
 }
 
 module.exports =

@@ -1,21 +1,40 @@
 "use strict";
 
 const fetch = require("node-fetch");
-const tools = require("./../scripts/botTools.js");
+const tools = require("./../../scripts/botTools.js");
 
 const base = "https://e621.net/posts";
 var lastFetch = 0;
 
-function run (message, options) {
+const hardBlackList = 
+[
+	"",
+	"cub",
+	"young",
+	"loli",
+	"shota",
+	"rape",
+	"bestiality",
+	"flash"
+];
+
+const fetchOptions =
+{
+	method: "get",
+	headers:
+	{
+		"User-Agent": "Node-Synth/1.0 (by thealbinoarmadillo on e621)"
+	}
+};
+
+async function run (message, options) {
 		
 	if (!message.channel.nsfw)
 	{
 		return "This command is only allowed in NSFW channels."
 	}
 
-	let hardBlackList = ["cub", "young", "loli", "shota", "rape", "bestiality", "flash"];
-
-	let url = `${base}.json?tags=${options.join("+")}+-${hardBlackList.join("+-")}`;
+	let url = `${base}.json?tags=${options.join("+")}${hardBlackList.join("+-")}`;
 	url = encodeURI(url);
 
 	if (lastFetch > Date.now() - 1500)
@@ -25,25 +44,18 @@ function run (message, options) {
 
 	lastFetch = Date.now();
 
-	fetch(url,
-	{
-		method: "get",
-		headers:
-		{
-			'User-Agent': "Node-Synth/1.0 (by thealbinoarmadillo on e621)"
-		}
-	}).then( (result) =>
-	{
-		return result.json();
+	let fetched = await fetch(url, fetchOptions);
+	let json = await fetched.json();
 
-	}).then( (json) =>
+	if (json.posts.length < 1)
 	{
-		if (json.posts.length < 1)
-		{
-			message.channel.send(`No results found for:\n\`${options.join(" ")}\``);
-			return;
-		}
+		return `No results found for:\n\`${options.join(" ")}\``;
+	}
 
+
+
+	return eEmbed(base, json, message.author, options).then();
+/*
 		message.channel.send(eEmbed(base, json, message.author, options) ).then( (sent) =>
 		{
 			sent.react("💾");
@@ -72,7 +84,7 @@ function run (message, options) {
 				}
 			);
 		});
-	});
+	});*/
 }
 
 function eEmbed (baseURL, json, user, tags)
@@ -111,6 +123,6 @@ function eEmbed (baseURL, json, user, tags)
 
 module.exports =
 {
-	runFunction:run,
-	calls:["e621", "e6"]
+	runFunction: run,
+	calls: ["e621", "e6"]
 };

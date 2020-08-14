@@ -1,27 +1,39 @@
 "use strict";
 
-const Discord = require("discord.js");
-const Command = require("./../../scripts/commandConst.js");
 const MathJS = require("mathjs");
 
-function run (message, args)
+async function run (message, args)
 {
-	let embed = new Discord.MessageEmbed()
-	.setTitle(`Calculator`)
-	.setThumbnail("https://i.imgur.com/lUBOk8j.png");
+	let embed =
+	{
+		title: "Calculator",
+		thumbnail:
+		{
+			url: "https://i.imgur.com/lUBOk8j.png"
+		},
+		fields: []
+	};
 
 	try
 	{
 		let full = args.join(" ");
 		let answer = MathJS.evaluate(full);
-		embed.addField(`${full} =`, `${answer}`);
+		embed.fields.push(
+		{
+			name: `${full} =`,
+			value: `${answer}`
+		});
 	}
 	catch (error)
 	{
-		embed.addField("Error:", error.message);
+		embed.fields.push(
+		{
+			name: "Error:",
+			value: error.message
+		});
 	}
 
-	return new Command.TextMessage(message, embed);
+	return {embed: embed};
 }
 
 module.exports =

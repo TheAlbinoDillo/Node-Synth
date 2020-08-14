@@ -1,15 +1,15 @@
 "use strict";
 
 const fs = require("fs");
-const Command = require("./../../scripts/commandConst.js");
+const commands = require("./../../scripts/commands.js");
 const Tools = require("./../../scripts/botTools.js");
 
-class ImageShare extends Command.Command {
+class ImageShare extends commands.Command {
 	constructor(name, images) {
 		super
 		(
 			name,
-			function (message, args) {
+			function (message, options) {
 
 				let returnUrl = (index, reactions, showTags = true) =>
 				{
@@ -40,7 +40,7 @@ class ImageShare extends Command.Command {
 
 				let randAll = Tools.randNumber(images.length - 1);
 
-				let pick = args[0];
+				let pick = options[0];
 				if (pick) {
 
 					let list = [];
@@ -70,7 +70,7 @@ class ImageShare extends Command.Command {
 	}
 }
 
-let commands = [];
+let newcommands = [];
 let path = "./files/commands/image";
 
 let dir = fs.readdirSync(path);
@@ -82,7 +82,7 @@ dir.forEach( (e) =>
 
 	let img = new ImageShare(imgObj.name, imgObj.images);
 
-	commands.push(img);
+	newcommands.push(img);
 });
 
-module.exports = commands;
+module.exports = newcommands;

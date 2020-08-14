@@ -1,17 +1,6 @@
 "use strict";
 
-function formatBin (string)
-{
-	let text = string.toString(2);
-	
-	while (text.length < 8)
-	{
-		text = `0${text}`;
-	}
-	return text;
-}
-
-function run (message, args)
+async function run (message, args)
 {
 	if (Number.isNaN(parseInt(args[0]) ) )
 	{
@@ -25,6 +14,17 @@ function run (message, args)
 		return text;
 	}
 	return `\`0b${parseInt(args[0]).toString(2)}\``;
+}
+
+function formatBin (string)
+{
+	let text = string.toString(2);
+	
+	while (text.length < 8)
+	{
+		text = `0${text}`;
+	}
+	return text;
 }
 
 module.exports =

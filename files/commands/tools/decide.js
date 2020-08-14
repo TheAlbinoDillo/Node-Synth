@@ -1,10 +1,8 @@
 "use strict";
 
-const Discord = require("discord.js");
-const Command = require("./../../scripts/commandConst.js");
 const Tools = require("./../../scripts/botTools.js");
 
-function run (message, args)
+async function run (message, args)
 {
 	let arr = {};
 	arr.choices = args.full.split(" ");
@@ -12,12 +10,27 @@ function run (message, args)
 	arr.list = Tools.arrayIntoList(arr.choices);
 	arr.choice = arr.choices[arr.pick];
 
-	let embed = new Discord.MessageEmbed()
-	.setThumbnail("https://i.imgur.com/RTZu7Nn.png")
-	.addField("Deciding from:", arr.list)
-	.addField("Winner is:", arr.choice);
+	let embed =
+	{
+		title: "Decide",
+		thumbnail:
+		{
+			url: "https://i.imgur.com/RTZu7Nn.png"
+		},
+		fields:
+		[
+			{
+				name: "Deciding from:",
+				value: arr.list
+			},
+			{
+				name: "Winner is:",
+				value: arr.choice
+			}
+		]
+	};
 
-	return new Command.TextMessage(message, embed);
+	return {embed: embed};
 }
 
 module.exports =

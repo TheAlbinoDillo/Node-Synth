@@ -2,7 +2,7 @@
 
 const Tools = require("./../../scripts/botTools.js");
 
-function run (message, args)
+async function run (message, args)
 {		
 	let value = message.channel.id;
 	Tools.settings.write(message.guild, "logchannel", value);

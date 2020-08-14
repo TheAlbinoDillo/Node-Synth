@@ -1,23 +1,44 @@
 "use strict";
 
-const Discord = require("discord.js");
-const Command = require("./../../scripts/commandConst.js");
 const Tools = require("./../../scripts/botTools.js");
 
-function run (message, args)
+async function run (message, args)
 {
 	let g = message.guild;
 	let url = `https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png`;
 
-	let embed = new Discord.MessageEmbed()
-	.setTitle(`Information for ${g.name}`)
-	.setThumbnail(url)
-	.addField("Server Owner:", Tools.serverName(g.owner.user, g), true)
-	.addField("Created On:", `${g.createdAt.toLocaleString('default',{month:'long'})} ${g.createdAt.getFullYear()}`, true)
-	.addField("Member Count:", `${g.memberCount} users`, true)
-	.setFooter(`${g.region} • ${g.id} • ${g.owner.user.username}#${g.owner.user.discriminator}`);
+	let embed =
+	{
+		title: `Information for ${g.name}`,
+		thumbnail:
+		{
+			url: url
+		},
+		fields:
+		[
+			{
+				name: "Server Owner:",
+				value: Tools.serverName(g.owner.user, g),
+				inline: true
+			},
+			{
+				name: "Created On:",
+				value: `${g.createdAt.toLocaleString('default',{month:'long'})} ${g.createdAt.getFullYear()}`,
+				inline: true
+			},
+			{
+				name: "Member Count:",
+				value: `${g.memberCount} users`,
+				inline: true
+			}
+		],
+		footer:
+		{
+			text: `${g.region} • ${g.id} • ${g.owner.user.username}#${g.owner.user.discriminator}`
+		}
+	};
 
-	return new Command.TextMessage(message, embed);
+	return {embed: embed};
 }
 
 module.exports =
