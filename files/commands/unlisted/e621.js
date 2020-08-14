@@ -52,43 +52,6 @@ async function run (message, options) {
 		return `No results found for:\n\`${options.join(" ")}\``;
 	}
 
-
-
-	return eEmbed(base, json, message.author, options).then();
-/*
-		message.channel.send(eEmbed(base, json, message.author, options) ).then( (sent) =>
-		{
-			sent.react("💾");
-			let collector = sent.createReactionCollector( (reaction, user) => 
-				{
-					return reaction.emoji.name === "💾" && !user.bot;
-
-				}, {time: 3600000});
-		
-			collector.sentTo = [];
-			collector.on("collect", (reaction, user) =>
-				{
-					if (collector.sentTo.includes(user.id) ) return;
-
-					collector.sentTo.push(user.id);
-
-					tools.botSendDM(user, sent.embeds[0]);
-				}
-			);
-			
-			collector.on("end", (collected, reason) =>
-				{
-					if (reason == "time") {
-						botReact(message, "⏰");
-					}
-				}
-			);
-		});
-	});*/
-}
-
-function eEmbed (baseURL, json, user, tags)
-{
 	let post = tools.randArray(json.posts);
 
 	let isVid = false;
@@ -101,24 +64,69 @@ function eEmbed (baseURL, json, user, tags)
 
 	let embed =
 	{
-	  "embed": {
-	    "color": 18838,
-	    "timestamp": post.created_at.substring(0, 23),
-	    "footer": {
-	      "text": `${isVid? "📽️ ":""}Score: ${post.score.total} • ${post.tags.artist.join(" ")}`
-	    },
-	    "image": {
-	      "url": fileURL
-	    },
-	    "author": {
-	      "name": `${user.username}`,
-	      "url": `${baseURL}/${post.id}`,
-	      "icon_url": user.avatarURL()
-	    },
-	    "description": tags.join(" ")
-	  }
+		"color": 18838,
+		"timestamp": post.created_at.substring(0, 23),
+		"footer":
+		{
+		  "text": `${isVid? "📽️ ":""}Score: ${post.score.total} • ${post.tags.artist.join(" ")}`
+		},
+		"image":
+		{
+		  "url": fileURL
+		},
+		"author":
+		{
+		  "name": `Searched by ${message.author.username} • Post ${post.id}`,
+		  "url": `${base}/${post.id}`,
+		  "icon_url": message.author.avatarURL()
+		},
+		"description": options.join(" ")
 	}
-	return embed;
+
+	message.client.botSend(message, {embed: embed}).then( (sent) =>
+	{
+		sent.react("🔁");
+		let repeatcollector = sent.createReactionCollector( (reaction, user) => 
+		{
+			return reaction.emoji.name === "🔁" && !user.bot && user === message.author;
+
+		}, {time: 3600000});
+
+		repeatcollector.on("collect", (reaction, user) =>
+		{
+			run(message, options);
+			repeatcollector.stop("complete");
+		});
+
+		repeatcollector.on("end", (collected, reason) =>
+		{
+			if (reason === "time") {
+				sent.react("⏰");
+			}
+		});
+
+		sent.react("💾");
+		let savecollector = sent.createReactionCollector( (reaction, user) => 
+		{
+			return reaction.emoji.name === "💾" && !user.bot;
+
+		}, {time: 3600000});
+		
+		savecollector.sentTo = [];
+		savecollector.on("collect", (reaction, user) =>
+		{
+			if (savecollector.sentTo.includes(user.id) ) return;
+			savecollector.sentTo.push(user.id);
+			tools.botSendDM(user, sent.embeds[0]);
+		});
+
+		savecollector.on("end", (collected, reason) =>
+		{
+			if (reason === "time") {
+				botReact(message, "⏰");
+			}
+		});
+	});
 }
 
 module.exports =

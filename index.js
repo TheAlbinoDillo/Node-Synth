@@ -12,11 +12,13 @@ const client = new discord.Client();
 const token = tools.token;
 const ownerID = tools.owner;
 
+client.botSend = botSend;
+
 //Log all uncaught errors to log file and exit process
 process.on('uncaughtException', (error) =>
 {
 	console.error(error);
-	fs.writeFileSync("log.txt", new Date.toJSON() + "\n" + error.stack);
+	fs.writeFileSync("log.txt", Date.now + "\n" + error.stack);
 	process.exit();
 });
 
@@ -185,7 +187,7 @@ function errorReact (message, emoji, respondWith, time = 180000) {
 
 	let collector = message.createReactionCollector( (reaction, user) => 
 		{
-			return reaction.emoji.name == emoji && !user.bot;
+			return reaction.emoji.name === emoji && !user.bot;
 		}, {time: time});
 
 	collector.on("collect", (reaction, user) =>
@@ -197,7 +199,7 @@ function errorReact (message, emoji, respondWith, time = 180000) {
 
 	collector.on("end", (collected, reason) =>
 		{
-			if (reason == "time") {
+			if (reason === "time") {
 				botReact(message, "⏰");
 			}
 		}
@@ -269,6 +271,10 @@ function runCommand (message) {
 			value.then( (msg) =>
 			{
 				botSend(message, msg);
+
+			}).catch( (err) =>
+			{
+				errorReact(message, "🤷", err.stack);
 			});
 
 			break command;
@@ -334,5 +340,6 @@ class ReactionFunction
 module.exports =
 {
 	serverEvent: serverEvent,
-	runCommand: runCommand
+	runCommand: runCommand,
+	botSend: botSend
 };
