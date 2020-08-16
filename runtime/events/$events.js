@@ -1,30 +1,22 @@
 "use strict";
 
-const run = (options) =>
-{
-	console.log("Loading events...");
+const tools = root_require("tools.js");
 
-	let event_scripts = options.tools.list_dir(options.current_path_up);
+this.run = (options) =>
+{
+	console.log("Loading events...\n");
+
+	let event_scripts = tools.list_dir(options.current_path_up);
 	event_scripts.files.filter( (file) =>
 	{
-		return file.filename[0] != options.runtime_settings.prefix;
+		return !options.runtime_settings.test_name(file.filename);
 
 	}).forEach( (file) =>
 	{
-		let minus = options.runtime_settings.extension.length;
-
-		let name = file.filename;
-		let runFunction = require(`./${name}`).run;
-
-		name = name.substring(0, name.length - minus);
+		let runFunction = require(`./${file.filename}`).run;
+		let name = options.runtime_settings.remove_extension(file.filename);
 
 		options.client.on(name, runFunction);
-
-		console.log(`  Loaded ${name}`);
+		console.log(`\tLoaded ${name}\n`);
 	});
-};
-
-module.exports =
-{
-	run: run
 };
