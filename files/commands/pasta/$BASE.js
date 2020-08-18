@@ -39,7 +39,7 @@ dir.forEach( (e) =>
 			let messages = [];
 			strings.forEach( (e) =>
 			{
-				messages.push({content: e});	
+				messages.push(e);	
 			});
 
 			return messages;

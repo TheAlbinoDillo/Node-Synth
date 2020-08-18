@@ -20,12 +20,12 @@ class ImageShare extends commands.Command {
 					if (showTags)
 					{
 						let tags = `\`${img.tags.join(", ")}\`\n`;
-						let msg = {content: tags};
+						let msg = tags;
 
 						returnList.push(msg);
 					}
 
-					let msg = {content: content};
+					let msg = content;
 					returnList.push(msg);
 
 					if (reactions) {
