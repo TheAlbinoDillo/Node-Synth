@@ -266,9 +266,9 @@ function runCommand (message) {
 	command: try {
 		let value = selectedCommand.runFunction(message, options);
 
-		if (!value) {
-			break command;
-		}
+		//if (!value) {
+		//	break command;
+		//}
 
 		if (typeof value === 'string' || value instanceof String) {
 			botSend(message, value);
@@ -279,19 +279,19 @@ function runCommand (message) {
 			value = [value];
 		}
 
-		if (value instanceof Promise)
-		{
-			value.then( (msg) =>
-			{
-				botSend(message, msg);
-
-			}).catch( (err) =>
-			{
-				errorReact(message, "🤷", err.stack);
-			});
-
-			break command;
-		}
+		//if (value instanceof Promise)
+		//{
+		//	value.then( (msg) =>
+		//	{
+		//		botSend(message, msg);
+//
+		//	}).catch( (err) =>
+		//	{
+		//		errorReact(message, "🤷", err.stack);
+		//	});
+//
+		//	break command;
+		//}
 
 		for (let i in value) {
 
