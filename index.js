@@ -266,6 +266,19 @@ function runCommand (message) {
 	command: try {
 		let value = selectedCommand.runFunction(message, options);
 
+		if (!value) {
+			break command;
+		}
+
+		if (typeof value === 'string' || value instanceof String) {
+			botSend(message, value);
+			break command;
+		}
+
+		if (!Array.isArray(value) ) {
+			value = [value];
+		}
+
 		if (value instanceof Promise)
 		{
 			value.then( (msg) =>
@@ -278,19 +291,6 @@ function runCommand (message) {
 			});
 
 			break command;
-		}
-
-		if (!value) {
-			break command;
-		}
-
-		if (typeof value === 'string' || value instanceof String) {
-			botSend(message, value);
-			break command;
-		}
-
-		if (!Array.isArray(value) ) {
-			value = [value];
 		}
 
 		for (let i in value) {
