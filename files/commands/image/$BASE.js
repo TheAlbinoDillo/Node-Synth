@@ -20,18 +20,18 @@ class ImageShare extends commands.Command {
 					if (showTags)
 					{
 						let tags = `\`${img.tags.join(", ")}\`\n`;
-						let msg = new commands.Command.TextMessage(message, tags);
+						let msg = {content: tags};
 
 						returnList.push(msg);
 					}
 
-					let msg = new commands.Command.TextMessage(message, content);
+					let msg = {content: content};
 					returnList.push(msg);
 
 					if (reactions) {
 						reactions.forEach( (e) =>
 						{
-							returnList.push(new commands.Command.ReactEmote(message, e) );
+							//returnList.push(new commands.Command.ReactEmote(message, e) );
 						});
 					}
 
