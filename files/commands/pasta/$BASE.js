@@ -39,7 +39,7 @@ dir.forEach( (e) =>
 			let messages = [];
 			strings.forEach( (e) =>
 			{
-				messages.push(new Command.TextMessage(message, e) );	
+				messages.push(new commands.Command.TextMessage(message, e) );	
 			});
 
 			return messages;
