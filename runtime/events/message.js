@@ -46,4 +46,6 @@ this.run = async (message) =>
 
 	//Make a system to find commands effciently
 	//Maybe a CommandList class with search options
+
+        //Make the events script handle promises
 };
