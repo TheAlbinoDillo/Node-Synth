@@ -16,7 +16,18 @@ this.run = (options) =>
 		let runFunction = require(`./${file.filename}`).run;
 		let name = options.runtime_settings.remove_extension(file.filename);
 
-		options.client.on(name, runFunction);
+		options.client.on(name, (arg1, arg2) =>
+		{
+			try
+			{
+				runFunction(arg1, arg2);
+			}
+			catch (error)
+			{
+				console.error(`Event Error:\n\n\t${error.stack}\n`);
+			}
+		});
+
 		console.log(`\tLoaded ${name}\n`);
 	});
 };
