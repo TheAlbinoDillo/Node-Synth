@@ -1,7 +1,7 @@
 {
-  "name": "FurGun",
+  "name": "Node Synth",
   "version": "1.0.1",
-  "description": "Furry gun bot",
+  "description": "Furry Discord bot",
   "main": "index.js",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
@@ -9,8 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "TheAlbinoArmadillo",
-  "license": "ISC",
+  "author": "TheAlbinoDillo",
+  "license": "MIT",
   "dependencies": {
     "diff": "^4.0.2",
     "discord.js": "^12.2.0",
