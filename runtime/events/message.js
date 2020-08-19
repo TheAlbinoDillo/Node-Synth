@@ -1,20 +1,49 @@
 "use strict";
 
-const index = require("./../../index.js");
-//const commands = require("./../scripts/commands.js");
+const command_test = /(?<prefix>^fg(?:\. |[^a-z0-9?]))(?<command>[^\s]+) ?(?<options>.+)*/gi;
+const options_test = /\w+|(?:"[^"]*"|`[^`]*`|'[^']*')/g;
 
-this.run = (message) =>
+this.run = async (message) =>
 {
-	if (!message.guild) return;
+	//Breakout message object properties
+	let content = message.content;
+	let guild = message.guild;
+	let author = message.author;
 
-	if (message.author.bot) return;
+	//Fail if message has no guild
+	//This usually means it's a DM message
+	if (!guild) return;
 
-	let lowercont = message.content.toLowerCase();
-	let prefix = commands.prefix;
+	//Fail if the prefix is being ran by a bot
+	if (author.bot) return;
 
-	if (lowercont.indexOf(prefix) ) return;
+	//Run the command_test RegEx to get compenents of a
+	//command (if there are any to get)
+	let command_msg = command_test.exec(content);
 
-	if (!lowercont[prefix.length].replace(/[0-9a-z]/gi, "") ) return;
+	//Fail if no command structured matches were found
+	if (!command_msg) return;
 
-	index.runCommand(message);
+	//Breakout command_msg object properties
+	let groups = command_msg.groups;
+
+	//Breakout groups object properties
+	let prefix = groups.prefix;
+	let command = groups.command;
+	let options = groups.options;
+
+	//If there are options with the command
+	//replace them with a structured array
+	if (options)
+	{
+		let matches = options.match(options_test);
+		options = matches;
+	}
+
+	
+
+	//to-do
+
+	//Make a system to find commands effciently
+	//Maybe a CommandList class with search options
 };
