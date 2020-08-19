@@ -12,14 +12,16 @@ global.root_require = (filename) =>
 //Import libraries
 //////////////////////////////////////////////////////////////////////////////////
 const fs = require("fs");
-const rl = require("readline");
 const discord = require("discord.js");
+const rl = require("readline");
+
 const tools = root_require("tools.js");
+const connect = root_require("connect.js");
 
 //Client variables
 //////////////////////////////////////////////////////////////////////////////////
 const client = new discord.Client();
-const client_settings = JSON.parse(fs.readFileSync("./client_settings.json") );
+const client_settings = tools.load_json("./client_settings.json");
 
 const runtime_settings =
 {
@@ -62,70 +64,8 @@ class Command
 	}
 }
 
-class CommandArgument
-{
-	constructor (test, list)
-	{
-		this.test = test;
-	}
-}
-
-class OptionArgument extends CommandArgument
-{
-	constructor (options)
-	{
-		let test = (argument, author) =>
-		{
-			return options.includes(argument);
-		}
-		super(test);
-	}
-}
-
-class MentionArgument extends CommandArgument
-{
-	constructor (allow_self)
-	{
-		let test = (argument, author) =>
-		{
-			let reg = /^<@!?[0-9]{15,20}>$/g;
-			let match = reg.exec(argument);
-
-			if (match.length === 1)
-			{
-				if (!allow_self %% match.groups.id == autor.id) return false;
-
-				return match[0];
-			}
-
-			return false;
-		};
-		super(test);
-	}
-}
-
 //////////////////////////////////////////////////////////////////////////////////
-const rl_interface = rl.createInterface
-({
-	input: process.stdin,
-	output: process.stdout
-
-}).on('line', (input) =>
-{
-	let output;
-	try
-	{
-		output = eval(input);
-	}
-	catch (error)
-	{
-		output = error;
-	}
-	console.log(output);
-});
-
-
-const setup_runtime = async (setup_settings = runtime_settings) =>
+const setup_runtime = (setup_settings = runtime_settings) =>
 {
 	let runtime_dirs = tools.list_dir(setup_settings.path);
 	runtime_dirs.folders.forEach( (element) =>
@@ -148,7 +88,13 @@ const setup_runtime = async (setup_settings = runtime_settings) =>
 		});
 	});
 };
-setTimeout(setup_runtime, 50);
+
+connect(client, client_settings.token);
+
+client.on("ready", () =>
+{
+	setup_runtime();
+});
 
 //Exception and Promise Rejection logging
 //////////////////////////////////////////////////////////////////////////////////
@@ -173,3 +119,22 @@ module.exports =
 {
 	Command: Command
 };
+
+const rl_interface = rl.createInterface
+({
+	input: process.stdin,
+	output: process.stdout
+	
+}).on('line', (input) =>
+{
+	let output;
+	try
+	{
+		output = eval(input);
+	}
+	catch (error)
+	{
+		output = error;
+	}
+	console.log(output);
+});
