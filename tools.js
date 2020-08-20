@@ -105,22 +105,34 @@ class BotTools
 		return array[pick];
 	}
 
-	static json_script (json_obj)
+	static pick_from (value)
 	{
-		let output = "";
-
-		json_obj.forEach( (element) =>
+		if (typeof value === 'string' || value instanceof String)
 		{
-			let complete;
+			return value;
+		}
+			
+		let choice = Math.floor(Math.random() * value.length);
+			
+		return pick_from(value[choice]);	
+	}
 
-			if (Array.isArray(element) )
-			{
-				complete = this.json_script(element);
-			}
-			output += complete;
+	static json_script (replacements, script)
+	{
+		let string = script.slice();
+
+		string.forEach( (element) =>
+		{
+			element = this.pick_from(element);
 		});
-
-		return output;
+			
+		string = string.join("");
+			
+		for (let replace in replacements)
+		{
+			string = string.replace(`%${replace}%`, replacements[replace]);
+		}	
+		return string;
 	}
 }
 
