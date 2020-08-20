@@ -17,6 +17,7 @@ const rl = require("readline");
 
 const tools = root_require("tools.js");
 const connect = root_require("connect.js");
+const commands = root_require("commands.js");
 
 //Client variables
 //////////////////////////////////////////////////////////////////////////////////
@@ -41,29 +42,6 @@ const runtime_settings =
 	}
 };
 
-var commands = {};
-class Command
-{
-	constructor (options)
-	{
-		this.name = options.name || `Command ${commands.length + 1}`;
-		this.desc = options.desc || `Run ${this.name}!`;
-
-		let run_function = async () => {return this.name + "!"};
-		this.run = options.run || run_function;
-
-		let call_name = this.name.toLowerCase().replace(/\s/g, "");
-		this.calls = options.calls || [call_name];
-
-		this.perms = options.perms || ["BOT_OWNER"];
-
-		commands[this.calls[0] ] = this;
-
-		console.log(`\t\tLoaded ${this.name}\tfg ${this.calls}`);
-		console.log(`\t\t${this.desc}\n`);
-	}
-}
-
 //////////////////////////////////////////////////////////////////////////////////
 const setup_runtime = (setup_settings = runtime_settings) =>
 {
@@ -79,8 +57,7 @@ const setup_runtime = (setup_settings = runtime_settings) =>
 				{
 					runtime_settings: runtime_settings,
 					client: client,
-					current_path_up: element.path,
-					Command: Command
+					current_path_up: element.path
 				};
 
 				require(subelement.path).run(options);
@@ -95,6 +72,11 @@ client.on("ready", () =>
 {
 	setup_runtime();
 });
+
+module.exports =
+{
+	client: client
+};
 
 //Exception and Promise Rejection logging
 //////////////////////////////////////////////////////////////////////////////////
@@ -115,10 +97,11 @@ process.on('unhandledRejection', async (reason, promise) =>
 	process.exit(1);
 });
 
-module.exports =
-{
-	Command: Command
-};
+
+
+
+
+
 
 const rl_interface = rl.createInterface
 ({
