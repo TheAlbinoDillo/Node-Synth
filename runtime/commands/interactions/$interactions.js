@@ -1,11 +1,11 @@
 "use strict";
 
-const index = root_require("index.js");
+const commands = root_require("commands.js");
 const tools = root_require("tools.js");
 
 const extension = ".json";
 
-class InteractionCommand extends index.Command
+class InteractionCommand extends commands.Command
 {
 	constructor (options)
 	{
@@ -29,10 +29,13 @@ this.run = (options, path) =>
 		{
 			name: json.name,
 			desc: json.description,
+			calls: json.calls,
 			self: json.self,
 			script: json.script,
 			async run (options)
 			{
+				
+				
 				return tools.json_script(this.self);
 			},
 			perms: []

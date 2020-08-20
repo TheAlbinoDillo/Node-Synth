@@ -1,6 +1,7 @@
 "use strict";
 
 const tools = root_require("tools.js");
+const commands = root_require("commands.js");
 
 this.run = (options) =>
 {
@@ -27,7 +28,7 @@ this.run = (options) =>
 			}
 			else
 			{
-				new options.Command(require(path) );
+				new commands.Command(require(path) );
 			}
 		});
 	});

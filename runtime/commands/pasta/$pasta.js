@@ -1,12 +1,13 @@
 "use strict";
 
-const index = root_require("index.js");
+const commands = root_require("commands.js");
 const tools = root_require("tools.js");
+const actions = root_require("actions.js");
 
 const extension = ".txt";
 const split_tag = "<br>";
 
-class PastaCommand extends index.Command
+class PastaCommand extends commands.Command
 {
 	constructor (options)
 	{
@@ -34,7 +35,12 @@ this.run = (options, path) =>
 			text: tools.load_file(file.path).toString().split(split_tag),
 			async run (options)
 			{
-				return this.text;
+				this.text.forEach( (element) =>
+				{
+					options.send_content = element;
+
+					actions.send(options);
+				});
 			}
 		};
 		new PastaCommand(new_command);

@@ -1,11 +1,11 @@
 "use strict";
 
-const index = root_require("index.js");
+const commands = root_require("commands.js");
 const tools = root_require("tools.js");
 
 const extension = ".json";
 
-class ImageCommand extends index.Command
+class ImageCommand extends commands.Command
 {
 	constructor (options)
 	{
