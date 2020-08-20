@@ -53,7 +53,7 @@ this.run = (message) =>
 
 	//Test if user has permission to use this command
 	
-
+	
 	//Try to run command
 	try
 	{
@@ -68,4 +68,9 @@ this.run = (message) =>
 	{
 		console.error(error.stack);
 	}
+
+	//Make a system to find commands effciently
+	//Maybe a CommandList class with search options
+
+        //Make the events script handle promises
 };
