@@ -4,7 +4,7 @@ const commands = root_require("commands.js");
 const actions = root_require("actions.js");
 const index = root_require("index.js");
 
-const command_test = /(?<prefix>^fg(?:\. |[^a-z0-9?]))(?<call>[^\s]+) ?(?<options>.+)*/gi;
+const command_test = /(?<prefix>^fg(?:\. |[^a-z0-9?]))(?<call>[^\s<]+) ?(?<options>.+)*/gi;
 const options_test = /\w+|(?:"[^"]*"|`[^`]*`|'[^']*')/g;
 
 this.run = (message) =>
@@ -37,14 +37,15 @@ this.run = (message) =>
 	//Breakout groups object properties
 	let prefix = groups.prefix;
 	let call = groups.call;
-	let options = groups.options;
+	let cmd_options = groups.options;
+	let cmd_args;
 
 	//If there are options with the command
 	//replace them with a structured array
-	if (options)
+	if (cmd_options)
 	{
-		let matches = options.match(options_test);
-		options = matches;
+		let matches = cmd_options.match(options_test);
+		cmd_args = matches;
 	}
 
 	//Search for command
@@ -75,16 +76,23 @@ this.run = (message) =>
 		return;
 	}
 
-	//Try to run command
-	selected_command.run(
+	//Create an options object to send to the command
+	let options =
 	{
 		message: message,
-		guild: message.guild,
-		channel: message.channel
+		guild: guild,
+		channel: message.channel,
+		member: member,
+		author: author,
+		args: cmd_args,
+		full: cmd_options
+	};
 
-	}).catch( (error) =>
+	//Try to run command
+	selected_command.run(options).catch( (error) =>
 	{
-		let say = `\`${selected_command.name}\`\n${error.message}`;
+		let say = `\`${selected_command.name}\`\n${error.stack}`;
 		actions.react_say(message, "⁉️", say);
+		return;
 	});
 };
