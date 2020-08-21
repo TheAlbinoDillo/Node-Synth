@@ -4,7 +4,7 @@ class Command
 {
 	constructor (options)
 	{
-		this.name = options.name || `Command ${commands.length + 1}`;
+		this.name = options.name || `Command ${Date.now()}`;
 		this.desc = options.desc || `Run ${this.name}!`;
 
 		let run_function = async () => {return this.name + "!"};
