@@ -75,7 +75,8 @@ client.on("ready", () =>
 
 module.exports =
 {
-	client: client
+	client: client,
+	client_settings
 };
 
 //Exception and Promise Rejection logging
