@@ -64,8 +64,11 @@ class BotTools
 		return JSON.parse(this.load_file(path) );
 	}
 	
-	static async send (channel)
+	static async send (options, content)
 	{
+		let channel = options.channel;
+		let message = options.message;
+
 		if (!(channel instanceof discord.TextChannel) ) {
 			console.error("Did not provide a channel to botSend.\n");
 			return null;
@@ -114,25 +117,66 @@ class BotTools
 			
 		let choice = Math.floor(Math.random() * value.length);
 			
-		return pick_from(value[choice]);	
+		return this.pick_from(value[choice]);	
 	}
 
 	static json_script (replacements, script)
 	{
-		let string = script.slice();
+		let array = script.slice();
+		let string = "";
 
-		string.forEach( (element) =>
+		array.forEach( (element) =>
 		{
-			element = this.pick_from(element);
+			string += this.pick_from(element);
 		});
-			
-		string = string.join("");
 			
 		for (let replace in replacements)
 		{
 			string = string.replace(`%${replace}%`, replacements[replace]);
-		}	
+		}
 		return string;
+	}
+
+	static bold (text)
+	{
+		return `**${text}**`;
+	}
+
+	static array_list (array, join_word = "and")
+	{
+		let length = array.length;
+		if (length === 1)
+		{
+			return array[0];
+		}
+		else
+		{
+			let without_two = array.slice(0, length - 2);
+			return `${without_two}${array[length - 2]} ${join_word} ${array[length - 1]}`;
+		}
+	}
+
+	static get_mentions (options, remove_self = true, remove_bot = true)
+	{
+		let members = options.message.mentions.members.array();
+
+		if (members.length === 0) return;
+
+		if (remove_self)
+		{
+			members = members.filter( (a) =>
+			{
+				return a !== options.member;
+			});
+		}
+		if (remove_bot)
+		{
+			members = members.filter( (a) =>
+			{
+				return !a.user.bot;
+			});
+		}
+		return members;
 	}
 }
 
