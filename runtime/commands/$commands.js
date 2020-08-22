@@ -28,7 +28,10 @@ this.run = (options) =>
 			}
 			else
 			{
-				new commands.Command(require(path) );
+				let new_command = require(path);
+				new_command.category = category.filename;
+
+				new commands.Command(new_command);
 			}
 		});
 	});
