@@ -22,7 +22,7 @@ const connect = (client, token, time = 3) =>
 		);
 		client.setTimeout( () =>
 		{
-			connect(30);
+			connect(client, token, 30);
 
 		}, time * 1000);
 	});
