@@ -15,6 +15,8 @@ class Command
 
 		this.perms = options.perms || ["BOT_OWNER"];
 
+		this.category = options.category;
+
 		command_list.add(this);
 
 		console.log(`\t\tLoaded ${this.name}\tfg ${this.calls}`);
@@ -28,6 +30,7 @@ class CommandList
 	{
 		this.call_list = {};
 		this.commands_list = {};
+		this.category_list = {};
 	}
 
 	add (command)
@@ -39,6 +42,16 @@ class CommandList
 		{
 			this.call_list[calls[i] ] = calls[0];
 		}
+
+		let category_list_category = this.category_list[command.category];
+		if (category_list_category === undefined)
+		{
+			category_list_category = {};
+		}
+		else
+		{
+			category_list_category[calls[0]] = command;
+		}
 	}
 
 	find (call)
@@ -47,6 +60,11 @@ class CommandList
 		if (!selected) return;
 
 		return this.commands_list[selected];
+	}
+
+	get_categories ()
+	{
+		return this.category_list;
 	}
 }
 
