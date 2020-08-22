@@ -43,15 +43,11 @@ class CommandList
 			this.call_list[calls[i] ] = calls[0];
 		}
 
-		let category_list_category = this.category_list[command.category];
-		if (category_list_category === undefined)
+		if (this.category_list[command.category] === undefined)
 		{
-			category_list_category = {};
+			this.category_list[command.category] = {};
 		}
-		else
-		{
-			category_list_category[calls[0]] = command;
-		}
+		this.category_list[command.category][calls[0] ] = command;
 	}
 
 	find (call)
