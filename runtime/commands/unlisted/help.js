@@ -1,34 +1,41 @@
 "use strict";
 
-const actions = root_require("actions.js");
-const commands = root_require("commands.js");
+const Discord = require("discord.js");
+const Actions = root_require("actions.js");
+const Commands = root_require("commands.js");
 
 async function run (options)
 {
-	let categories = commands.command_list.get_categories();
+	let categories = Commands.command_list.get_categories();
+	
+	let embed = new Discord.MessageEmbed()
+	.setTitle(`Help for ${options.client.user.username}`)
+	.setThumbnail("https://i.imgur.com/zfVwbiK.png");
 
-	console.log(categories)
-	return;
-
-	let embed =
+	for (let category in categories)
 	{
-		title: `Help for ${options.client.user.username}`,
-		thumbnail:
+		let command_calls = [];
+		for (let command in categories[category])
 		{
-			url: "https://i.imgur.com/zfVwbiK.png"
-		},
-		fields: []
-	};
+			command_calls.push(categories[category][command].calls[0]);
+		}
 
+		if (category === "unlisted") continue;
 
+		embed.addField
+		(
+			category,
+			command_calls.join(", ")
+		);
+	}
 
-	actions.send(options, "help");
+	Actions.send(options, embed);
 }
 
 module.exports =
 {
 	name: "Help",
-	calls: ["help"],
+	calls: ["help", "?"],
 	perms: [],
 	run: run
 }
