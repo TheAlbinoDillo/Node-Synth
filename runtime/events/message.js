@@ -4,7 +4,10 @@ const commands = root_require("commands.js");
 const actions = root_require("actions.js");
 const index = root_require("index.js");
 
+//RegEx to test for the prefix call and command
 const command_test = /(?<prefix>^fg(?:\. |[^a-z0-9?]))(?<call>[^\s<]+) ?(?<options>.+)*/gi;
+
+//RegEx to seperate the options out
 const options_test = /\w+|(?:"[^"]*"|`[^`]*`|'[^']*')/g;
 
 this.run = (message) =>
@@ -62,8 +65,10 @@ this.run = (message) =>
 	//Test if user has permission to use this command
 	if (selected_command.perms.includes("BOT_OWNER") )
 	{
+		//Test if the user is this bot's owner
 		if (member.id !== index.client_settings.owner)
 		{
+			//Fail if the user is not the bot's owner
 			let say = `Only the bot owner can use \`${selected_command.name}\`.`;
 			actions.react_say(message, "⛔", say);
 			return;
@@ -71,6 +76,7 @@ this.run = (message) =>
 	}
 	else if (!member.permissions.has(selected_command.perms) )
 	{
+		//Fail if the user doesn't have the needed permissions
 		let say = `${member} does not have permission to use \`${selected_command.name}\`.`;
 		actions.react_say(message, "⛔", say);
 		return;
