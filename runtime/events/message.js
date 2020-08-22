@@ -85,7 +85,8 @@ this.run = (message) =>
 		member: member,
 		author: author,
 		args: cmd_args,
-		full: cmd_options
+		full: cmd_options,
+		client: message.client
 	};
 
 	//Try to run command
