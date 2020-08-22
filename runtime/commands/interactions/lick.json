@@ -1,0 +1,23 @@
+{
+	"name": "Lick",
+	"calls": [
+		"lick",
+		"licc",
+		"tonguepunch"
+	],
+	"description": "Lick someone!",
+	"script": [
+		"%user% ",
+		[
+			"",
+			"slowly "
+		],
+		"licks %users% on the",
+		[
+			" arm",
+			" face",
+			"... well let's not go there..."
+		],
+		"!"
+	]
+}

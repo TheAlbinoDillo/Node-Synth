@@ -1,0 +1,10 @@
+{
+	"name": "Poop",
+	"calls": [
+		"poop"
+	],
+	"description": "Why?",
+	"script": [
+		"Why."
+	]
+}

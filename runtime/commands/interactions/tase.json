@@ -1,0 +1,30 @@
+{
+	"name": "Tase",
+	"calls": [
+		"tase",
+		"taze"
+	],
+	"description": "Give someone a shock!!",
+	"script": [
+		"%user% ",
+		[
+			"tases",
+			"uses a taser on"
+		],
+		" %users%",
+		[
+			"",
+			" ouch",
+			", take that"
+		],
+		"!"
+	],
+	"self": [
+		"%user% tases themselves",
+		[
+			"!",
+			"...",
+			", they must like it."
+		]
+	]
+}

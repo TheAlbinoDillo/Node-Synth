@@ -1,0 +1,28 @@
+{
+	"name": "Kiss",
+	"calls": [
+		"kiss",
+		"smooch"
+	],
+	"description": "Give someone a nice kiss!",
+	"script": [
+		"%user% ",
+		[
+			"",
+			"puckers up and ",
+			"smiles and "
+		],
+		[
+			"kisses ",
+			"gives a big kiss to ",
+			"gives a wet kiss to "
+		],
+		"%users%",
+		[
+			" on the lips",
+			" on the cheek",
+			" on the forehead"
+		],
+		"!"
+	]
+}

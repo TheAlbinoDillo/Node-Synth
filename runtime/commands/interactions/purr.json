@@ -1,0 +1,24 @@
+{
+	"name": "Purr",
+	"calls": [
+		"purr",
+		"pur"
+	],
+	"description": "Purr like a kitty!",
+	"self": [
+		"%user% ",
+		[
+			"",
+			"softly ",
+			"happily ",
+			"adorably "
+		],
+		"purrs!",
+		[
+			"",
+			" *purr*",
+			" awwwwww.",
+			" *purrrrr*"
+		]
+	]
+}

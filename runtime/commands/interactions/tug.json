@@ -1,0 +1,18 @@
+{
+	"name": "Tug",
+	"calls": [
+		"tug"
+	],
+	"description": "Tug on something.",
+	"script": [
+		"%user% tugs ",
+		[
+			"off a mattress tag! That's illegal!",
+			"on a german frag grenade activator! Better run!",
+			"on their shoelaces... now they have to tie them again.",
+			"on their own tail, that's cute, I guess.",
+			"on the leaf of a plant, it came off, unsurprisingly.",
+			"on a loose thread of their shirt, now it's a bit longer."
+		]
+	]
+}
