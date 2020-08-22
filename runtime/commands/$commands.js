@@ -1,19 +1,19 @@
 "use strict";
 
-const tools = root_require("tools.js");
-const commands = root_require("commands.js");
+const Tools = root_require("tools.js");
+const Commands = root_require("commands.js");
 
 this.run = (options) =>
 {
 	console.log("Loading commands...\n");
 
-	let categories = tools.list_dir(options.current_path_up);
+	let categories = Tools.list_dir(options.current_path_up);
 	categories.folders.forEach( (category) =>
 	{
 		console.log(`\tLoading ${category.filename}...\n`);
 
-		let commands_subdir = tools.list_dir(category.path);
-		let filtered = commands_subdir.files.filter( (file) =>
+		let Commands_subdir = Tools.list_dir(category.path);
+		let filtered = Commands_subdir.files.filter( (file) =>
 		{
 			return file.filename.endsWith(options.runtime_settings.extension);
 		});
@@ -31,7 +31,7 @@ this.run = (options) =>
 				let new_command = require(path);
 				new_command.category = category.filename;
 
-				new commands.Command(new_command);
+				new Commands.Command(new_command);
 			}
 		});
 	});
