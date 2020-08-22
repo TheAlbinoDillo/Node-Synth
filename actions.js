@@ -1,7 +1,7 @@
 "use strict";
 
-const discord = require("discord.js");
-const index = root_require("index.js");
+const Discord = require("discord.js");
+const Index = root_require("index.js");
 
 class BotActions
 {
@@ -10,7 +10,10 @@ class BotActions
 		let channel = options.channel;
 		let message = options.message;
 
-		if (!(channel instanceof discord.TextChannel) )
+		let text = channel instanceof Discord.TextChannel;
+		let dm = channel instanceof Discord.DMChannel;
+
+		if (!(text || dm) )
 		{
 			console.error("Did not provide a channel to botSend.\n");
 			return null;
@@ -41,6 +44,27 @@ class BotActions
 		return sent;
 	}
 
+	static async send_dm (options, user, content)
+	{
+		let dm;
+		if (!user.dmChannel)
+		{
+			dm = await user.createDM().catch( (error)=>
+			{
+				this.react_say(options.message, "‼️", `Error creating DM.`);
+			});
+		}
+
+		if (!dm) return;
+
+		let dm_options =
+		{
+			channel: user.dmChannel,
+			message: options.message
+		};
+		this.send(dm_options, content);
+	}
+
 	static async react (message, emote)
 	{
 		message.react(emote).catch(error =>
@@ -51,20 +75,8 @@ class BotActions
 
 	static async react_say (message, emote, content)
 	{
-		await this.react(message, emote);
-
-		let collector = message.createReactionCollector( (reaction, user) =>
+		let dofunc = () =>
 		{
-			if (reaction.emoji.name !== emote) return false;
-			if (user !== message.author) return false;
-			return true;
-
-		}, 120000);
-
-		collector.on("collect", (reaction) =>
-		{
-			collector.stop("complete");
-
 			let options =
 			{
 				message: message,
@@ -72,12 +84,36 @@ class BotActions
 			};
 
 			this.send(options, content);
+		};
+		return this.react_do(message, emote, dofunc);
+	}
+
+	static async react_do (message, emote, dofunc)
+	{
+		await this.react(message, emote);
+
+		let collector = message.createReactionCollector( (reaction, user) =>
+		{
+			let a = reaction.emoji.name === emote;
+			let b = user === message.author || user.id === Index.client_settings.owner;
+			let c = !user.bot;
+			return a && b && c;
+
+		}, 120000);
+
+		collector.on("collect", (reaction, user) =>
+		{
+			collector.stop("complete");
+
+			dofunc(reaction, user);
 		});
 
 		collector.on("end", (collected, reason) =>
 		{
 			if (reason === "time") this.react(message, "⏰");
 		});
+
+		return collector;
 	}
 }
 
