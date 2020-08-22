@@ -33,6 +33,7 @@ this.run = (options, path) =>
 			name: name,
 			desc: `Send the ${name} copypasta!`,
 			text: tools.load_file(file.path).toString().split(split_tag),
+			category: "pasta",
 			async run (options)
 			{
 				this.text.forEach( (element) =>
