@@ -34,6 +34,7 @@ this.run = (options, path) =>
 		{
 			name: name,
 			desc: desc,
+			category: "image",
 			json: JSON.parse(tools.load_file(file.path) ),
 			async run (options)
 			{
