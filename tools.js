@@ -152,7 +152,7 @@ class BotTools
 		else
 		{
 			let without_two = array.slice(0, length - 2);
-			return `${without_two}${array[length - 2]} ${join_word} ${array[length - 1]}`;
+			return `${without_two.join(", ")}, ${array[length - 2]} ${join_word} ${array[length - 1]}`;
 		}
 	}
 
