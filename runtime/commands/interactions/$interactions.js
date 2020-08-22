@@ -63,6 +63,7 @@ this.run = (options, path) =>
 			self: json.self,
 			script: json.script,
 			run: runFunction,
+			category: "interactions",
 			perms: []
 		};
 		new InteractionCommand(new_command);
