@@ -8,7 +8,7 @@ const index = root_require("index.js");
 const command_test = /(?<prefix>^fg(?:\. |[^a-z0-9?]))(?<call>[^\s<]+) ?(?<options>.+)*/gi;
 
 //RegEx to seperate the options out
-const options_test = /\w+|(?:"[^"]*"|`[^`]*`|'[^']*')/g;
+const options_test = /[^\s]+|(?:"[^"]*"|`[^`]*`|'[^']*')/g;
 
 this.run = (message) =>
 {
