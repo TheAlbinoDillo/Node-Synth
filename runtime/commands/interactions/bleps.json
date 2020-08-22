@@ -1,0 +1,15 @@
+{
+	"name": "Blep",
+	"calls": [
+		"blep"
+	],
+	"description": "Stick out that cute tongue!",
+	"self": [
+		"%user% ",
+		[
+			"sticks out their tongue",
+			"bleps"
+		],
+		"!"
+	]
+}
