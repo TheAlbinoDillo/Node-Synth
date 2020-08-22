@@ -21,10 +21,12 @@ async function runFunction (options)
 	let replacements =
 	{
 		"user": tools.bold(options.member.displayName),
+		"users": "themselves"
 	};
 	let script_to_run = this.script;
 
 	let members = tools.get_mentions(options);
+
 	if (members)
 	{
 		let names = [];
@@ -34,9 +36,8 @@ async function runFunction (options)
 		});
 		replacements["users"] = tools.array_list(names);
 	}
-	else
+	else if (this.self)
 	{
-		replacements["users"] = "themselves";
 		script_to_run = this.self;
 	}
 
