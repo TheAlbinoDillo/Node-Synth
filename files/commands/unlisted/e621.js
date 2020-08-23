@@ -132,5 +132,6 @@ async function run (message, options) {
 module.exports =
 {
 	runFunction: run,
-	calls: ["e621", "e6"]
+	calls: ["e621", "e6"],
+        perms: []
 };
