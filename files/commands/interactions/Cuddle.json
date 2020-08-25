@@ -2,7 +2,8 @@
 	"name": "Cuddle",
 	"calls": [
 		"cuddle",
-		"cudd"
+		"cudd",
+                "cddl"
 	],
 	"description": "Cuddle up with someone!",
 	"script": [
