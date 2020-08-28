@@ -34,13 +34,12 @@ this.run = (options, path) =>
 			desc: `Send the ${name} copypasta!`,
 			text: tools.load_file(file.path).toString().split(split_tag),
 			category: "pasta",
+			perms: [],
 			async run (options)
 			{
 				this.text.forEach( (element) =>
 				{
-					options.send_content = element;
-
-					actions.send(options);
+					actions.send(options, element);
 				});
 			}
 		};
