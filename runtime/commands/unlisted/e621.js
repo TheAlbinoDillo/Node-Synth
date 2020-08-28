@@ -68,10 +68,22 @@ async function send_embed (options, posts_json)
 
 	let sent = await Actions.send(options, embed);
 
-	Actions.react_do(sent, "🔁", () =>
+	/*Actions.react_do(sent, "🔁", () =>
 	{
 		send_embed(options, posts_json);
-	});
+	});*/
+
+	/*Actions.react(options.message, "🔁");
+	Actions.react_collect(options.message, (reaction, user) =>
+	{
+		return reaction.emoji.name === "🔁" && user === options.author;
+
+	}, (reaction, user) =>
+	{
+		send_embed(options, posts_json);
+		this.stop("complete");
+
+	});*/
 
 	//Actions.react_do(sent, "💾", (reaction, user) =>
 	//{
@@ -171,5 +183,6 @@ module.exports =
 {
 	name: "E621",
 	run: run,
+	perms: [],
 	calls: ["e621", "e6"]
 };
