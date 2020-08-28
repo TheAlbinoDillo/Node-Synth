@@ -8,7 +8,19 @@ class Command
 		this.desc = options.desc || `Run ${this.name}!`;
 
 		let run_function = async () => {return this.name + "!"};
-		this.run = options.run || run_function;
+		this.run = async (o)=>
+		{
+			let start = Date.now();
+
+			let result = await options.run(o);
+
+			let time = Date.now() - start;
+
+			console.log(`Ran "${this.name}" for ${o.author.username} in ${time}ms.\n`);
+			return result;
+		};
+
+		//this.run = options.run || run_function;
 
 		let call_name = this.name.toLowerCase().replace(/\s/g, "");
 		this.calls = options.calls || [call_name];
