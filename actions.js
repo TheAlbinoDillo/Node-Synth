@@ -88,6 +88,21 @@ class BotActions
 		return this.react_do(message, emote, dofunc);
 	}
 
+	static react_collect (message, filter, on_collect, on_end, time = 120000)
+	{
+		let collector = message.createReactionCollector(filter, time);
+
+		let time_end = (collected, reason) =>
+		{
+			if (reason === "time") this.react(message, "⏰");
+		};
+
+		collector.on("collect", on_collect);
+		collector.on("end", on_end || time_end);
+
+		return collector;
+	}
+
 	static async react_do (message, emote, dofunc)
 	{
 		await this.react(message, emote);
