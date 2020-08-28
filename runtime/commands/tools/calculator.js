@@ -17,7 +17,7 @@ async function run (options)
 
 	try
 	{
-		let full = options;
+		let full = options.full;
 		let answer = MathJS.evaluate(full);
 		embed.fields.push(
 		{
@@ -47,5 +47,6 @@ module.exports =
 		"calc"
 	],
 	run: run,
-	usage: ["expression"]
+	usage: ["expression"],
+	perms: []
 };
