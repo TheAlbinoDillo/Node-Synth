@@ -35,6 +35,7 @@ this.run = (options, path) =>
 		{
 			name: name,
 			desc: desc,
+			perms: [],
 			category: "image",
 			json: JSON.parse(tools.load_file(file.path) ),
 			async run (options)
