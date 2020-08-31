@@ -38,7 +38,7 @@ this.run = (options, path) =>
 			json: JSON.parse(tools.load_file(file.path) ),
 			async run (options)
 			{
-				return tools.randArray(this.json.images).link;
+				return tools.rand_array(this.json.images).link;
 			}
 		};
 		new ImageCommand(new_command);
