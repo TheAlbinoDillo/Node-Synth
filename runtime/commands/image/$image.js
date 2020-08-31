@@ -2,6 +2,7 @@
 
 const commands = root_require("commands.js");
 const tools = root_require("tools.js");
+const actions = root_require("actions.js");
 
 const extension = ".json";
 
@@ -38,7 +39,8 @@ this.run = (options, path) =>
 			json: JSON.parse(tools.load_file(file.path) ),
 			async run (options)
 			{
-				return tools.rand_array(this.json.images).link;
+				let link = tools.rand_array(this.json.images).link;
+				actions.send(options, link);
 			}
 		};
 		new ImageCommand(new_command);
