@@ -1,7 +1,8 @@
 {
 	"name": "Pet",
 	"calls": [
-		"pet"
+		"pet",
+		"pets"
 	],
 	"description": "Give someone some nice pets!",
 	"script": [
