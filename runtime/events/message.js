@@ -102,4 +102,6 @@ this.run = (message) =>
 		actions.react_say(message, "⁉️", say);
 		return;
 	});
+
+	//Delete message used to run command
 };
