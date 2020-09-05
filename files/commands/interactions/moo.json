@@ -1,5 +1,0 @@
-{
-	"name":"Moo",
-	"calls":["moo"],
-	"script":["%user% moos",[" loudly"],"!"]
-}
