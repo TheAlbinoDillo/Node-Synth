@@ -4,10 +4,13 @@ const actions = root_require("actions.js");
 
 module.exports =
 {
-	name: "heh",
-	perms: ["MANAGE_MESSAGES"],
+	name: "OwO",
+calls: ["owo","OwO"],
+	perms: [],
 	run: async (options) =>
 	{
-		actions.send(options, "heh");
+		actions.send(options, "OwO");
+options.message.delete().catch();
+                
 	}
 }
