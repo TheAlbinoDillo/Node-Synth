@@ -7,7 +7,7 @@
 global.root_require = (filename) =>
 {
 	return require(__dirname + '/' + filename);
-}
+};
 
 //Import libraries
 //////////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@ const fs = require("fs");
 const discord = require("discord.js");
 const rl = require("readline");
 
-const tools = root_require("tools.js");
+const tools = root_require("global/tools.js");
 const connect = root_require("connect.js");
 const commands = root_require("commands.js");
 
