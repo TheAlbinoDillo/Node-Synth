@@ -1,13 +1,13 @@
 "use strict";
 
-const commands = root_require("commands.js");
-const tools = root_require("tools.js");
-const actions = root_require("actions.js");
+const Command = script_require("Command.js");
+const tools = script_require("tools.js");
+const actions = script_require("actions.js");
 
 const extension = ".txt";
 const split_tag = "<br>";
 
-class PastaCommand extends commands.Command
+class PastaCommand extends Command
 {
 	constructor (options)
 	{

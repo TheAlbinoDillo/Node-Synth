@@ -1,6 +1,6 @@
 "use strict";
 
-const actions = root_require("actions.js");
+const actions = script_require("actions.js");
 
 module.exports =
 {

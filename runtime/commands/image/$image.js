@@ -1,12 +1,12 @@
 "use strict";
 
-const commands = root_require("commands.js");
-const tools = root_require("tools.js");
-const actions = root_require("actions.js");
+const tools = script_require("tools.js");
+const actions = script_require("actions.js");
+const Command = script_require("Command.js");
 
 const extension = ".json";
 
-class ImageCommand extends commands.Command
+class ImageCommand extends Command
 {
 	constructor (options)
 	{

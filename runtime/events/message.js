@@ -1,7 +1,6 @@
 "use strict";
 
-const commands = root_require("commands.js");
-const actions = root_require("actions.js");
+const actions = script_require("actions.js");
 const index = root_require("index.js");
 
 //RegEx to test for the prefix call and command
@@ -52,7 +51,7 @@ this.run = (message) =>
 	}
 
 	//Search for command
-	let selected_command = commands.command_list.find(call);
+	let selected_command = command_list.find(call);
 
 	//Fail if this command doesn't exist
 	if (!selected_command)

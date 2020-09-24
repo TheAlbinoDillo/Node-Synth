@@ -33,3 +33,5 @@ class Command
 		console.log(`\t\t${this.desc}\n`);
 	}
 }
+
+module.exports = Command;

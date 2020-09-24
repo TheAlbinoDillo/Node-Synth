@@ -9,15 +9,22 @@ global.root_require = (filename) =>
 	return require(__dirname + '/' + filename);
 };
 
+global.script_require = (filename) =>
+{
+	return require(__dirname + '/scripts/' + filename);
+};
+
 //Import libraries
 //////////////////////////////////////////////////////////////////////////////////
 const fs = require("fs");
 const discord = require("discord.js");
 const rl = require("readline");
 
-const tools = root_require("global/tools.js");
-const connect = root_require("connect.js");
-const commands = root_require("commands.js");
+const tools = script_require("tools.js");
+const connect = script_require("connect.js");
+const CommandList = script_require("CommandList.js");
+
+global.command_list = new CommandList();
 
 //Client variables
 //////////////////////////////////////////////////////////////////////////////////
@@ -46,6 +53,16 @@ const runtime_settings =
 const setup_runtime = (setup_settings = runtime_settings) =>
 {
 	let runtime_dirs = tools.list_dir(setup_settings.path);
+
+	runtime_dirs.folders.sort( (a, b) =>
+	{
+		if (a.filename === "eval")
+		{
+			return -1;
+		}
+		return 1;
+	});
+
 	runtime_dirs.folders.forEach( (element) =>
 	{
 		let runtime_subdirs = tools.list_dir(element.path);

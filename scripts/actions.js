@@ -32,7 +32,7 @@ class BotActions
 				return null;
 			}
 		}
-	
+
 		let sent = await channel.send(content).catch(error =>
 		{
 			console.error(`Error sending message:\n${error.message}\n`);

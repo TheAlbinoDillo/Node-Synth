@@ -1,6 +1,6 @@
 "use strict";
 
-const tools = root_require("tools.js");
+const tools = script_require("tools.js");
 
 this.run = (options) =>
 {

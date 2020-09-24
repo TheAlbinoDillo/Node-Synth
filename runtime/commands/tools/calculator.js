@@ -1,7 +1,7 @@
 "use strict";
 
 const MathJS = require("mathjs");
-const actions = root_require("actions.js");
+const actions = script_require("actions.js");
 
 async function run (options)
 {

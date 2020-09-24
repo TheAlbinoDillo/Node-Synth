@@ -38,11 +38,4 @@ class CommandList
 	}
 }
 
-var command_list = new CommandList();
-
-module.exports =
-{
-	Command: Command,
-	CommandList: CommandList,
-	command_list: command_list
-};
+module.exports = CommandList;

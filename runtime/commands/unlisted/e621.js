@@ -2,8 +2,8 @@
 
 const Discord = require("discord.js");
 const Fetch = require("node-fetch");
-const Tools = root_require("tools.js");
-const Actions = root_require("actions.js");
+const Tools = script_require("tools.js");
+const Actions = script_require("actions.js");
 
 const base = "https://e621.net/posts";
 

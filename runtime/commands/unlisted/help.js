@@ -1,12 +1,12 @@
 "use strict";
 
 const Discord = require("discord.js");
-const Actions = root_require("actions.js");
-const Commands = root_require("commands.js");
+const Actions = script_require("actions.js");
+const Command = script_require("Command.js");
 
 async function run (options)
 {
-	let categories = Commands.command_list.get_categories();
+	let categories = command_list.get_categories();
 	
 	let embed = new Discord.MessageEmbed()
 	.setTitle(`Help for ${options.client.user.username}`)

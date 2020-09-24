@@ -178,6 +178,20 @@ class BotTools
 		}
 		return members;
 	}
+
+	static clean (string)
+	{
+		let replacements = ["*", "\\", "_", "~", ":", "#"];
+		replacements.forEach( (e) =>
+		{
+			string = string.replace(e, `\\${e}`);
+		});
+
+		string = string.replace("@everyone", "@\u200beveryone");
+		string = string.replace("<@", "<\u200b@");
+
+		return string;
+	}
 }
 
 //Export class

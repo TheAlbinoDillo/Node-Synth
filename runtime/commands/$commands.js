@@ -1,7 +1,7 @@
 "use strict";
 
-const Tools = root_require("tools.js");
-const Commands = root_require("commands.js");
+const Tools = script_require("tools.js");
+const Command = script_require("Command.js");
 
 this.run = (options) =>
 {
@@ -31,7 +31,7 @@ this.run = (options) =>
 				let new_command = require(path);
 				new_command.category = category.filename;
 
-				new Commands.Command(new_command);
+				new Command(new_command);
 			}
 		});
 	});

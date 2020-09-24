@@ -1,12 +1,12 @@
 "use strict";
 
-const commands = root_require("commands.js");
-const tools = root_require("tools.js");
-const actions = root_require("actions.js");
+const Command = script_require("Command.js");
+const tools = script_require("tools.js");
+const actions = script_require("actions.js");
 
 const extension = ".json";
 
-class InteractionCommand extends commands.Command
+class InteractionCommand extends Command
 {
 	constructor (options)
 	{
@@ -20,7 +20,7 @@ async function runFunction (options)
 {
 	let replacements =
 	{
-		"user": tools.bold(options.member.displayName),
+		"user": tools.bold(tools.clean(options.member.displayName) ),
 		"users": "themselves"
 	};
 	let script_to_run = this.script;
@@ -32,7 +32,7 @@ async function runFunction (options)
 		let names = [];
 		members.forEach( (member) =>
 		{
-			names.push(tools.bold(member.displayName) );
+			names.push(tools.bold(tools.clean(member.displayName) ) );
 		});
 		replacements["users"] = tools.array_list(names);
 	}
