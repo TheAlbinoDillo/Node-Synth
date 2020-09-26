@@ -51,7 +51,7 @@ this.run = (message) =>
 	}
 
 	//Search for command
-	let selected_command = command_list.find(call);
+	let selected_command = command_list.find(call.toLowerCase() );
 
 	//Fail if this command doesn't exist
 	if (!selected_command)
