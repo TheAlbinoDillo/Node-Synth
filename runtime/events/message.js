@@ -38,7 +38,7 @@ this.run = (message) =>
 
 	//Breakout groups object properties
 	let prefix = groups.prefix;
-	let call = groups.call;
+	let call = groups.call.toLowerCase();
 	let cmd_options = groups.options;
 	let cmd_args;
 
@@ -51,7 +51,7 @@ this.run = (message) =>
 	}
 
 	//Search for command
-	let selected_command = command_list.find(call.toLowerCase() );
+	let selected_command = command_list.find(call);
 
 	//Fail if this command doesn't exist
 	if (!selected_command)
