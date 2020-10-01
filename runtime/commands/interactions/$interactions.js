@@ -25,14 +25,21 @@ async function runFunction (options)
 	};
 	let script_to_run = this.script;
 
-	let members = tools.get_mentions(options);
+	let members = tools.get_mentions(options, true, false);
 
-	if (members)
+	if (members.length > 0)
 	{
 		let names = [];
 		members.forEach( (member) =>
 		{
-			names.push(tools.bold(tools.clean(member.displayName) ) );
+			if (member.id === options.client.user.id)
+			{
+				names.push("**me**");
+			}
+			else
+			{
+				names.push(tools.bold(tools.clean(member.displayName) ) );
+			}
 		});
 		replacements["users"] = tools.array_list(names);
 	}
