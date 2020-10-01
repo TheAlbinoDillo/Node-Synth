@@ -6,14 +6,14 @@
 	],
 	"description": "Give someone some nice pets!",
 	"script": [
-		"%user% ",
+		"%user%",
 		[
 			"",
-			"softly "
+			" softly"
 		],
 		[
-			"pets",
-			"kneads their paws into"
+			" pets",
+			" kneads their paws into"
 		],
 		" %users%!"
 	]

@@ -9,15 +9,15 @@
 	],
 	"description": "Give someone a hug!",
 	"script": [
-		"%user% ",
+		"%user%",
 		[
 			"",
-			"quickly ",
-			"happily "
+			" quickly",
+			" happily"
 		],
 		[
-			"gives a hug to",
-			"hugs"
+			" gives a hug to",
+			" hugs"
 		],
 		" %users%",
 		[
