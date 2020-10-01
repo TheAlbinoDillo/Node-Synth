@@ -142,17 +142,21 @@ class BotTools
 		return `**${text}**`;
 	}
 
-	static array_list (array, join_word = "and")
+	static array_list (array, join_word = "and", oxford = true)
 	{
 		let length = array.length;
-		if (length === 1)
+		switch (length)
 		{
-			return array[0];
-		}
-		else
-		{
-			let without_two = array.slice(0, length - 2);
-			return `${without_two.join(", ")}, ${array[length - 2]} ${join_word} ${array[length - 1]}`;
+			case 1:
+				return array[0];
+				break;
+			case 2:
+				return `${array[0]} ${join_word} ${array[1]}`;
+				break;
+			default:
+				let last = array.pop();
+				return `${array.join(", ")}, ${join_word} ${last}`;
+				break;
 		}
 	}
 
