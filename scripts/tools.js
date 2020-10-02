@@ -163,8 +163,8 @@ class BotTools
 	static get_mentions (options, remove_self = true, remove_bot = true)
 	{
 		let members = options.message.mentions.members.array();
-
-		if (members.length === 0) return;
+		
+		if (members.length === 0) return [];
 
 		if (remove_self)
 		{
