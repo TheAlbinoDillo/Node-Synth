@@ -73,7 +73,8 @@ this.run = (message) =>
 			return;
 		}
 	}
-	else if (!member.permissions.has(selected_command.perms) )
+	
+	if (!member.permissions.has(selected_command.perms) && member.id !== index.client_settings.owner)
 	{
 		//Fail if the user doesn't have the needed permissions
 		let say = `${member} does not have permission to use \`${selected_command.name}\`.`;
