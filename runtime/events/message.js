@@ -9,6 +9,12 @@ const command_test = /(?<prefix>^fg(?:\. |[^a-z0-9?]))(?<call>[^\s<]+) ?(?<optio
 //RegEx to seperate the options out
 const options_test = /[^\s]+|(?:"[^"]*"|`[^`]*`|'[^']*')/g;
 
+//Test if user's id is the bot's owner
+function isOwner (user)
+{
+	return user.id == index.client_settings.owner;
+}
+
 this.run = (message) =>
 {
 	//Breakout message object properties
@@ -65,7 +71,7 @@ this.run = (message) =>
 	if (selected_command.perms.includes("BOT_OWNER") )
 	{
 		//Test if the user is this bot's owner
-		if (member.id !== index.client_settings.owner)
+		if (!isOwner(member) )
 		{
 			//Fail if the user is not the bot's owner
 			let say = `Only the bot owner can use \`${selected_command.name}\`.`;
@@ -73,8 +79,7 @@ this.run = (message) =>
 			return;
 		}
 	}
-	
-	if (!member.permissions.has(selected_command.perms) && member.id !== index.client_settings.owner)
+	else if (!member.permissions.has(selected_command.perms) && !isOwner(member) )
 	{
 		//Fail if the user doesn't have the needed permissions
 		let say = `${member} does not have permission to use \`${selected_command.name}\`.`;
@@ -102,6 +107,4 @@ this.run = (message) =>
 		actions.react_say(message, "⁉️", say);
 		return;
 	});
-
-	//Delete message used to run command
 };
