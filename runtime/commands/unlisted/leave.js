@@ -4,7 +4,7 @@ const Actions = script_require("actions.js");
 
 function run (options)
 {
-	options.client.setTimeout( ()=>
+	options.client.setTimeout( () =>
 	{
 		process.exit();
 
@@ -16,5 +16,6 @@ function run (options)
 module.exports =
 {
 	run: run,
+	name: "leave",
 	calls: ["leave", "quit"]
 };
