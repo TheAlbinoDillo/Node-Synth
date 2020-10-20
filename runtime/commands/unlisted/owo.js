@@ -5,7 +5,7 @@ const actions = script_require("actions.js");
 module.exports =
 {
 	name: "OwO",
-calls: ["owo","OwO"],
+calls: ["owo"],
 	perms: [],
 	run: async (options) =>
 	{
