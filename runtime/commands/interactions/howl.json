@@ -1,0 +1,17 @@
+{
+	"name": "Howl",
+	"calls": [
+		"howl",
+		"awoo"
+	],
+	"description": "Awoooooooo!",
+	"self": [
+		"%user% howls! ",
+		[
+			"",
+			"Awooooooooooooooo",
+			"Oooooowwwwoooooo"
+		],
+		"!"
+	]
+}

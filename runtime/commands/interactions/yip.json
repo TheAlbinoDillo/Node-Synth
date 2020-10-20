@@ -1,0 +1,16 @@
+{
+	"name": "Yip",
+	"calls": [
+		"yip"
+	],
+	"description": "Yip to be heard!",
+	"self": [
+		"%user% yips! ",
+		[
+			"yipyipyip!!!",
+			"yip yip!",
+			"yip yap! yip yap!"
+		],
+		"!"
+	]
+}

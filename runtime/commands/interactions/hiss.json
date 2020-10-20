@@ -1,0 +1,17 @@
+{
+	"name": "Hiss",
+	"calls": [
+		"hiss"
+	],
+	"description": "Hiss like a snake!",
+	"self": [
+		"%user% hisses! ",
+		[
+			"",
+			"*hisssssssssssssssss*",
+			"sssSssSSsSssSssss!!",
+			"s*s*s*s*s*s*s*s*s*s*"
+		],
+		"!"
+	]
+}
