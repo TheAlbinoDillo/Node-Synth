@@ -19,7 +19,8 @@ const hard_blacklist =
 	"shota",
 	"rape",
 	"bestiality",
-	"flash"
+	"flash",
+	"human"
 ];
 
 const fetch_options =
@@ -27,7 +28,7 @@ const fetch_options =
 	method: "get",
 	headers:
 	{
-		"User-Agent": "Node-Synth/1.0 (by thealbinoarmadillo on e621)"
+		"User-Agent": "Node-Synth/1.0 (by TheAlbinoArmadillo on e621)"
 	}
 };
 
@@ -44,6 +45,8 @@ async function get_posts (tags)
 
 async function send_embed (options, posts_json)
 {
+	options.channel.startTyping();
+
 	let post = Tools.rand_array(posts_json.posts);
 	let is_vid = false;
 	let file_url = post.file.url;
@@ -68,28 +71,7 @@ async function send_embed (options, posts_json)
 
 	let sent = await Actions.send(options, embed);
 
-	/*Actions.react_do(sent, "🔁", () =>
-	{
-		send_embed(options, posts_json);
-	});*/
-
-	/*Actions.react(options.message, "🔁");
-	Actions.react_collect(options.message, (reaction, user) =>
-	{
-		return reaction.emoji.name === "🔁" && user === options.author;
-
-	}, (reaction, user) =>
-	{
-		send_embed(options, posts_json);
-		this.stop("complete");
-
-	});*/
-
-	//Actions.react_do(sent, "💾", (reaction, user) =>
-	//{
-	//	Actions.send_dm(options, user, embed);
-	//	
-	//}, false);
+	options.channel.stopTyping();
 }
 
 async function run (options) {
