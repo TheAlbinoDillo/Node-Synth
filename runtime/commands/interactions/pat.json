@@ -1,7 +1,8 @@
 {
 	"name": "Pat",
 	"calls": [
-		"pat"
+		"pat",
+		"pats"
 	],
 	"description": "Give someone some nice pats!",
 	"script": [
