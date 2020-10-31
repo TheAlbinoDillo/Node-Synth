@@ -2,15 +2,26 @@
 	"name": "Cuddle",
 	"calls": [
 		"cuddle",
-		"cudd"
+		"cudd",
+		"cuddl",
+		"cuddles"
 	],
 	"description": "Cuddle up with someone!",
-	"script": [
-		"%user% ",
+	"script":
+	[
 		[
-			"cozily ",
-			"warmly "
-		],
-		"cuddles %users%!"
-	]
+			"%user% and %users% lay in bed, cuddling gently!",
+			"%user% gives surprise cuddles to %users%!",
+			"%user% and %users% cuddle in each other's arms!",
+			"%user% and %users% create a cuddle pile!",
+			"%user% cuddles %users%, making them a big ball of floof!",
+			"%user% gives loving and passionate cuddles to %users%!",
+			"%user% gibs %users% a heccin cuddl!",
+			"%user% tackles %users% and cuddles them!",
+			"%user% cuddles %users% against the wall!",
+			"%users% gets smothered in floof as %user% cuddles them!",
+			"%user% covers %users% in their floof, cuddling them!"
+		]
+	],
+	"Thanks to": "favorit1 :3"
 }
