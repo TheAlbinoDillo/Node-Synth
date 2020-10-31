@@ -132,7 +132,8 @@ class BotTools
 			
 		for (let replace in replacements)
 		{
-			string = string.replace(`%${replace}%`, replacements[replace]);
+			let regex = new RegExp(`%${replace}%`, "g");
+			string = string.replace(regex, replacements[replace]);
 		}
 		return string;
 	}
