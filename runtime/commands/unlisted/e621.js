@@ -76,14 +76,6 @@ async function send_embed (options, posts_json)
 
 async function run (options) {
 		
-	//Fail if the channel is not NSFW
-	if (!options.channel.nsfw)
-	{
-		let msg = "E621 is only allowed in NSFW channels.";
-		Actions.react_say(options.message, "🔞", msg);
-		return;
-	}
-
 	//Fail if no tags were given
 	if (!options.full)
 	{
@@ -165,6 +157,7 @@ module.exports =
 {
 	name: "E621",
 	run: run,
+	nsfw: true,
 	perms: [],
 	calls: ["e621", "e6"]
 };

@@ -4,6 +4,7 @@
 		"vore",
 		"nom"
 	],
+	"nsfw": true,
 	"description": "Fukkin eat someone.",
 	"script": [
 		"%user% ",

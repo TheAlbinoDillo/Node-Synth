@@ -1,11 +1,12 @@
 "use strict";
 
 const Command = script_require("Command.js");
-const tools = script_require("tools.js");
-const actions = script_require("actions.js");
+const Tools = script_require("tools.js");
+const Actions = script_require("actions.js");
 
 const extension = ".txt";
-const split_tag = "<br>";
+const splitTag = "<br>";
+const nsfwTag = "<!nsfw>";
 
 class PastaCommand extends Command
 {
@@ -18,7 +19,7 @@ class PastaCommand extends Command
 
 this.run = (options, path) =>
 {
-	let pasta_dir = tools.list_dir(path);
+	let pasta_dir = Tools.list_dir(path);
 	pasta_dir.files.filter( (file) =>
 	{
 		return file.filename.endsWith(extension);
@@ -28,18 +29,31 @@ this.run = (options, path) =>
 		let withoutExt = file.filename.substring(0, file.filename.length - extension.length);
 		let name = withoutExt[0].toUpperCase() + withoutExt.substring(1);
 
+		let text = Tools.load_file(file.path).toString();
+
+		let isNSFW = false;
+		let newText = text.replace(nsfwTag, "");
+
+		if (newText !== text)
+		{
+			isNSFW = true;
+			text = newText;
+		}
+		text = text.split(splitTag)
+
 		let new_command =
 		{
 			name: name,
 			desc: `Send the ${name} copypasta!`,
-			text: tools.load_file(file.path).toString().split(split_tag),
+			text: text,
+			nsfw: isNSFW,
 			category: "pasta",
 			perms: [],
 			async run (options)
 			{
 				this.text.forEach( (element) =>
 				{
-					actions.send(options, element);
+					Actions.send(options, element);
 				});
 			}
 		};

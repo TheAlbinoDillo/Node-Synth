@@ -1,0 +1,27 @@
+{
+	"name": "Fuck",
+	"calls":
+	[
+		"fuck",
+		"fucc",
+		"makelove",
+		"fuk"
+	],
+	"nsfw": true,
+	"description": "Make some love ;3",
+	"script":
+	[
+		[
+			"%user% fucks %users%'s ass slowly and passionately",
+			"%users% gets railed by %user% against a wall",
+			"%user% rides %users%'s dick making them both cum",
+			"%user% gives %users% a reacharound",
+			"%users% gets fucked by %user% in the shower",
+			"%user% pounds %users%'s tight hole against the table",
+			"%user% and %users% fuck passionately before cuddling to sleep",
+			"%user% throatfucks %users%",
+			"%user% takes %users% dick like a champ"
+		],
+		"!"
+	]
+}

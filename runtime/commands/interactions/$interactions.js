@@ -67,6 +67,7 @@ this.run = (options, path) =>
 		{
 			name: json.name,
 			desc: json.description,
+			nsfw: json.nsfw,
 			calls: json.calls,
 			self: json.self,
 			script: json.script,

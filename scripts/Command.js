@@ -27,6 +27,8 @@ class Command
 
 		this.category = options.category;
 
+		this.nsfw = options.nsfw;
+
 		command_list.add(this);
 
 		console.log(`\t\tLoaded ${this.name}\tfg ${this.calls}`);

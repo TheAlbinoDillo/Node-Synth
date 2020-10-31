@@ -1,6 +1,6 @@
 "use strict";
 
-const actions = script_require("actions.js");
+const Actions = script_require("actions.js");
 const index = root_require("index.js");
 
 //RegEx to test for the prefix call and command
@@ -57,33 +57,43 @@ this.run = (message) =>
 	}
 
 	//Search for command
-	let selected_command = command_list.find(call);
+	let selectedCommand = command_list.find(call);
 
 	//Fail if this command doesn't exist
-	if (!selected_command)
+	if (!selectedCommand)
 	{
 		let say = `\`${call}\` is not a command.`;
-		actions.react_say(message, "❓", say);	
+		Actions.react_say(message, "❓", say);	
+		return;
+	}
+
+	console.log(selectedCommand);
+
+	//Test if this command is NSFW
+	if (selectedCommand.nsfw && !message.channel.nsfw)
+	{
+		let msg = `\`${selectedCommand.name}\` is only allowed in NSFW channels.`;
+		Actions.react_say(message, "🔞", msg);
 		return;
 	}
 
 	//Test if user has permission to use this command
-	if (selected_command.perms.includes("BOT_OWNER") )
+	if (selectedCommand.perms.includes("BOT_OWNER") )
 	{
 		//Test if the user is this bot's owner
 		if (!isOwner(member) )
 		{
 			//Fail if the user is not the bot's owner
-			let say = `Only the bot owner can use \`${selected_command.name}\`.`;
-			actions.react_say(message, "⛔", say);
+			let say = `Only the bot owner can use \`${selectedCommand.name}\`.`;
+			Actions.react_say(message, "⛔", say);
 			return;
 		}
 	}
-	else if (!member.permissions.has(selected_command.perms) && !isOwner(member) )
+	else if (!member.permissions.has(selectedCommand.perms) && !isOwner(member) )
 	{
 		//Fail if the user doesn't have the needed permissions
-		let say = `${member} does not have permission to use \`${selected_command.name}\`.`;
-		actions.react_say(message, "⛔", say);
+		let say = `${member} does not have permission to use \`${selectedCommand.name}\`.`;
+		Actions.react_say(message, "⛔", say);
 		return;
 	}
 
@@ -101,10 +111,10 @@ this.run = (message) =>
 	};
 
 	//Try to run command
-	selected_command.run(options).catch( (error) =>
+	selectedCommand.run(options).catch( (error) =>
 	{
-		let say = `\`${selected_command.name}\`\n${error.stack}`;
-		actions.react_say(message, "⁉️", say);
+		let say = `\`${selectedCommand.name}\`\n${error.stack}`;
+		Actions.react_say(message, "⁉️", say);
 		return;
 	});
 };

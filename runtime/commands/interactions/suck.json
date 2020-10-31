@@ -1,0 +1,24 @@
+{
+	"name": "Suck",
+	"calls":
+	[
+		"suck",
+		"suck",
+		"givehead"
+	],
+	"nsfw": true,
+	"description": "SUCCCCCC",
+	"script":
+	[
+		[
+			"%user% sucks %users%'s knot like a lollipop!",
+			"%user% gives %users% a blowjob!",
+			"%user% moans as they swallow %users%'s cum!",
+			"%users%'s dick gets sucked by %user%!",
+			"%user% sucks %users%'s cock then swallows all the cum!",
+			"%users% gets their dick sucked by %user%!",
+			"%user% gives %users% a toothy blowjob... :grimacing:",
+			"%user% deepthroats %users%'s long cock!"
+		]
+	]
+}
