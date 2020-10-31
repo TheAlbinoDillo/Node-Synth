@@ -8,22 +8,24 @@
 		"huggies"
 	],
 	"description": "Give someone a hug!",
-	"script": [
-		"%user%",
+	"script":
+	[
 		[
-			"",
-			" quickly",
-			" happily"
-		],
-		[
-			" gives a hug to",
-			" hugs"
-		],
-		" %users%",
-		[
-			"!",
-			", how nice!",
-			", awwww."
+			"%user% hugs %users%, rubbing their back!",
+			"%user% gives a long passionate hug to %users%!",
+			"%user% tackle-hugs %users%! Watch out!!",
+			"%user% hugs %users%, planting their face into their chest!",
+			"%user% nuzzles %users%'s chest, hugging them!",
+			"%user% wraps their arms around %users% then gives them a heccin squeeze!",
+			"%user% hugs %users% while nuzzling their neck!",
+			"%user% hugs %users%, resting their face on %users%'s shoulder!",
+			"%user% squeezes %users% in their arms!",
+			"%user% hugs %users% around their tummy!",
+			"%user% gives huggies to %users%!",
+			"%user% launches a hug attack on %users%!",
+			"%users% gets shocked as %user% comes from behind, hugging %users%!",
+			"%user% sneaks from behind then hugs %users%!",
+			"%user% jumps on %users% and hugs them with all 4!"
 		]
 	],
 	"self": [
@@ -33,5 +35,6 @@
 			"tightly "
 		],
 		"squeezes!"
-	]
+	],
+	"Thanks to": "favorit1 :3"
 }
