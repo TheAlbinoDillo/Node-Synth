@@ -10,7 +10,6 @@ calls: ["huh"],
 	perms: [],
 	run: async (options) =>
 	{
-		actions.send(options, "huh");
-    options.message.delete().catch();       
+		actions.send(options, "huh");    
 	}
 }
