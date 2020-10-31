@@ -67,7 +67,7 @@ this.run = (message) =>
 		return;
 	}
 
-	console.log(selectedCommand);
+	//console.log(selectedCommand);
 
 	//Test if this command is NSFW
 	if (selectedCommand.nsfw && !message.channel.nsfw)

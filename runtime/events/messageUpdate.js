@@ -23,7 +23,7 @@ async function run (oldMessage, newMessage)
 
 	let textDiff = diff.diffWords(oldMessage.content, newMessage.content);
 
-	console.log(textDiff);
+	//console.log(textDiff);
 
 	let diffString = "";
 	for (let i = 0; i < textDiff.length; i++)
