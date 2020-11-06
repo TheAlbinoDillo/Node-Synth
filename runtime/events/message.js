@@ -12,7 +12,7 @@ const options_test = /[^\s]+|(?:"[^"]*"|`[^`]*`|'[^']*')/g;
 //Test if user's id is the bot's owner
 function isOwner (user)
 {
-	return user.id == index.client_settings.owner;
+	return user.id == process.env.CLIENT_OWNER;
 }
 
 this.run = (message) =>

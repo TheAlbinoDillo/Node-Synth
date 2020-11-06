@@ -19,6 +19,7 @@ global.script_require = (filename) =>
 const fs = require("fs");
 const discord = require("discord.js");
 const rl = require("readline");
+require("dotenv").config();
 
 const tools = script_require("tools.js");
 const connect = script_require("connect.js");
@@ -29,7 +30,6 @@ global.command_list = new CommandList();
 //Client variables
 //////////////////////////////////////////////////////////////////////////////////
 const client = new discord.Client();
-const client_settings = tools.load_json("./client_settings.json");
 
 const runtime_settings =
 {
@@ -83,17 +83,18 @@ const setup_runtime = (setup_settings = runtime_settings) =>
 	});
 };
 
-connect(client, client_settings.token);
+connect(client, process.env.BOT_TOKEN);
 
 client.on("ready", () =>
 {
 	setup_runtime();
+
+	console.log("Ready.");
 });
 
 module.exports =
 {
-	client: client,
-	client_settings
+	client: client
 };
 
 //Exception and Promise Rejection logging

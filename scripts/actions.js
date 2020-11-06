@@ -110,7 +110,7 @@ class BotActions
 		let collector = message.createReactionCollector( (reaction, user) =>
 		{
 			let a = reaction.emoji.name === emote;
-			let b = user === message.author || user.id === Index.client_settings.owner;
+			let b = user === message.author || user.id === process.env.CLIENT_OWNER;
 			let c = !user.bot;
 			return a && b && c;
 
