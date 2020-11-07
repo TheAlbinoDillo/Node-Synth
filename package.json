@@ -1,20 +1,34 @@
 {
-  "name": "Node Synth",
-  "version": "1.0.1",
-  "description": "Furry Discord bot",
+  "name": "node-synth",
+  "version": "1.0.0",
+  "description": "Bot for furry Discord servers",
   "main": "index.js",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+  "dependencies": {
+    "discord.js": "^12.3.1",
+    "diff": "^4.0.2",
+    "dotenv": "^8.2.0",
+    "mathjs": "^7.3.0",
+    "prism-media": "^1.2.2",
+    "ws": "^7.3.1"
   },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheAlbinoDillo/Node-Synth.git"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "furry",
+    "fandom"
+  ],
   "author": "TheAlbinoDillo",
   "license": "MIT",
-  "dependencies": {
-    "diff": "^4.0.2",
-    "discord.js": "^12.2.0",
-    "dotenv": "^8.2.0",
-    "mathjs": "^7.0.0"
-  }
+  "bugs": {
+    "url": "https://github.com/TheAlbinoDillo/Node-Synth/issues"
+  },
+  "homepage": "https://github.com/TheAlbinoDillo/Node-Synth#readme"
 }
