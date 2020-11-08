@@ -4,8 +4,9 @@
   "description": "Bot for furry Discord servers",
   "main": "index.js",
   "dependencies": {
-    "discord.js": "^12.3.1",
+    "canvas": "^2.6.1",
     "diff": "^4.0.2",
+    "discord.js": "^12.3.1",
     "dotenv": "^8.2.0",
     "mathjs": "^7.3.0",
     "prism-media": "^1.2.2",
