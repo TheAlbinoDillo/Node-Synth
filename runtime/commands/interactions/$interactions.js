@@ -50,6 +50,8 @@ async function runFunction (options)
 
 	let text = tools.json_script(replacements, script_to_run);
 	actions.send(options, text);
+        if (!this.script && this.self)
+               options.message.delete().catch();
 }
 
 this.run = (options, path) =>
