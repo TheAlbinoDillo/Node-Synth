@@ -9,6 +9,6 @@ module.exports =
 	perms: [],
 	run: async (options) =>
 	{
-		actions.send(options, `http://choohy.com:5000/${options.user.id}`);
+		actions.send(options, `http://choohy.com:5000/${options.author.id}`);
 	}
 }
