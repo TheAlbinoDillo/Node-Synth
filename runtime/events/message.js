@@ -1,7 +1,6 @@
 "use strict";
 
-const Actions = script_require("actions.js");
-const index = root_require("index.js");
+const index = require("../../index.js");
 
 //RegEx to test for the prefix call and command
 const command_test = /(?<prefix>^fg(?:\. |[^a-z0-9?]))(?<call>[^\s<]+) ?(?<options>.+)*/gi;
@@ -15,7 +14,7 @@ function isOwner (user)
 	return user.id == process.env.CLIENT_OWNER;
 }
 
-this.run = (message) =>
+async function run (message)
 {
 	//Breakout message object properties
 	let content = message.content;
@@ -57,23 +56,21 @@ this.run = (message) =>
 	}
 
 	//Search for command
-	let selectedCommand = command_list.find(call);
+	let selectedCommand = VarCommandList[VarCommandCalls[call] ];
 
 	//Fail if this command doesn't exist
 	if (!selectedCommand)
 	{
 		let say = `\`${call}\` is not a command.`;
-		Actions.react_say(message, "❓", say);	
+		BotActions.react_say(message, "❓", say);	
 		return;
 	}
-
-	//console.log(selectedCommand);
 
 	//Test if this command is NSFW
 	if (selectedCommand.nsfw && !message.channel.nsfw)
 	{
 		let msg = `\`${selectedCommand.name}\` is only allowed in NSFW channels.`;
-		Actions.react_say(message, "🔞", msg);
+		BotActions.react_say(message, "🔞", msg);
 		return;
 	}
 
@@ -85,7 +82,7 @@ this.run = (message) =>
 		{
 			//Fail if the user is not the bot's owner
 			let say = `Only the bot owner can use \`${selectedCommand.name}\`.`;
-			Actions.react_say(message, "⛔", say);
+			BotActions.react_say(message, "⛔", say);
 			return;
 		}
 	}
@@ -93,7 +90,7 @@ this.run = (message) =>
 	{
 		//Fail if the user doesn't have the needed permissions
 		let say = `${member} does not have permission to use \`${selectedCommand.name}\`.`;
-		Actions.react_say(message, "⛔", say);
+		BotActions.react_say(message, "⛔", say);
 		return;
 	}
 
@@ -114,7 +111,12 @@ this.run = (message) =>
 	selectedCommand.run(options).catch( (error) =>
 	{
 		let say = `\`${selectedCommand.name}\`\n${error.stack}`;
-		Actions.react_say(message, "⁉️", say);
+		BotActions.react_say(message, "⁉️", say);
 		return;
 	});
+};
+
+module.exports =
+{
+	run: run
 };
