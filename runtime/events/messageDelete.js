@@ -1,7 +1,5 @@
 "use strict";
 
-const Actions = script_require("actions.js");
-
 const name = "message-deleted-node-synth-log";
 
 async function run (message)
@@ -46,7 +44,7 @@ async function run (message)
 		]
 	};
 
-	Actions.send({channel: logChannel[0]}, {embed: embed});
+	BotActions.send({channel: logChannel[0]}, {embed: embed});
 }
 
 module.exports =

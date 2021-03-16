@@ -1,7 +1,5 @@
 "use strict";
 
-const Actions = script_require("actions.js");
-
 async function run (options)
 {
 	let embed =
@@ -11,7 +9,7 @@ async function run (options)
 		"url": "https://discord.com/oauth2/authorize?client_id=662825806967472128&scope=bot&permissions=8"
 	};
 
-	Actions.send(options, {embed: embed});
+	BotActions.send(options, {embed: embed});
 }
 
 module.exports =

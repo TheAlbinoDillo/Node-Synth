@@ -1,7 +1,6 @@
 "use strict";
 
 const MathJS = require("mathjs");
-const actions = script_require("actions.js");
 
 async function run (options)
 {
@@ -33,7 +32,7 @@ async function run (options)
 			value: error.message
 		});
 	}
-	actions.send(options, {embed: embed});
+	BotActions.send(options, {embed: embed});
 }
 
 module.exports =

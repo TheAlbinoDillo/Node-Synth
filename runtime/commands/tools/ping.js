@@ -1,11 +1,10 @@
 "use strict";
 
 const MathJS = require("mathjs");
-const actions = script_require("actions.js");
 
 async function run (options)
 {
-	let sent = await actions.send(options, "Pong.");
+	let sent = await BotActions.send(options, "Pong.");
 
 	sent.edit(`**Pong!** \`${sent.createdTimestamp - options.message.createdTimestamp}\`ms`);
 }

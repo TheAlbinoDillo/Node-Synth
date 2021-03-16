@@ -2,8 +2,6 @@
 
 const Discord = require("discord.js");
 const Fetch = require("node-fetch");
-const Tools = script_require("tools.js");
-const Actions = script_require("actions.js");
 
 const base = "https://e621.net/posts";
 
@@ -47,7 +45,7 @@ async function send_embed (options, posts_json)
 {
 	options.channel.startTyping();
 
-	let post = Tools.rand_array(posts_json.posts);
+	let post = BotTools.rand_array(posts_json.posts);
 	let is_vid = false;
 	let file_url = post.file.url;
 	if (post.file.url.endsWith(".webm") )
@@ -69,7 +67,7 @@ async function send_embed (options, posts_json)
 
 	).setDescription(options.full);
 
-	let sent = await Actions.send(options, embed);
+	let sent = await BotActions.send(options, embed);
 
 	options.channel.stopTyping();
 }
@@ -80,14 +78,14 @@ async function run (options) {
 	if (!options.full)
 	{
 		let msg = "No tags were provided.";
-		Actions.react_say(options.message, "❕", msg);
+		BotActions.react_say(options.message, "❕", msg);
 		return;
 	}
 
 	if (last_fetch > Date.now() - (wait_seconds * 1000) )
 	{
 		let msg = "Please wait before using this command again.";
-		Actions.react_say(options.message, "⌛", msg);
+		BotActions.react_say(options.message, "⌛", msg);
 		return;
 	}
 
@@ -98,7 +96,7 @@ async function run (options) {
 	if (json.posts.length === 0)
 	{
 		let msg = `No results found for:\n\`${options.full}\``;
-		Actions.send(options, msg);
+		BotActions.send(options, msg);
 		return;
 	}
 

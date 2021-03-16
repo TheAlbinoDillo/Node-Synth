@@ -1,7 +1,5 @@
 "use strict";
 
-const Actions = script_require("actions.js");
-
 function run (options)
 {
 	options.client.setTimeout( () =>
@@ -10,7 +8,7 @@ function run (options)
 
 	}, 100);
 
-	Actions.send(options, "Disconnecting...");
+	BotActions.send(options, "Disconnecting...");
 }
 
 module.exports =

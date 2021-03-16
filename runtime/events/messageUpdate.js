@@ -1,7 +1,5 @@
 "use strict";
 
-const actions = script_require("actions.js");
-const index = root_require("index.js");
 const diff = require("diff");
 
 // Name of channel the log will be sent
@@ -77,7 +75,7 @@ async function run (oldMessage, newMessage)
 	};
 
 	// Send embed to the log channel
-	actions.send({channel: logChannel[0]}, {embed: embed});
+	BotActions.send({channel: logChannel[0]}, {embed: embed});
 }
 
 module.exports =

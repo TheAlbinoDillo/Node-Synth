@@ -1,14 +1,14 @@
-const actions = script_require("actions.js");
+"use strict";
 
 function run (options)
 {
-  actions.send(options, options.full);
-  options.message.delete().catch();
+	BotActions.send(options, options.full);
+	options.message.delete().catch();
 }
 
 module.exports =
 {
-  name: "Echo",
-  perms: ["ADMINISTRATOR"],
-  run: run
+	name: "Echo",
+	perms: ["ADMINISTRATOR"],
+	run: run
 };
