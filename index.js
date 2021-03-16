@@ -1,95 +1,32 @@
 "use strict";
 
-//Global variables
-//////////////////////////////////////////////////////////////////////////////////
+global.VarClient = {};
+global.VarEventList = {};
+global.VarCommandList = {};
+global.VarCommandCalls = {};
 
-//Fix for relative require
-global.root_require = (filename) =>
-{
-	return require(__dirname + '/' + filename);
-};
-
-global.script_require = (filename) =>
-{
-	return require(__dirname + '/scripts/' + filename);
-};
-
-//Import libraries
-//////////////////////////////////////////////////////////////////////////////////
-const fs = require("fs");
+const fs = require("fs.promises");
 const discord = require("discord.js");
 const rl = require("readline");
 require("dotenv").config();
 
-const tools = script_require("tools.js");
-const connect = script_require("connect.js");
-const CommandList = script_require("CommandList.js");
+const BotConnect = require("./scripts/BotConnect.js");
 
-global.command_list = new CommandList();
-
-//Client variables
-//////////////////////////////////////////////////////////////////////////////////
 const client = new discord.Client();
+global.Client = client;
 
-const runtime_settings =
-{
-	path: "./runtime",
-	prefix: "$",
-	extension: ".js",
-	test_name (filename)
-	{
-		let starts = filename.startsWith(this.prefix);
-		let ends = filename.endsWith(this.extension);
-		return starts && ends;
-	},
-	remove_extension (filename)
-	{
-		let minus = this.extension.length;
-		return filename.substring(0, filename.length - minus);
-	}
-};
-
-//////////////////////////////////////////////////////////////////////////////////
-const setup_runtime = (setup_settings = runtime_settings) =>
-{
-	let runtime_dirs = tools.list_dir(setup_settings.path);
-
-	runtime_dirs.folders.sort( (a, b) =>
-	{
-		if (a.filename === "eval")
-		{
-			return -1;
-		}
-		return 1;
-	});
-
-	runtime_dirs.folders.forEach( (element) =>
-	{
-		let runtime_subdirs = tools.list_dir(element.path);
-		runtime_subdirs.files.forEach( (subelement) =>
-		{
-			if (runtime_settings.test_name(subelement.filename) )
-			{
-				let options =
-				{
-					runtime_settings: runtime_settings,
-					client: client,
-					current_path_up: element.path
-				};
-
-				require(subelement.path).run(options);
-			}
-		});
-	});
-};
-
-connect(client, process.env.BOT_TOKEN);
+BotConnect(client, process.env.BOT_TOKEN);
 
 client.on("ready", () =>
 {
-	setup_runtime();
+	setupEvents().then( () =>
+	{
+		client.user.setActivity('Under Construction!', { type: '' })
+		.then(presence => console.log(`Activity set to ${presence.activities[0].name}`))
+		.catch(console.error);
 
-	console.log("Ready.");
+		console.log("Ready.");
+	});
 });
 
 module.exports =
@@ -104,7 +41,7 @@ process.on('uncaughtException', async (error) =>
 	let message = Date.now() + "\n" + error.stack;
 	console.error(error);
 
-	fs.writeFileSync("error_log.txt", message);
+	fs.writeFile("error_log.txt", message);
 	process.exit(1);
 });
 
@@ -112,7 +49,7 @@ process.on('unhandledRejection', async (reason, promise) =>
 {
 	console.error(reason.stack);
 	
-	fs.writeFileSync("error_log.txt", reason.stack);
+	fs.writeFile("error_log.txt", reason.stack);
 	process.exit(1);
 });
 
@@ -134,3 +71,152 @@ const rl_interface = rl.createInterface
 	}
 	console.log(output);
 });
+
+async function setupEvents ()
+{
+	await loadScripts();
+	await loadEvents();
+	await loadCommands();
+
+	for (let event in VarEventList)
+	{
+		Client.on(event, (arg1, arg2) =>
+		{
+			//console.log(event);
+			VarEventList[event].run(arg1, arg2).then( () =>
+			{
+				//console.log("///////////////////////", event);
+
+			}).catch( (error) =>
+			{
+				console.log(event, error);
+			});
+		});
+	}
+}
+
+async function filterPath (path)
+{
+	// Regular Expression that only accepts javascript files
+	let fileReg = /^.+\.js$/g;
+
+	// Read directory and filter out only .js files
+	let contents = await fs.readdir(path);
+	let scripts = contents.filter( (c) =>
+	{
+		// Reset RegEx and test
+		fileReg.lastIndex = 0;
+		return fileReg.test(c);
+	});
+	return scripts;
+}
+
+async function loadScripts ()
+{
+	console.log("Loading global scripts...");
+
+	// File path to global scripts
+	let path = "./scripts";
+
+	// Load each script and add it to global
+	let scripts = await filterPath(path);
+	scripts.forEach( (e, i) =>
+	{
+		let scriptName = e.replace(/\.js/, "");
+		global[scriptName] = require(`${path}/${e}`);
+		console.log(`  Loaded ${e}`);
+	});
+
+	console.log("Loaded global scripts.\n");
+}
+
+async function loadEvents ()
+{
+	console.log("Loading events...");
+
+	// File path to event scripts
+	let path = "./runtime/events";
+
+	// Load each script and add it to the event list
+	let scripts = await filterPath(path);
+	scripts.forEach( (e, i) =>
+	{
+		let eventName = e.replace(/\.js/, "");
+		VarEventList[eventName] = require(`${path}/${e}`);
+		console.log(`  Loaded ${e}`);
+	});
+
+	console.log("Loaded events.\n");
+}
+
+async function loadCommands ()
+{
+	console.log("Loading commands...");
+
+	// File path to command scripts
+	let path = "./runtime/commands";
+
+	// Read directory and loop for every folder
+	let contents = await fs.readdir(path);
+
+	for (let i = 0, l = contents.length; i < l; i++)
+	{
+		let folder = contents[i];
+		console.log(`  Loading ${folder}...`);
+
+		// If folder contains a master command
+		let scripts = await filterPath(`${path}/${folder}`);
+		if (scripts.includes(`_${folder}.js`) )
+		{
+			let commandArray = require(`${path}/${folder}/_${folder}.js`);
+console.log(commandArray);
+			loadMultipleCommand(commandArray);
+			continue;
+		}
+
+		// If folder contains single commands
+		scripts.forEach( (script) =>
+		{
+			let command = require(`${path}/${folder}/${script}`);
+			loadSingleCommand(command, script);
+		});
+	}
+
+	console.log("Loaded commands.\n");
+}
+
+async function loadSingleCommand (command, file)
+{
+	// Fail if command has no name
+	if (!command.name)
+	{
+		console.error(`    Command from ${file} failed without name.`);
+		return;
+	}
+
+	// Add command call if not specified
+	if (!command.calls)
+	{
+		command.calls = [command.name.toLowerCase().replace(/\s/g, "")];
+		console.warn(`    Forced call of ${command.name} to ${command.calls[0]}.`);
+	}
+
+	// Add command to VarCommandList
+	VarCommandList[command.name] = command;
+
+	// Add calls to VarCommandCalls
+	command.calls.forEach( (call) =>
+	{
+		VarCommandCalls[call] = command.name;
+	});
+
+	console.log(`    Loaded ${command.name}.`);
+}
+
+async function loadMultipleCommand (array)
+{
+	array.forEach( (command) =>
+	{
+		loadSingleCommand(command);
+	});
+}
