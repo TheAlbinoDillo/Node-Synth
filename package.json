@@ -3,13 +3,6 @@
   "version": "1.0.0",
   "description": "Bot for furry Discord servers",
   "main": "index.js",
-  "dependencies": {
-    "diff": "^4.0.2",
-    "discord.js": "^12.3.1",
-    "dotenv": "^8.2.0",
-    "fs.promises": "^0.1.2",
-    "mathjs": "^7.3.0"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -28,5 +21,12 @@
   "bugs": {
     "url": "https://github.com/TheAlbinoDillo/Node-Synth/issues"
   },
-  "homepage": "https://github.com/TheAlbinoDillo/Node-Synth#readme"
+  "homepage": "https://github.com/TheAlbinoDillo/Node-Synth#readme",
+  "dependencies": {
+    "diff": "^5.0.0",
+    "discord.js": "^12.5.1",
+    "dotenv": "^8.2.0",
+    "fs.promises": "^0.1.2",
+    "mathjs": "^9.3.0"
+  }
 }
