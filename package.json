@@ -4,14 +4,11 @@
   "description": "Bot for furry Discord servers",
   "main": "index.js",
   "dependencies": {
-    "canvas": "^2.6.1",
     "diff": "^4.0.2",
     "discord.js": "^12.3.1",
     "dotenv": "^8.2.0",
     "fs.promises": "^0.1.2",
-    "mathjs": "^7.3.0",
-    "prism-media": "^1.2.2",
-    "ws": "^7.3.1"
+    "mathjs": "^7.3.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
