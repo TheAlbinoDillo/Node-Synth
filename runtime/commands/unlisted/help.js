@@ -1,8 +1,6 @@
 "use strict";
 
 const Discord = require("discord.js");
-const Actions = script_require("actions.js");
-const Command = script_require("Command.js");
 
 async function run (options)
 {
@@ -17,6 +15,8 @@ async function run (options)
 		let command_calls = [];
 		for (let command in categories[category])
 		{
+			if (categories[category][command].nsfw && !options.channel.nsfw)
+				continue;
 			command_calls.push(categories[category][command].calls[0]);
 		}
 
@@ -29,7 +29,7 @@ async function run (options)
 		);
 	}
 
-	Actions.send(options, embed);
+	BotActions.send(options, embed);
 }
 
 module.exports =
