@@ -21,9 +21,9 @@ client.on("ready", () =>
 {
 	setupEvents().then( () =>
 	{
-		client.user.setActivity('Under Construction!', { type: '' })
+		/*client.user.setActivity('Under Construction!', { type: '' })
 		.then(presence => console.log(`Activity set to ${presence.activities[0].name}`))
-		.catch(console.error);
+		.catch(console.error);*/
 
 		console.log("Ready.");
 	});
