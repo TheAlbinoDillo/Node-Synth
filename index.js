@@ -169,7 +169,6 @@ async function loadCommands ()
 		if (scripts.includes(`_${folder}.js`) )
 		{
 			let commandArray = require(`${path}/${folder}/_${folder}.js`);
-console.log(commandArray);
 			loadMultipleCommand(commandArray);
 			continue;
 		}
