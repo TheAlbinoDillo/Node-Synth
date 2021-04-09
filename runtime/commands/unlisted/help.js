@@ -4,38 +4,70 @@ const Discord = require("discord.js");
 
 async function run (options)
 {
-	let categories = command_list.get_categories();
-	
-	let embed = new Discord.MessageEmbed()
-	.setTitle(`Help for ${options.client.user.username}`)
-	.setThumbnail("https://i.imgur.com/zfVwbiK.png");
-
-	for (let category in categories)
+	let nsfw = options.channel.nsfw;
+	let embed =
 	{
-		let command_calls = [];
-		for (let command in categories[category])
+		title: `Commands for ${Client.user.username}`,
+		thumbnail:
 		{
-			if (categories[category][command].nsfw && !options.channel.nsfw)
-				continue;
-			command_calls.push(categories[category][command].calls[0]);
+			url: "https://i.imgur.com/zfVwbiK.png"
+		},
+		fields: makeFields(nsfw),
+		footer:
+		{
+			text: nsfw ? "" : "* NSFW commands not shown.\nRun this command in a NSFW channel to view."
 		}
+	};
 
-		if (category === "unlisted") continue;
+	BotActions.send(options, {embed: embed});
+}
 
-		embed.addField
-		(
-			category,
-			command_calls.join(", ")
-		);
+function makeField (name, value)
+{
+	let obj =
+	{
+		name: name,
+		value: value
+	};
+	return obj;
+}
+
+function makeFields (isNSFW)
+{
+	let fields = [];
+
+	for (let categoryName in VarCommandCategories)
+	{
+		// Skip category if in unlisted folder
+		if (categoryName === "unlisted")
+			continue;
+
+		let calls = [];
+		let category = VarCommandCategories[categoryName];
+
+		// Compile command calls into array
+		let anyRejected = false;
+		category.forEach( (e, i) =>
+		{
+			let command = VarCommandList[e];
+
+			// Ignore NSFW commands if in SFW channel
+			if (command.nsfw && !isNSFW)
+				return anyRejected = true;
+
+			calls.push(command.calls[0]);
+		});
+
+		// Add category to embed field
+		fields.push(makeField(`${categoryName}${anyRejected ? "*" : ""}`, calls.join(", ") ) );
 	}
-
-	BotActions.send(options, embed);
+	return fields;
 }
 
 module.exports =
 {
 	name: "Help",
-	calls: ["help", "?"],
+	calls: ["help", "?", "commands"],
 	perms: [],
 	run: run
 }
