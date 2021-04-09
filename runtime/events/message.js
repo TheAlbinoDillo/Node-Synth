@@ -2,12 +2,6 @@
 
 const index = require("../../index.js");
 
-// RegEx to test for the prefix call and command
-const command_test = /(?<prefix>^fg(?:\. |[^a-z0-9?]))(?<call>[^\s<]+) ?(?<options>.+)*/gi;
-
-// RegEx to seperate the options out
-const options_test = /[^\s]+|(?:"[^"]*"|`[^`]*`|'[^']*')/g;
-
 // Test if user's id is the bot's owner
 function isOwner (user)
 {
@@ -39,39 +33,20 @@ async function processMessage (message)
 	// Fail if the prefix is being ran by a bot
 	if (author.bot) return;
 
-	// reset command_test RegEx pointer
-	command_test.lastIndex = 0;
-	// Run the command_test RegEx to get compenents of a
-	// command (if there are any to get)
-	let command_msg = command_test.exec(content);
+	// Parse string for command
+	let parsed = BotTools.parseCommand(content);
 
-	// Fail if no command structured matches were found
-	if (!command_msg) return;
-
-	// Breakout command_msg object properties
-	let groups = command_msg.groups;
-
-	// Breakout groups object properties
-	let prefix = groups.prefix;
-	let call = groups.call.toLowerCase();
-	let cmd_options = groups.options;
-	let cmd_args;
-
-	// If there are options with the command
-	// replace them with a structured array
-	if (cmd_options)
-	{
-		let matches = cmd_options.match(options_test);
-		cmd_args = matches;
-	}
+	// Fail if this message doesn't look like a command
+	if (!parsed)
+		return;
 
 	// Search for command
-	let selectedCommand = VarCommandList[VarCommandCalls[call] ];
+	let selectedCommand = VarCommandList[VarCommandCalls[parsed.call] ];
 
 	// Fail if this command doesn't exist
 	if (!selectedCommand)
 	{
-		let say = `\`${call}\` is not a command.`;
+		let say = `\`${parsed.call}\` is not a command.`;
 		BotActions.react_say(message, "❓", say);	
 		return;
 	}
@@ -112,8 +87,8 @@ async function processMessage (message)
 		channel: message.channel,
 		member: member,
 		author: author,
-		args: cmd_args,
-		full: cmd_options,
+		args: parsed.cmdArgs,
+		full: parsed.cmdOptions,
 		client: message.client
 	};
 
