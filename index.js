@@ -82,14 +82,9 @@ async function setupEvents ()
 	{
 		Client.on(event, (arg1, arg2) =>
 		{
-			//console.log(event);
-			VarEventList[event].run(arg1, arg2).then( () =>
+			VarEventList[event].run(arg1, arg2).then().catch( (error) =>
 			{
-				//console.log("///////////////////////", event);
-
-			}).catch( (error) =>
-			{
-				console.log(event, error);
+				console.error(event, error);
 			});
 		});
 	}
