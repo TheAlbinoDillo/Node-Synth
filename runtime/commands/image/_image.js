@@ -29,7 +29,7 @@ image_dir.filter( (file) =>
 		json: JSON.parse(BotTools.loadFile(`${path}/${file}`) ),
 		async run (options)
 		{
-			let link = BotTools.rand_array(this.json.images).link;
+			let link = BotTools.randArray(this.json.images).link;
 			BotActions.send(options, link);
 		}
 	};

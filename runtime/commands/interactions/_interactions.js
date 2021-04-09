@@ -16,7 +16,7 @@ async function runFunction (options)
 	};
 	let script_to_run = this.script;
 
-	let members = BotTools.get_mentions(options, true, false);
+	let members = BotTools.getMentions(options, true, false);
 
 	if (members.length > 0)
 	{
@@ -32,14 +32,14 @@ async function runFunction (options)
 				names.push(BotTools.bold(BotTools.clean(member.displayName) ) );
 			}
 		});
-		replacements["users"] = BotTools.array_list(names);
+		replacements["users"] = BotTools.arrayList(names);
 	}
 	else if (this.self)
 	{
 		script_to_run = this.self;
 	}
 
-	let text = BotTools.json_script(replacements, script_to_run);
+	let text = BotTools.JSONscript(replacements, script_to_run);
 	BotActions.send(options, text);
 }
 

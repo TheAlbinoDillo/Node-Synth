@@ -45,7 +45,7 @@ async function send_embed (options, posts_json)
 {
 	options.channel.startTyping();
 
-	let post = BotTools.rand_array(posts_json.posts);
+	let post = BotTools.randArray(posts_json.posts);
 	let is_vid = false;
 	let file_url = post.file.url;
 	if (post.file.url.endsWith(".webm") )
