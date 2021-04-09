@@ -26,7 +26,7 @@ image_dir.filter( (file) =>
 		desc: desc,
 		perms: [],
 		category: "image",
-		json: JSON.parse(BotTools.load_file(`${path}/${file}`) ),
+		json: JSON.parse(BotTools.loadFile(`${path}/${file}`) ),
 		async run (options)
 		{
 			let link = BotTools.rand_array(this.json.images).link;

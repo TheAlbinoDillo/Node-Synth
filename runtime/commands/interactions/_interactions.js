@@ -51,7 +51,7 @@ pasta_dir.filter( (file) =>
 
 }).forEach( (file) =>
 {
-	let json = BotTools.load_json(`${path}/${file}`);
+	let json = BotTools.loadJSON(`${path}/${file}`);
 
 	let new_command =
 	{

@@ -19,7 +19,7 @@ pasta_dir.filter( (file) =>
 	let withoutExt = file.substring(0, file.length - extension.length);
 	let name = withoutExt[0].toUpperCase() + withoutExt.substring(1);
 
-	let text = BotTools.load_file(`${path}/${file}`).toString();
+	let text = BotTools.loadFile(`${path}/${file}`).toString();
 
 	let isNSFW = false;
 	let newText = text.replace(nsfwTag, "");
