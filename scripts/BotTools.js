@@ -2,6 +2,52 @@
 
 const fs = require("fs");
 
+// RegEx to test for the prefix call and command
+const commandTest = /(?<prefix>^fg(?:\. |[^a-z0-9?]))(?<call>[^\s<]+) ?(?<options>.+)*/gi;
+
+// RegEx to seperate the options out
+const optionsTest = /[^\s]+|(?:"[^"]*"|`[^`]*`|'[^']*')/g;
+
+function parseCommand (string)
+{
+	// reset commandTest RegEx pointer
+	commandTest.lastIndex = 0;
+
+	// Run the commandTest RegEx to get compenents of a
+	// command (if there are any to get)
+	let commandMsg = commandTest.exec(string);
+
+	// Fail if no command structured matches were found
+	if (!commandMsg)
+		return null;
+
+	// Breakout commandMsg object properties
+	let groups = commandMsg.groups;
+
+	// Breakout groups object properties
+	let prefix = groups.prefix;
+	let call = groups.call.toLowerCase();
+	let cmdOptions = groups.options;
+	let cmdArgs;
+
+	// If there are options with the command
+	// replace them with a structured array
+	if (cmdOptions)
+	{
+		let matches = cmdOptions.match(optionsTest);
+		cmdArgs = matches;
+	}
+
+	let obj =
+	{
+		prefix: prefix,
+		call: call,
+		cmdOptions: cmdOptions,
+		cmdArgs: cmdArgs
+	};
+	return obj;
+}
+
 function upperFirst (string)
 {
 	return string[0].toUpperCase() + string.substring(1);
@@ -98,21 +144,7 @@ function JSONscript (replacements, script)
 
 function bold (text)
 {
-	console.warn("Deprecated. Use format()");
 	return `**${text}**`;
-}
-
-function format (text, style)
-{
-	let obj =
-	{
-		bold: `**${text}**`,
-		italic: `*${text}*`,
-		code: `\`${text}\``,
-		spoiler: `||${text}||`
-	};
-
-	return obj[style];
 }
 
 function arrayList (array, join_word = "and", oxford = true)
@@ -164,8 +196,8 @@ function clean (string)
 		string = string.replace(e, `\\${e}`);
 	});
 
-	string = string.replace("@everyone", "@\u200beveryone");
-	string = string.replace("<@", "<\u200b@");
+	string = string.replace(/@everyone/g, "@\u200beveryone");
+	string = string.replace(/@</g, "<\u200b@");
 
 	return string;
 }
@@ -183,8 +215,8 @@ module.exports =
 	pickFrom: pickFrom,
 	JSONscript: JSONscript,
 	bold: bold,
-	format: format,
 	arrayList: arrayList,
 	getMentions: getMentions,
-	clean: clean
+	clean: clean,
+	parseCommand: parseCommand
 };
