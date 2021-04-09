@@ -4,6 +4,7 @@ global.VarClient = {};
 global.VarEventList = {};
 global.VarCommandList = {};
 global.VarCommandCalls = {};
+global.VarCommandCategories = {};
 
 const fs = require("fs.promises");
 const discord = require("discord.js");
@@ -172,6 +173,12 @@ async function loadCommands ()
 		scripts.forEach( (script) =>
 		{
 			let command = require(`${path}/${folder}/${script}`);
+
+			// If command doesn't have a category
+			// Give it a category based on folder name
+			if (!command.category)
+				command.category = folder;
+
 			loadSingleCommand(command, script);
 		});
 	}
@@ -203,6 +210,13 @@ async function loadSingleCommand (command, file)
 	{
 		VarCommandCalls[call] = command.name;
 	});
+
+	// Create category if it doesn't exist yet
+	if (!VarCommandCategories[command.category])
+		VarCommandCategories[command.category] = [];
+
+	// Add category to VarCommandCategories
+	VarCommandCategories[command.category].push(command.name);
 
 	console.log(`    Loaded ${command.name}.`);
 }
