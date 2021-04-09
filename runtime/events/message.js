@@ -16,6 +16,15 @@ function isOwner (user)
 
 async function run (message)
 {
+	processMessage(message).catch( (error) =>
+	{
+		let say = `Something went wrong!\n${error.stack}`;
+		BotActions.react_say(message, "‼️", say);	
+	});
+}
+
+async function processMessage (message)
+{
 	// Breakout message object properties
 	let content = message.content;
 	let guild = message.guild;
