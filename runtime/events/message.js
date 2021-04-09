@@ -20,6 +20,7 @@ async function run (message)
 	{
 		let say = `Something went wrong!\n${error.stack}`;
 		BotActions.react_say(message, "‼️", say);	
+		console.error(say);
 	});
 }
 
@@ -121,6 +122,7 @@ async function processMessage (message)
 	{
 		let say = `\`${selectedCommand.name}\`\n${error.stack}`;
 		BotActions.react_say(message, "⁉️", say);
+		console.error(say);
 		return;
 	});
 };
