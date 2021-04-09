@@ -1,4 +1,4 @@
-# Node Synth (Discord)
+# Node Synth (Discord Bot)
 Bot for furry Discord servers
 
 Running from Node.js v14.16.0
