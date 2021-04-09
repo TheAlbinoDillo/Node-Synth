@@ -15,5 +15,6 @@ module.exports =
 {
 	run: run,
 	name: "leave",
-	calls: ["leave", "quit"]
+	calls: ["leave", "quit"],
+	perms: ["BOT_OWNER"]
 };
