@@ -60,7 +60,7 @@ function randNumber (max, min = 0)
 	return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function rand_array (array)
+function randArray (array)
 {
 	let pick = randNumber(array.length - 1);
 	return array[pick];
@@ -98,7 +98,21 @@ function JSONscript (replacements, script)
 
 function bold (text)
 {
+	console.warn("Deprecated. Use format()");
 	return `**${text}**`;
+}
+
+function format (text, style)
+{
+	let obj =
+	{
+		bold: `**${text}**`,
+		italic: `*${text}*`,
+		code: `\`${text}\``,
+		spoiler: `||${text}||`
+	};
+
+	return obj[style];
 }
 
 function arrayList (array, join_word = "and", oxford = true)
@@ -161,15 +175,15 @@ module.exports =
 {
 	upperFirst: upperFirst,
 	subEnd: subEnd,
-	//list_dir: list_dir,
 	loadFile: loadFile,
 	loadJSON: loadJSON,
 	send: send,
 	randNumber: randNumber,
-	rand_array: rand_array,
+	randArray: randArray,
 	pickFrom: pickFrom,
 	JSONscript: JSONscript,
 	bold: bold,
+	format: format,
 	arrayList: arrayList,
 	getMentions: getMentions,
 	clean: clean
