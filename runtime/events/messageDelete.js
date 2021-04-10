@@ -1,6 +1,6 @@
 "use strict";
 
-const name = "message-deleted-node-synth-log";
+const logChannelName = "message-deleted-node-synth-log";
 
 async function run (message)
 {
@@ -11,7 +11,7 @@ async function run (message)
 	let channels = message.guild.channels.cache;
 	let logChannel = channels.filter( (c) =>
 	{
-		return c.name === name;
+		return c.name === logChannelName;
 
 	}).array();
 
