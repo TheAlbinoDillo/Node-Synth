@@ -1,50 +1,37 @@
 "use strict";
 
-global.VarClient = {};
-global.VarEventList = {};
-global.VarCommandList = {};
-global.VarCommandCalls = {};
-global.VarCommandCategories = {};
+// Make empty global objects
+["Client", "EventList", "CommandList", "CommandCalls", "CommandCategories"]
+.forEach( (e, i) =>
+{
+	global[`Var${e}`] = {};
+});
 
+// Import
 const fs = require("fs.promises");
 const discord = require("discord.js");
-const rl = require("readline");
 require("dotenv").config();
 
-global.VarClient = new discord.Client();
+// Create Discord client
+VarClient = new discord.Client();
 VarClient.on("ready", () =>
 {
 	init();
 });
 
+// Connect to Discord
 const BotConnect = require("./scripts/BotConnect.js");
 BotConnect(VarClient, process.env.BOT_TOKEN);
 
-const rl_interface = rl.createInterface
-({
-	input: process.stdin,
-	output: process.stdout
-	
-}).on('line', (input) =>
-{
-	let output;
-	try
-	{
-		output = eval(input);
-	}
-	catch (error)
-	{
-		output = error;
-	}
-	console.log(output);
-});
 
+// Load all the external scripts
 async function init ()
 {
-	await loadScripts();
-	await loadEvents();
-	await loadCommands();
+	await loadGlobalScripts();
+	await loadEventScripts();
+	await loadCommandScripts();
 
+	// Handle events as they are called
 	for (let event in VarEventList)
 	{
 		VarClient.on(event, (arg1, arg2) =>
@@ -74,7 +61,7 @@ async function filterPath (path)
 	return scripts;
 }
 
-async function loadScripts ()
+async function loadGlobalScripts ()
 {
 	console.log("Loading global scripts...");
 
@@ -98,7 +85,7 @@ async function loadScripts ()
 	console.log("Loaded global scripts.\n");
 }
 
-async function loadEvents ()
+async function loadEventScripts ()
 {
 	console.log("Loading events...");
 
@@ -117,7 +104,7 @@ async function loadEvents ()
 	console.log("Loaded events.\n");
 }
 
-async function loadCommands ()
+async function loadCommandScripts ()
 {
 	console.log("Loading commands...");
 
@@ -139,7 +126,7 @@ async function loadCommands ()
 			let scriptPath = `${path}/${folder}/_${folder}.js`
 			let commandArray = require(scriptPath).forEach( (command) =>
 			{
-				loadSingleCommand(command);
+				loadCommand(command);
 			});
 			continue;
 		}
@@ -154,14 +141,14 @@ async function loadCommands ()
 			if (!command.category)
 				command.category = folder;
 
-			loadSingleCommand(command, script);
+			loadCommand(command, script);
 		});
 	}
 
 	console.log("Loaded commands.\n");
 }
 
-async function loadSingleCommand (command, file)
+async function loadCommand (command, file)
 {
 	// Fail if command has no name
 	if (!command.name)

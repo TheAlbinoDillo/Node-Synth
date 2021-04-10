@@ -6,11 +6,11 @@ const connect = (client, token, time = 3) =>
 {
 	if (logged_in) return;
 
-	console.log("Connecting to Discord...\n");
+	console.log("Connecting to Discord...");
 
 	client.login(token).then( () =>
 	{
-		console.log("\tLogged in.\n\n");
+		console.log("  Logged in.\n");
 
 	}).catch( (error) =>
 	{
