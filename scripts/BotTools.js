@@ -68,12 +68,12 @@ function loadJSON (path)
 	return JSON.parse(loadFile(path) );
 }
 
-async function send (options, content)
+async function send (options, content, embedWrap)
 {
 	let channel = options.channel;
 	let message = options.message;
 
-	if (!(channel instanceof discord.TextChannel) ) {
+	if (!channel) {
 		console.error("Did not provide a channel to botSend.\n");
 		return null;
 	}
@@ -88,9 +88,21 @@ async function send (options, content)
 		}
 	}
 
+	if (embedWrap)
+	{
+		let embed =
+		{
+			title: content
+		};
+		content = {embed: embed};
+	}
+
 	let sent = channel.send(content);
 
-	sent.then(message => {}).catch(error =>
+	if (!message)
+		return;
+
+	sent.catch(error =>
 	{
 		console.error(`Error sending message:\n${error.message}\n`);
 		if (message) {
