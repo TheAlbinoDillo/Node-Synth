@@ -11,48 +11,14 @@ const discord = require("discord.js");
 const rl = require("readline");
 require("dotenv").config();
 
+global.VarClient = new discord.Client();
+VarClient.on("ready", () =>
+{
+	init();
+});
+
 const BotConnect = require("./scripts/BotConnect.js");
-
-const client = new discord.Client();
-global.Client = client;
-
-BotConnect(client, process.env.BOT_TOKEN);
-
-client.on("ready", () =>
-{
-	setupEvents().then( () =>
-	{
-		/*client.user.setActivity('Under Construction!', { type: '' })
-		.then(presence => console.log(`Activity set to ${presence.activities[0].name}`))
-		.catch(console.error);*/
-
-		console.log("Ready.");
-	});
-});
-
-module.exports =
-{
-	client: client
-};
-
-//Exception and Promise Rejection logging
-//////////////////////////////////////////////////////////////////////////////////
-process.on('uncaughtException', async (error) =>
-{
-	let message = Date.now() + "\n" + error.stack;
-	console.error(error);
-
-	fs.writeFile("error_log.txt", message);
-	process.exit(1);
-});
-
-process.on('unhandledRejection', async (reason, promise) =>
-{
-	console.error(reason.stack);
-	
-	fs.writeFile("error_log.txt", reason.stack);
-	process.exit(1);
-});
+BotConnect(VarClient, process.env.BOT_TOKEN);
 
 const rl_interface = rl.createInterface
 ({
@@ -73,7 +39,7 @@ const rl_interface = rl.createInterface
 	console.log(output);
 });
 
-async function setupEvents ()
+async function init ()
 {
 	await loadScripts();
 	await loadEvents();
@@ -81,7 +47,7 @@ async function setupEvents ()
 
 	for (let event in VarEventList)
 	{
-		Client.on(event, (arg1, arg2) =>
+		VarClient.on(event, (arg1, arg2) =>
 		{
 			VarEventList[event].run(arg1, arg2).then().catch( (error) =>
 			{
@@ -89,6 +55,7 @@ async function setupEvents ()
 			});
 		});
 	}
+	console.log("Ready.");
 }
 
 async function filterPath (path)
@@ -119,7 +86,12 @@ async function loadScripts ()
 	scripts.forEach( (e, i) =>
 	{
 		let scriptName = e.replace(/\.js/, "");
-		global[scriptName] = require(`${path}/${e}`);
+
+		// Load script and add to globals if it has an export
+		let script = require(`${path}/${e}`);
+		if (script !== null)
+			global[scriptName] = script;
+
 		console.log(`  Loaded ${e}`);
 	});
 
@@ -164,8 +136,11 @@ async function loadCommands ()
 		let scripts = await filterPath(`${path}/${folder}`);
 		if (scripts.includes(`_${folder}.js`) )
 		{
-			let commandArray = require(`${path}/${folder}/_${folder}.js`);
-			loadMultipleCommand(commandArray);
+			let scriptPath = `${path}/${folder}/_${folder}.js`
+			let commandArray = require(scriptPath).forEach( (command) =>
+			{
+				loadSingleCommand(command);
+			});
 			continue;
 		}
 
@@ -219,12 +194,4 @@ async function loadSingleCommand (command, file)
 	VarCommandCategories[command.category].push(command.name);
 
 	console.log(`    Loaded ${command.name}.`);
-}
-
-async function loadMultipleCommand (array)
-{
-	array.forEach( (command) =>
-	{
-		loadSingleCommand(command);
-	});
 }
