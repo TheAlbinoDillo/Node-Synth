@@ -3,6 +3,9 @@
 const searchLimit = 20;
 const repeatCalls = ["repeat", "!!"];
 
+// RegEx to identify repeated commands
+const repeatReg = /\u200b<@(?<id>\d+)> `(?<command>.+)`/g;
+
 async function run (options)
 {
 	// Get last 50 messages in the channel
@@ -16,9 +19,12 @@ async function run (options)
 	});
 
 	// Filter out only messages from author
+	// or from this bot (for repeats)
 	messages = messages.filter( (m) =>
 	{
-		return m.author.id === options.author.id;
+		let isAuthor = m.author.id === options.author.id;
+		let isThisBot = m.author.id === VarClient.user.id;
+		return isAuthor || isThisBot;
 	});
 
 	// Fail if no messages in last 50
@@ -26,14 +32,32 @@ async function run (options)
 		return none(options);
 
 	// Filter out only command messages
+	// Including those from repeat commands
 	// And remove commands that look like fg repeat
 	messages = messages.filter( (m) =>
 	{
-		let parsed = BotTools.parseCommand(m.content);
+		repeatReg.lastIndex = 0;
 
-		if (!parsed)
+		let parsed = BotTools.parseCommand(m.content);
+		let repeat = repeatReg.exec(m.content);
+
+		if (!parsed && !repeat)
 			return false;
 
+		// Alter the bot's repeat message to look like
+		// the user actually ran that command
+		if (repeat)
+		{
+			let user = VarClient.users.cache.get(repeat.groups.id);
+			let command = repeat.groups.command;
+			m.author = user;
+			m.content = command;
+			m.mentions = 
+
+			return true;
+		}
+
+		// Remove Repeat commands to prevent looping
 		if (repeatCalls.includes(parsed.call) )
 			return false;
 
@@ -53,10 +77,10 @@ async function run (options)
 	// Inject the old command into the current message object
 	options.message.content = `${messages[0].content} ${options.full || ""}`.trim();
 
-	BotActions.send(options, `\`${options.message.content}\``);
+	BotActions.send(options, `\u200b${options.author} \`${options.message.content}\``);
 
 	// Run old command as if a new message
-	VarEventList.message.run(options.message).then().catch( (error) =>
+	VarEventList.message.run(options.message).catch( (error) =>
 	{
 		console.error(event, error);
 	});
