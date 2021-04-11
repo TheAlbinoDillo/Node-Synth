@@ -7,7 +7,8 @@ async function run (options)
 	let nsfw = options.channel.nsfw;
 	let embed =
 	{
-		title: `Commands for ${Client.user.username}`,
+		title: `Commands for ${VarClient.user.username}`,
+		description: "Usage: `fg <command>`",
 		thumbnail:
 		{
 			url: "https://i.imgur.com/zfVwbiK.png"
