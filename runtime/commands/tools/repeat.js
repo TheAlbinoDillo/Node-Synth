@@ -52,7 +52,6 @@ async function run (options)
 			let command = repeat.groups.command;
 			m.author = user;
 			m.content = command;
-			m.mentions = 
 
 			return true;
 		}
