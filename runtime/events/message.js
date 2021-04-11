@@ -93,6 +93,7 @@ async function processMessage (message)
 	};
 
 	// Try to run command
+	console.log(`Running ${selectedCommand.name}`);
 	selectedCommand.run(options).catch( (error) =>
 	{
 		let say = `\`${selectedCommand.name}\`\n${error.stack}`;
