@@ -92,7 +92,7 @@ async function send (options, content, embedWrap)
 	{
 		let embed =
 		{
-			title: content
+			description: content
 		};
 		content = {embed: embed};
 	}
