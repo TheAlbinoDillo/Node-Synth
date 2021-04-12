@@ -2,13 +2,13 @@
 
 async function run (options)
 {
-	let message = "```js\n";
+	let message = "```diff\n";
 
 	let guilds = VarClient.guilds.cache.array();
 	guilds.forEach( (e, i) =>
 	{
 		let isAdmin = e.members.cache.get(VarClient.user.id).permissions.has("ADMINISTRATOR");
-		message += `${isAdmin}${isAdmin?"  ":" "}"${e.name}"\n`;
+		message += `${isAdmin?"-":"+"}${isAdmin?"  ":" "}"${e.name}"\n`;
 	});
 
 	message += "```";
