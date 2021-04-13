@@ -150,11 +150,18 @@ async function loadCommandScripts ()
 
 async function loadCommand (command, file)
 {
-	// Fail if command has no name
+	// Abort if command has no name
 	if (!command.name)
 	{
-		console.error(`    Command from ${file} failed without name.`);
-		return;
+		console.error(`Command from ${file} failed without name.`);
+		process.exit(2);
+	}
+
+	// Abort if command is not async
+	if (command.run[Symbol.toStringTag] !== "AsyncFunction")
+	{
+		console.error(`Command from ${file} has non-async function.`);
+		process.exit(3);
 	}
 
 	// Add command call if not specified
