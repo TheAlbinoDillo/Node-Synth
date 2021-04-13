@@ -1,12 +1,12 @@
 "use strict";
 
-function run (options)
+async function run (options)
 {
 	options.client.setTimeout( () =>
 	{
 		process.exit();
 
-	}, 100);
+	}, 500);
 
 	BotActions.send(options, "Disconnecting...");
 }
