@@ -1,8 +1,8 @@
 "use strict";
 
-const fs = require("fs.promises");
+const fs = require("fs");
 
-process.on("uncaughtException", async (error) =>
+process.on("uncaughtException", (error) =>
 {
 	let message = `${Date.now()}\n${error.stack}`;
 	console.error(error);
@@ -11,7 +11,7 @@ process.on("uncaughtException", async (error) =>
 	process.exit(1);
 });
 
-process.on("unhandledRejection", async (reason, promise) =>
+process.on("unhandledRejection", (reason, promise) =>
 {
 	console.error(reason.stack);
 	
